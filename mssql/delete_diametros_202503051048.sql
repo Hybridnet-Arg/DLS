@@ -1,0 +1,1 @@
+DELETE from diametro where idDiametro IN (11,12,13,14);

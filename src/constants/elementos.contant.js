@@ -1,0 +1,17 @@
+const LOWER_IBOP = 1;
+const UPPER_IBOP = 2;
+const WASH_PIPE = 3;
+const SAVER_SUB = 4;
+
+const BOBINA = 5;
+
+export const ELEMENTOS_TOP_DRIVE = {
+  LOWER_IBOP,
+  UPPER_IBOP,
+  WASH_PIPE,
+  SAVER_SUB,
+};
+
+export const ELEMENTOS_CICLOS_CABLE_TONELADA_MILLA = {
+  BOBINA,
+};

@@ -1,0 +1,4 @@
+export const COMPONENTES = {
+  TOP_DRIVE: 1,
+  CICLOS_CABLE_TONELADA_MILLA: 2,
+};

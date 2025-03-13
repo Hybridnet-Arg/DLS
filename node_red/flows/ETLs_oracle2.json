@@ -1,0 +1,287 @@
+[
+    {
+        "id": "bb612a2c63b987b7",
+        "type": "tab",
+        "label": "ETLs ORACLE 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "acf6ea7d3352eabe",
+        "type": "function",
+        "z": "bb612a2c63b987b7",
+        "name": "prepareRequest",
+        "func": "const startDate = msg.startDate;\n\nlet tempDate2 = new Date(startDate);\ntempDate2.setDate(tempDate2.getDate() + 1); // suma 1 día\nconst endDate = tempDate2.toISOString().split('T')[0];\n\nconst query = `SELECT * FROM PBI.PS_DLOM_PDIA_OE_VW WHERE TO_CHAR(DATE1, 'YYYY-MM-DD') BETWEEN '${startDate}' AND '${endDate}' ORDER BY DATE1 ASC`;\nmsg.topic = query;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 400,
+        "wires": [
+            [
+                "cf952ce33f88acec",
+                "0d149e2bcf8b8a07"
+            ]
+        ]
+    },
+    {
+        "id": "9bcb9803f30d10b2",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 353",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4c7b21d98a4d6a1f",
+        "type": "inject",
+        "z": "bb612a2c63b987b7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 180,
+        "wires": [
+            [
+                "6dd52ce25c42f382"
+            ]
+        ]
+    },
+    {
+        "id": "12cdfc05295fe3f6",
+        "type": "function",
+        "z": "bb612a2c63b987b7",
+        "name": "generateInsertsSQL",
+        "func": "const rows = msg.payload.rows;\nif(rows && rows.length > 0){\n\n    // Nombre de la tabla\n  const tableName = 'DLOM_PARTE_DIARIO_OBS_EQU_QRY';\n\n  // Array para almacenar los valores formateados\n  const valuesArray = rows.map(item => {\n    // Formatear la fecha a YYYY-MM-DD\n    const date = new Date(item.DATE1).toISOString().split('T')[0];\n\n    // Escapar posibles caracteres especiales en las cadenas\n    const equipo = item.DESCR.replace(/'/g, \"''\");\n    const pozo = item.DL_W_CD.replace(/'/g, \"''\");\n    const fase = item.DL_OPRTN_PHASE.replace(/'/g, \"''\");\n\n    // Construir la cadena de valores para cada registro\n    return `('${equipo}', '${pozo}', '${fase}', '${date}')`;\n  });\n\n  // Unir los valores en una sola cadena separada por comas\n  const valuesString = valuesArray.join(',\\n');\n\n  // Construir la sentencia completa\n  const insertStatement = `\n    INSERT INTO ${tableName} (EQUIPO, POZO, FASE, [DATE])\n    VALUES\n    ${valuesString};\n  `;\n\n    msg.payload = insertStatement;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 400,
+        "wires": [
+            [
+                "596450cac7d8d9f1",
+                "effa842741c0e30a"
+            ]
+        ]
+    },
+    {
+        "id": "effa842741c0e30a",
+        "type": "MSSQL",
+        "z": "bb612a2c63b987b7",
+        "mssqlCN": "ef140dddcb121102",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 980,
+        "y": 400,
+        "wires": [
+            [
+                "bab57ec96e261b71"
+            ]
+        ]
+    },
+    {
+        "id": "596450cac7d8d9f1",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 354",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "bab57ec96e261b71",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 355",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1170,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "0d149e2bcf8b8a07",
+        "type": "oracle",
+        "z": "bb612a2c63b987b7",
+        "name": "Oracle_DLSFSPRD",
+        "server": "b37ff609b8bd5691",
+        "x": 450,
+        "y": 400,
+        "wires": [
+            [
+                "9bcb9803f30d10b2",
+                "12cdfc05295fe3f6"
+            ]
+        ]
+    },
+    {
+        "id": "6dd52ce25c42f382",
+        "type": "function",
+        "z": "bb612a2c63b987b7",
+        "name": "getLastRow",
+        "func": "const query = `SELECT TOP 1 * FROM DLOM_PARTE_DIARIO_OBS_EQU_QRY ORDER BY [DATE] DESC`\nmsg.payload = query;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "d16805beb936a31a"
+            ]
+        ]
+    },
+    {
+        "id": "d16805beb936a31a",
+        "type": "MSSQL",
+        "z": "bb612a2c63b987b7",
+        "mssqlCN": "ef140dddcb121102",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "dc7457cfa0a797eb",
+                "38d4198dd95c2e4b"
+            ]
+        ]
+    },
+    {
+        "id": "dc7457cfa0a797eb",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 356",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "38d4198dd95c2e4b",
+        "type": "function",
+        "z": "bb612a2c63b987b7",
+        "name": "setStartDate",
+        "func": "const recordsets = msg.payload.recordset;\nlet startDate;\nif(recordsets && recordsets.length > 0){\n    let tempDate1 = new Date(recordsets[0].Date);\n    tempDate1.setDate(tempDate1.getDate() + 1); // suma 1 día\n    startDate = tempDate1.toISOString().split('T')[0];\n}else{\n    startDate = '2023-01-01';\n}\nmsg.startDate = startDate;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 260,
+        "wires": [
+            [
+                "460b9924e9d71df7",
+                "acf6ea7d3352eabe"
+            ]
+        ]
+    },
+    {
+        "id": "460b9924e9d71df7",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 357",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "startDate",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 750,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "cf952ce33f88acec",
+        "type": "debug",
+        "z": "bb612a2c63b987b7",
+        "name": "debug 358",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 350,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "ef140dddcb121102",
+        "type": "MSSQL-CN",
+        "name": "DLOM_TESTING",
+        "server": "sgip.lam.domain",
+        "encyption": false,
+        "database": "dlom"
+    },
+    {
+        "id": "b37ff609b8bd5691",
+        "type": "oracle-config",
+        "name": "Oracle_DLSFSPRD",
+        "host": "10.0.10.240",
+        "port": "1921",
+        "database": "DLSFSPRD",
+        "user": "PBI",
+        "password": "March2024",
+        "mode": "thick",
+        "instantClient": "/Users/johnnyguzman/Downloads/instantclient_19_16"
+    }
+]

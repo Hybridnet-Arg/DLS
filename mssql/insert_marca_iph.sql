@@ -1,0 +1,23 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+SET IDENTITY_INSERT [dbo].[marcas] ON
+INSERT INTO marcas
+(id, nombre, creado_el, actualizado_el)
+VALUES(3, 'IPH', '2024-11-14 11:11:00.820', '2024-11-14 11:11:00.820');
+SET IDENTITY_INSERT [dbo].[marcas] OFF 
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
+

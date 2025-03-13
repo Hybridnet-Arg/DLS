@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <title>Sitio en Construcción</title>
+    <style>
+      body {
+        margin: 0;
+        background: url('images/dms-back.jpg') no-repeat center center/cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        min-height: 100vh;
+        height: 100%;
+        color: white;
+        font-family: Arial, sans-serif;
+        position: relative;
+        font-family: 'Darker Grotesque', serif;
+      }
+      .bg-opacity {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 2;
+      }
+      .container {
+        padding-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+      }
+      .container-info {
+        display: flex;
+        width: 100%;
+      }
+      .container-logo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 20px;
+      }
+      .logo {
+        margin: 40px 0;
+        max-width: 200px;
+      }
+      .item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .iconImg {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .iconPhone {
+        height: 24px;
+        margin-right: 10px;
+      }
+      .container-text {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      h4 {
+        width: 300px;
+        display: flex;
+        align-items: start;
+        justify-content: center;
+        text-align: center;
+        margin-top: 50px;
+        font-size: 26px;
+        font-weight: 500;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+        text-align: center;
+      }
+      .suscribe-container {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        width: 40%;
+      }
+      form {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 5px;
+      }
+      input[type='email'] {
+        padding: 10px;
+        border-radius: 0px;
+        border: none;
+        flex: 1;
+      }
+      input[type='email']:focus-visible {
+        outline: none;
+        border: none;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+      .custom-button {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: white;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        background: linear-gradient(to top, #1a202c, #25303b, #6d8caa);
+      }
+      .subscribeText {
+        text-align: start;
+        margin: 20px 0 0 0;
+      }
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 0 10px;
+        }
+        .container-info {
+          flex-direction: column;
+          align-items: center;
+        }
+        .suscribe-container {
+          margin-bottom: 30px;
+          width: 90%;
+        }
+        h4 {
+          width: 100%;
+          font-size: 20px;
+        }
+        form {
+          flex-direction: column;
+        }
+        button {
+          width: 100%;
+        }
+      }
+      @media (max-width: 1024px) {
+        .suscribe-container {
+          width: 60%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-opacity"></div>
+    <div class="container">
+      <div class="container-info">
+        <div class="container-logo">
+          <img class="logo" src="images/logo.svg" alt="logo" />
+          <div class="item">
+            <img src="images/web.svg" alt="web" class="iconImg" />
+            <a href="https://cua.dls-archer.com/" target="_blank"
+              >https://cua.dls-archer.com</a
+            >
+          </div>
+          <div class="item">
+            <img src="images/mail.svg" alt="web" class="iconImg" />
+            <a href="#">soporte.it@dls-archer.com</a>
+          </div>
+          <div class="item">
+            <img src="images/phone.svg" alt="web" class="iconPhone" />
+            <a href="#">011 5129 3000</a>
+          </div>
+          <div class="item">
+            <img src="images/wsp.svg" width="18" alt="web" class="iconPhone" />
+            <a href="#">011 3365 0000</a>
+          </div>
+          <div class="item">
+            <img src="images/team.svg" alt="web" class="iconImg" />
+            <a href="#">Soporte.it</a>
+          </div>
+        </div>
+        <div class="container-text">
+          <h4>
+            Este sitio se encuentra en estado de mantenimiento programado.<br />
+            Agradecemos su comprensión.
+          </h4>
+        </div>
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById('subscribeForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const email = document.getElementById('email').value;
+
+          try {
+            // Llamada a la API con fetch
+            const response = await fetch(
+              'https://dms.dls-archer.com/api/suscribe',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+              }
+            );
+
+            if (response.ok) {
+              alert('¡Gracias por suscribirte!');
+              document.getElementById('subscribeForm').classList.add('hidden');
+              document.getElementById('subscribeText').classList.add('hidden');
+              document
+                .getElementById('successMessage')
+                .classList.remove('hidden');
+            } else {
+              alert('Error al suscribirse');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error al suscribirse');
+          }
+        });
+    </script>
+  </body>
+</html>

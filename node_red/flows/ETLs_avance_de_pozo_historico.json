@@ -1,0 +1,1406 @@
+[
+    {
+        "id": "5e5a0f50e0190a4e",
+        "type": "tab",
+        "label": "ETLs Avance de Pozo - Historico",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a540e804987a6474",
+        "type": "inject",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "480c3367076705c7"
+            ]
+        ]
+    },
+    {
+        "id": "c4c7133539bd54c5",
+        "type": "http request",
+        "z": "5e5a0f50e0190a4e",
+        "name": "GetToken",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/tokens/token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "ApplicationID",
+                "valueType": "other",
+                "valueValue": "E4FC9AEB-0CF9-481C-99F6-A4FA8A5D11C9"
+            }
+        ],
+        "x": 380,
+        "y": 160,
+        "wires": [
+            [
+                "9e728e17fe8234e3",
+                "776835b344106737"
+            ]
+        ]
+    },
+    {
+        "id": "9e728e17fe8234e3",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "saveToken",
+        "func": "global.set(\"token\", msg.payload.token);\n//return msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cdf5cb09a8e6254d",
+        "type": "comment",
+        "z": "5e5a0f50e0190a4e",
+        "name": "ETLS Avance de Pozo WELLDATA Historico",
+        "info": "# Alcances\n\n 1. Consulta historial de avance de pozo por perforador.\n 2. Se trae todos los pozos que han sido realizados por cada perforador desde el 27 de Sep. de 2024.\n 3. Solo se procesar pozos que tiene estado finalizado.\n",
+        "x": 210,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "85434b93b5ff92a3",
+        "type": "inject",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "900",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "c4c7133539bd54c5"
+            ]
+        ]
+    },
+    {
+        "id": "0f17a5535688dd36",
+        "type": "http request",
+        "z": "5e5a0f50e0190a4e",
+        "name": "GetJobs",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/jobs?jobStatus=AllJobs&startDateMin=2024-08-01T18:55:00&take=1425&total=true",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 440,
+        "y": 260,
+        "wires": [
+            [
+                "ff81dd203c3e0d89",
+                "4b07545d8154b185"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "b6554c0df7d817cd",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "setup",
+        "func": "msg.token = global.get(\"token\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 260,
+        "wires": [
+            [
+                "0f17a5535688dd36"
+            ]
+        ]
+    },
+    {
+        "id": "ff81dd203c3e0d89",
+        "type": "split",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 610,
+        "y": 260,
+        "wires": [
+            [
+                "d74f408a43e3b674"
+            ]
+        ]
+    },
+    {
+        "id": "d74f408a43e3b674",
+        "type": "split",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 770,
+        "y": 260,
+        "wires": [
+            [
+                "e8d993f55d088dc8"
+            ]
+        ]
+    },
+    {
+        "id": "e8d993f55d088dc8",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "jobInfo",
+        "func": "let id = msg.payload.id;\nlet name = msg.payload.name;\nlet rigNameAux = msg.payload.assetInfoList[0].name;\nlet rigName = rigNameAux.replace(' ', '');\n\nlet job = {\n   \"jobId\": id,\n   \"idPozo\": null,\n   \"name\": name,\n   \"startDate\": msg.payload.startDate,\n   \"endDate\": msg.payload.endDate,\n   \"jobStatus\": msg.payload.jobStatus,\n   \"firstDataDate\": msg.payload.firstDataDate,\n   \"lastDataDate\": msg.payload.lastDataDate,\n};\n\nlet arr = global.get('etl_avance_pozo_his_'+rigName);\nif(arr && arr.length > 0){\n   const jobIndex = arr.findIndex((e) => e.jobId === job.jobId);\n\n   if (jobIndex !== -1) {\n      arr[jobIndex] = job;\n   } else {\n      arr.push(job);\n   }\n   // Guardar el array actualizado en la variable global\n   global.set('etl_avance_pozo_his_' + rigName, arr);\n}else{\n   // Si el array no existe, crear uno nuevo \n   global.set('etl_avance_pozo_his_' + rigName, [job]);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7bfa295025d2c60a",
+        "type": "inject",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "b6554c0df7d817cd"
+            ]
+        ]
+    },
+    {
+        "id": "776835b344106737",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 517",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "e8d71c1d2c70d054",
+        "type": "http request",
+        "z": "5e5a0f50e0190a4e",
+        "name": "PostRequest",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 1310,
+        "y": 420,
+        "wires": [
+            [
+                "355a8924f9f6205a",
+                "78b58a520aaa6998"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "0661357faf3d0b0e",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "prepararRequest",
+        "func": "msg.token = global.get(\"token\");\nconst job = msg.payload;\nlet dateUTC = new Date(job.endDate); \nlet horaH = dateUTC.toISOString();\n\nlet date = new Date(job.endDate);\n// Restar 30 horas\ndate.setHours(date.getHours() - 30);\nlet horaD = date.toISOString();\n\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 60,\n    \"isDifferential\": true\n}\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nmsg.jobName = job.name;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 420,
+        "wires": [
+            [
+                "7a4899c150ef5ee3"
+            ]
+        ]
+    },
+    {
+        "id": "7a4899c150ef5ee3",
+        "type": "change",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1130,
+        "y": 420,
+        "wires": [
+            [
+                "e8d71c1d2c70d054"
+            ]
+        ]
+    },
+    {
+        "id": "355a8924f9f6205a",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 527",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1490,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "0c4284791c913bea",
+        "type": "MSSQL",
+        "z": "5e5a0f50e0190a4e",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2340,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b07545d8154b185",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 546",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "37ea6c9a0bf07b9e",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "consultaIdPozo",
+        "func": "const jobName = msg.jobName;\nif(jobName){\n    msg.payload = `SELECT p.* FROM pozos p\nINNER JOIN planes_pozo pp ON pp.id = p.plan_pozo_id \nWHERE p.nombre_clave = '${jobName}' and pp.activo = 1;`;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1740,
+        "y": 420,
+        "wires": [
+            [
+                "ecae7e0df146ae96",
+                "ef297faabbe8915b"
+            ]
+        ]
+    },
+    {
+        "id": "ecae7e0df146ae96",
+        "type": "MSSQL",
+        "z": "5e5a0f50e0190a4e",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 1920,
+        "y": 420,
+        "wires": [
+            [
+                "6ba7bd62c061b91a",
+                "3a2c34d787837aef"
+            ]
+        ]
+    },
+    {
+        "id": "3a2c34d787837aef",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "actualizarHistorico",
+        "func": "//const data = msg.payload.recordsets[0];\nconst data = msg.payload;\nconst maxHoleDepthValue = msg.maxHoleDepthValue;\nconst maxBitPositionValue = msg.maxBitPositionValue;\n\nif (data.length > 0 && maxHoleDepthValue > 0) {\n    const idPozo = data[0].id; //id pozo\n    msg.payload = `\n        INSERT INTO [dbo].[avances_pozo] \n        ([pozo_id], [nivel_trepano], [velocidad], [curva_de_avance], [profundidad]) \n        VALUES (${idPozo}, 0, 0, 0, ${maxHoleDepthValue});\n    `;\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2130,
+        "y": 420,
+        "wires": [
+            [
+                "0c4284791c913bea"
+            ]
+        ]
+    },
+    {
+        "id": "6ba7bd62c061b91a",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 568",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2110,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "ef297faabbe8915b",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 570",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1930,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "10dd284557e9ae22",
+        "type": "split",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 730,
+        "y": 420,
+        "wires": [
+            [
+                "0661357faf3d0b0e"
+            ]
+        ]
+    },
+    {
+        "id": "480c3367076705c7",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 168",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_168\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended');\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 190,
+        "y": 440,
+        "wires": [
+            [
+                "db80b56435bfb88f"
+            ]
+        ]
+    },
+    {
+        "id": "78b58a520aaa6998",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "obtenerMaxHistorico",
+        "func": "const data = msg.payload.timeRecords;\n\n// Variables para almacenar el objeto con el mayor HoleDepth y BitPosition\nlet maxHoleDepthObj = null;\nlet maxHoleDepthValue = 0;\nlet maxBitPositionValue = 0;\n\n// Iterar el array\ndata.forEach(item => {\n  const holeDepthValue = item.values[0][1];  // Usamos values[0][1] en lugar de values[1][1]\n\n  // Verificar si el valor es un número válido\n  if (!isNaN(holeDepthValue)) {\n    const depth = parseFloat(holeDepthValue);  // Convertir a número\n\n    // Comparar y actualizar el máximo si es necesario\n    if (depth > maxHoleDepthValue) {\n      maxHoleDepthValue = depth;\n      maxHoleDepthObj = item;  // Guardar el objeto actual\n    }\n  }\n});\n\nif(maxHoleDepthObj && !isNaN(maxHoleDepthObj.values[1][1])){\n  maxBitPositionValue = parseFloat(maxHoleDepthObj.values[1][1]);\n}\nmsg.maxHoleDepthValue = maxHoleDepthValue;\nmsg.maxBitPositionValue = maxBitPositionValue;\nmsg.payload = maxHoleDepthObj;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 420,
+        "wires": [
+            [
+                "fca81a29d783aeb1",
+                "37ea6c9a0bf07b9e"
+            ]
+        ]
+    },
+    {
+        "id": "fca81a29d783aeb1",
+        "type": "debug",
+        "z": "5e5a0f50e0190a4e",
+        "name": "debug 595",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1730,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "50ac2cc39274dff3",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 165",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_165\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 500,
+        "wires": [
+            [
+                "62076c94fddaa5ba"
+            ]
+        ]
+    },
+    {
+        "id": "62076c94fddaa5ba",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 114",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "95582cba047551e2",
+        "type": "link in",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link in 257",
+        "links": [
+            "fe3e3ea077f1f174",
+            "62076c94fddaa5ba",
+            "e39336342add74b5",
+            "b3c3630285c18b3d",
+            "8280de129ad9680f",
+            "8b31e59697d1218e",
+            "5ab5938f710a6ed1",
+            "ae0e70b5e18fd28d",
+            "7f3dc5df79c8a1c5",
+            "14264a301f93c9c1",
+            "12f5dccfd7076f3d",
+            "d2e237d9932f489b",
+            "bc96c8a60548b357",
+            "db80b56435bfb88f"
+        ],
+        "x": 715,
+        "y": 540,
+        "wires": [
+            [
+                "10dd284557e9ae22"
+            ]
+        ]
+    },
+    {
+        "id": "db80b56435bfb88f",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 115",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "a9a93a0572f32ad4",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 156",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_156\")));\netls.map((e, i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter((e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 560,
+        "wires": [
+            [
+                "e39336342add74b5"
+            ]
+        ]
+    },
+    {
+        "id": "e39336342add74b5",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 116",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "6cdfa89b6746363d",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 173",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_173\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 620,
+        "wires": [
+            [
+                "b3c3630285c18b3d"
+            ]
+        ]
+    },
+    {
+        "id": "b3c3630285c18b3d",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 117",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "2836d61d9685b56a",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 160",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_160\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 680,
+        "wires": [
+            [
+                "8280de129ad9680f"
+            ]
+        ]
+    },
+    {
+        "id": "8280de129ad9680f",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 118",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "6780074ed08c5685",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 170",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_170\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 740,
+        "wires": [
+            [
+                "8b31e59697d1218e"
+            ]
+        ]
+    },
+    {
+        "id": "8b31e59697d1218e",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 119",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 525,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "bc76c7fb9a17da95",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded PAE001",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_PAE001\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 800,
+        "wires": [
+            [
+                "fe3e3ea077f1f174"
+            ]
+        ]
+    },
+    {
+        "id": "fe3e3ea077f1f174",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 120",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "6109bc75e5436b96",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 163",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_163\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 860,
+        "wires": [
+            [
+                "5ab5938f710a6ed1"
+            ]
+        ]
+    },
+    {
+        "id": "5ab5938f710a6ed1",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 121",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "69846889309189fd",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 166",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_166\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 920,
+        "wires": [
+            [
+                "ae0e70b5e18fd28d"
+            ]
+        ]
+    },
+    {
+        "id": "ae0e70b5e18fd28d",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 122",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "46f00c6e21df7dfe",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 167",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_167\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 980,
+        "wires": [
+            [
+                "7f3dc5df79c8a1c5"
+            ]
+        ]
+    },
+    {
+        "id": "7f3dc5df79c8a1c5",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 123",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "8029a7efd2966efa",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 169",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_169\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1040,
+        "wires": [
+            [
+                "14264a301f93c9c1"
+            ]
+        ]
+    },
+    {
+        "id": "14264a301f93c9c1",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 124",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 545,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "c8b1f6d5cb8bf816",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 174",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_174\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1100,
+        "wires": [
+            [
+                "12f5dccfd7076f3d"
+            ]
+        ]
+    },
+    {
+        "id": "12f5dccfd7076f3d",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 125",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "5334b7323e67d557",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 161",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_161\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1160,
+        "wires": [
+            [
+                "d2e237d9932f489b"
+            ]
+        ]
+    },
+    {
+        "id": "d2e237d9932f489b",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 126",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "f330317515f1cdc1",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 500,
+        "wires": [
+            [
+                "50ac2cc39274dff3",
+                "32d3866a02a4a28b"
+            ]
+        ]
+    },
+    {
+        "id": "32d3866a02a4a28b",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 560,
+        "wires": [
+            [
+                "a9a93a0572f32ad4",
+                "771254b1861f75a6"
+            ]
+        ]
+    },
+    {
+        "id": "771254b1861f75a6",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 620,
+        "wires": [
+            [
+                "6cdfa89b6746363d",
+                "62fab0debf344951"
+            ]
+        ]
+    },
+    {
+        "id": "62fab0debf344951",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 680,
+        "wires": [
+            [
+                "2836d61d9685b56a",
+                "a4d9bb8100a7152f"
+            ]
+        ]
+    },
+    {
+        "id": "a4d9bb8100a7152f",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 740,
+        "wires": [
+            [
+                "6780074ed08c5685",
+                "7c0db36a15d1c708"
+            ]
+        ]
+    },
+    {
+        "id": "7c0db36a15d1c708",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 800,
+        "wires": [
+            [
+                "bc76c7fb9a17da95",
+                "4b1835e2ed482697"
+            ]
+        ]
+    },
+    {
+        "id": "4b1835e2ed482697",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 860,
+        "wires": [
+            [
+                "6109bc75e5436b96",
+                "14ac4d13cc10f998"
+            ]
+        ]
+    },
+    {
+        "id": "14ac4d13cc10f998",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 920,
+        "wires": [
+            [
+                "69846889309189fd",
+                "a0111f77a99b919d"
+            ]
+        ]
+    },
+    {
+        "id": "a0111f77a99b919d",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 980,
+        "wires": [
+            [
+                "46f00c6e21df7dfe",
+                "7231d50d32bf8fac"
+            ]
+        ]
+    },
+    {
+        "id": "7231d50d32bf8fac",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 1040,
+        "wires": [
+            [
+                "8029a7efd2966efa",
+                "4fb1d558c18dee37"
+            ]
+        ]
+    },
+    {
+        "id": "4fb1d558c18dee37",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 1100,
+        "wires": [
+            [
+                "c8b1f6d5cb8bf816",
+                "8b2bf3fd6a36c843"
+            ]
+        ]
+    },
+    {
+        "id": "8b2bf3fd6a36c843",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 1160,
+        "wires": [
+            [
+                "5334b7323e67d557",
+                "57e9c75b9eb42643"
+            ]
+        ]
+    },
+    {
+        "id": "bc96c8a60548b357",
+        "type": "link out",
+        "z": "5e5a0f50e0190a4e",
+        "name": "link out 164",
+        "mode": "link",
+        "links": [
+            "95582cba047551e2"
+        ],
+        "x": 555,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "11a104ef23644dfc",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "procesarJobsEnded 171",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_171\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1220,
+        "wires": [
+            [
+                "bc96c8a60548b357"
+            ]
+        ]
+    },
+    {
+        "id": "57e9c75b9eb42643",
+        "type": "delay",
+        "z": "5e5a0f50e0190a4e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 140,
+        "y": 1220,
+        "wires": [
+            [
+                "11a104ef23644dfc"
+            ]
+        ]
+    },
+    {
+        "id": "8c922d743060092b",
+        "type": "MSSQL-CN",
+        "name": "LOCAL SGIPAPP",
+        "server": "localhost",
+        "encyption": false,
+        "database": "DMS-Test"
+    }
+]

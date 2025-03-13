@@ -1,0 +1,22 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[perforadores_forecast] ALTER COLUMN [fecha_fin] DATETIME2 NULL;
+
+-- AlterTable
+ALTER TABLE [dbo].[tipos_tarea_forecast] ALTER COLUMN [tipo] CHAR NOT NULL;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

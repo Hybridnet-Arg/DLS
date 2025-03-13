@@ -1,0 +1,179 @@
+[
+    {
+        "id": "ef7354d4fd8fa7b2",
+        "type": "tab",
+        "label": "ETLs ORACLE 1",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "071cc7875b137f79",
+        "type": "function",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "prepareRequest",
+        "func": "const lastDlDate = flow.get('etlOracle1_lastDlDate');\nlet startDate;\nif(!lastDlDate) {\n    startDate = '2023-01-02'\n}else{\n    \n    const today = new Date();\n    const formattedToday = today.toISOString().split('T')[0];\n    if (lastDlDate === formattedToday) {\n        startDate = '2023-01-02'\n    } else{\n         let tempDate1 = new Date(lastDlDate);\n        tempDate1.setDate(tempDate1.getDate() + 1); // suma 1 día\n        startDate = tempDate1.toISOString().split('T')[0];\n    }\n}\n\nlet tempDate2 = new Date(startDate);\ntempDate2.setDate(tempDate2.getDate() + 1); // suma 1 día\nconst endDate = tempDate2.toISOString().split('T')[0];\n\nconst query = `SELECT * FROM PBI.PS_DL_FUN_EMPEQ_VW WHERE TO_CHAR(DL_DATE, 'YYYY-MM-DD') BETWEEN '${startDate}' AND '${endDate}'`;\nmsg.topic = query;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 120,
+        "wires": [
+            [
+                "db0a8e4232b58102"
+            ]
+        ]
+    },
+    {
+        "id": "4d395062d35b12f1",
+        "type": "debug",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "debug 350",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "fd1860b5e48a0fca",
+        "type": "inject",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "071cc7875b137f79"
+            ]
+        ]
+    },
+    {
+        "id": "db0a8e4232b58102",
+        "type": "oracle",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "ORACLE_DLSHRDG",
+        "server": "51b5cc99e47c4ae2",
+        "x": 600,
+        "y": 120,
+        "wires": [
+            [
+                "4d395062d35b12f1",
+                "076ac07489ff36f4"
+            ]
+        ]
+    },
+    {
+        "id": "076ac07489ff36f4",
+        "type": "function",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "generateMergeSQL",
+        "func": "const rows = msg.payload.rows;\nif(rows && rows.length > 0){\n\n    //guardar fecha del ultimo registro \n    const lastDlDate = rows[rows.length - 1];\n    const d = new Date(lastDlDate.DL_DATE).toISOString().split('T')[0];\n    flow.set('etlOracle1_lastDlDate', d);\n\n    const sqlStatements = rows.map((item) => {\n      // Formatear la fecha DL_DATE a 'YYYY-MM-DD'\n      const formattedDate = new Date(item.DL_DATE).toISOString().split('T')[0];\n\n      // Crear la consulta SQL para cada item usando MERGE\n      return `\n        MERGE INTO DL_FUNC_EMPLID_EQUIPO AS target\n        USING (VALUES (\n          '${item.DL_EQUIPMENT_ID}',\n          '${formattedDate}',\n          '${item.EMPLID}',\n          '${item.NAME.replace(/'/g, \"''\")}', -- Escapa las comillas simples en el nombre\n          '${item.START_TIME}'\n        )) AS source (DL_EQUIPMENT_ID, DL_DATE, EMPLID, NAME, START_TIME)\n        ON target.DL_DATE = '${formattedDate}' AND target.EMPLID = '${item.EMPLID}'\n        WHEN MATCHED THEN\n          UPDATE SET \n            target.DL_EQUIPMENT_ID = source.DL_EQUIPMENT_ID,\n            target.NAME = source.NAME,\n            target.START_TIME = source.START_TIME\n        WHEN NOT MATCHED THEN\n          INSERT (DL_EQUIPMENT_ID, DL_DATE, EMPLID, NAME, START_TIME)\n          VALUES (source.DL_EQUIPMENT_ID, source.DL_DATE, source.EMPLID, source.NAME, source.START_TIME);\n      `;\n    });\n\n    // Combina todas las consultas en un solo string\n    const query = sqlStatements.join('\\n');\n    msg.payload = query;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 120,
+        "wires": [
+            [
+                "4e0600f5d2904328",
+                "9b64cb6616259bab"
+            ]
+        ]
+    },
+    {
+        "id": "9b64cb6616259bab",
+        "type": "MSSQL",
+        "z": "ef7354d4fd8fa7b2",
+        "mssqlCN": "ef140dddcb121102",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 1120,
+        "y": 120,
+        "wires": [
+            [
+                "eeb1fb5f56b15ba8"
+            ]
+        ]
+    },
+    {
+        "id": "4e0600f5d2904328",
+        "type": "debug",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "debug 351",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1130,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "eeb1fb5f56b15ba8",
+        "type": "debug",
+        "z": "ef7354d4fd8fa7b2",
+        "name": "debug 352",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1310,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "51b5cc99e47c4ae2",
+        "type": "oracle-config",
+        "name": "Oracle_ DLSHRDG",
+        "host": "10.0.10.217",
+        "port": "1521",
+        "database": "DLSHRDG",
+        "user": "PBI",
+        "password": "D4THR9RD",
+        "mode": "thick",
+        "instantClient": "/Users/johnnyguzman/Downloads/instantclient_19_16"
+    },
+    {
+        "id": "ef140dddcb121102",
+        "type": "MSSQL-CN",
+        "name": "DLOM_TESTING",
+        "server": "sgip.lam.domain",
+        "encyption": false,
+        "database": "dlom"
+    }
+]

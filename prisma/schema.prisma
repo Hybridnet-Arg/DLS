@@ -1,0 +1,904 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model diametro {
+  idDiametro Int    @id(map: "PK_diametro") @default(autoincrement())
+  diametro   String @db.VarChar(10)
+
+  item            item[]
+  perforadorPieza perforadorPieza[]
+  piezaDiametro   piezaDiametro[]
+}
+
+model item {
+  inv_item                String    @id(map: "PK_item") @db.VarChar(12)
+  descr                   String    @db.VarChar(50)
+  idPieza                 Int
+  idDiametro              Int?
+  diametro                diametro? @relation(fields: [idDiametro], references: [idDiametro], onDelete: NoAction, onUpdate: NoAction, map: "FK_item_diametro")
+  pieza                   pieza     @relation(fields: [idPieza], references: [idPieza], onUpdate: NoAction, map: "FK_item_Pieza")
+  pnq_pnq_inv_item1Toitem pnq[]     @relation("pnq_inv_item1Toitem")
+  pnq_pnq_inv_item2Toitem pnq[]     @relation("pnq_inv_item2Toitem")
+  pnq_pnq_inv_item3Toitem pnq[]     @relation("pnq_inv_item3Toitem")
+  pnq_pnq_inv_item4Toitem pnq[]     @relation("pnq_inv_item4Toitem")
+}
+
+model log {
+  idLog             Int             @id(map: "PK_log") @default(autoincrement())
+  idPerforadorPieza Int
+  movimiento        String          @db.VarChar(50)
+  detalle           String?         @db.VarChar(50)
+  fecha             DateTime?       @default(now(), map: "DF_log_fecha") @db.DateTime
+  bomba             Int?
+  cuerpo            Int?
+  modulo            String?         @default("", map: "DF_log_modulo") @db.VarChar(50)
+  hs                Decimal?        @db.Decimal(18, 1)
+  usuario           String?         @db.VarChar(50)
+  perforador        String?         @db.VarChar(50)
+  perforadorPieza   perforadorPieza @relation(fields: [idPerforadorPieza], references: [idPerforadorPieza], onUpdate: NoAction, map: "FK_log_piezaPerforador")
+}
+
+model logPieza {
+  idLogPieza        Int      @id(map: "PK_logPieza") @default(autoincrement())
+  idPerforadorPieza Int
+  fecha             DateTime @default(now(), map: "DF_logPieza_fecha") @db.DateTime
+  hs                Decimal  @db.Decimal(18, 1)
+  hsInst            Decimal  @db.Decimal(18, 1)
+}
+
+model marca {
+  idMarca Int    @id(map: "PK_marca") @default(autoincrement())
+  marca   String @db.NChar(50)
+
+  modelo          modelo[]
+  perforadorPieza perforadorPieza[]
+  marcasTipoPieza marcasTipoPieza[]
+}
+
+model modelo {
+  idModelo Int    @id(map: "PK_modelo") @default(autoincrement())
+  modelo   String @db.NChar(50)
+  idMarca  Int
+
+  marca           marca             @relation(fields: [idMarca], references: [idMarca])
+  perforadorPieza perforadorPieza[]
+}
+
+model perforador {
+  perforador       String  @id(map: "PK_perforador") @db.VarChar(50)
+  tipoBomba        String  @db.NChar(10)
+  cantBombas       Int?    @default(3)
+  unidadNegocio    String? @db.NChar(10)
+  distributionType String? @db.NChar(10)
+}
+
+model perforadorPieza {
+  idPerforadorPieza Int     @id(map: "PK_perforadorPieza") @default(autoincrement())
+  perforador        String  @db.VarChar(50)
+  idPieza           Int
+  hs                Decimal @db.Decimal(18, 1)
+  hsInst            Decimal @db.Decimal(18, 1)
+  serie             String? @db.VarChar(50)
+  enUso             Int     @db.TinyInt
+  baja              Int     @default(0, map: "DF_perforadorPieza_baja") @db.TinyInt
+  motivo            String? @db.VarChar(50)
+  bomba             Int     @default(1, map: "DF_perforadorPieza_bomba")
+  cuerpo            Int     @default(1, map: "DF_perforadorPieza_cuerpo")
+  modulo            String? @default("0", map: "DF_perforadorPieza_modulo") @db.NVarChar(50)
+  idMarca           Int?
+  idDiametro        Int?
+  idModelo          Int?
+
+  log      log[]
+  diametro diametro? @relation(fields: [idDiametro], references: [idDiametro], onDelete: NoAction, onUpdate: NoAction, map: "FK_perforadorPieza_diametro")
+  marca    marca?    @relation(fields: [idMarca], references: [idMarca], onDelete: NoAction, onUpdate: NoAction, map: "FK_perforadorPieza_Marca")
+  pieza    pieza     @relation(fields: [idPieza], references: [idPieza], onUpdate: NoAction, map: "FK_perforadorPieza_Pieza")
+  modelo   modelo?   @relation(fields: [idModelo], references: [idModelo], onUpdate: NoAction, map: "FK_perforadorPieza_Modelo")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model perforadorPiezaBackUp {
+  idPerforadorPieza Int
+  perforador        String  @db.VarChar(50)
+  idPieza           Int
+  hs                Decimal @db.Decimal(18, 1)
+  hsInst            Decimal @db.Decimal(18, 1)
+  serie             String? @db.VarChar(50)
+  enUso             Int     @db.TinyInt
+  baja              Int     @db.TinyInt
+  motivo            String? @db.VarChar(50)
+  bomba             Int
+  cuerpo            Int
+  modulo            String? @db.NVarChar(50)
+  idMarca           Int?
+  idDiametro        Int?
+
+  @@ignore
+}
+
+model pieza {
+  idPieza     Int     @id(map: "PK_pieza") @default(autoincrement())
+  tipo        String? @db.VarChar(25)
+  codigo      String? @db.VarChar(25)
+  hsMin       Int
+  hsMax       Int
+  serie       Int     @default(0, map: "DF_pieza_serie") @db.TinyInt
+  nroPieza    Int     @default(1, map: "DF_pieza_nroPieza")
+  diametro    Int     @default(0, map: "DF_pieza_diametro") @db.TinyInt
+  idTipoPieza Int?
+
+  tipoPieza tiposPieza? @relation(fields: [idTipoPieza], references: [idTipoPieza], onDelete: SetNull)
+
+  item            item[]
+  perforadorPieza perforadorPieza[]
+  piezaDiametro   piezaDiametro[]
+  piezaPerforador piezaPerforador[]
+}
+
+model tiposPieza {
+  idTipoPieza Int    @id @default(autoincrement())
+  nombre      String
+
+  piezas          pieza[]
+  marcasTipoPieza marcasTipoPieza[]
+}
+
+model marcasTipoPieza {
+  id          Int @id @default(autoincrement())
+  idMarca     Int
+  idTipoPieza Int
+
+  marca     marca      @relation(fields: [idMarca], references: [idMarca], onDelete: Cascade)
+  tipoPieza tiposPieza @relation(fields: [idTipoPieza], references: [idTipoPieza], onDelete: Cascade)
+
+  @@unique([idMarca, idTipoPieza])
+}
+
+model piezaDiametro {
+  idPiezaDiametro Int      @id(map: "PK_piezaDiametro") @default(autoincrement())
+  idPieza         Int
+  idDiametro      Int
+  diametro        diametro @relation(fields: [idDiametro], references: [idDiametro], onUpdate: NoAction, map: "FK_piezaDiametro_Diametro")
+  pieza           pieza    @relation(fields: [idPieza], references: [idPieza], onUpdate: NoAction, map: "FK_piezaDiametro_pieza")
+}
+
+model piezaPerforador {
+  idPiezaPerforador Int    @id(map: "PK_piezaPerforador") @default(autoincrement())
+  idPieza           Int
+  perforador        String @db.VarChar(50)
+  stock             Int    @default(5, map: "DF_piezaPerforador_stock")
+  reposicion        Int    @default(5, map: "DF_piezaPerforador_reposicion")
+
+  pieza pieza @relation(fields: [idPieza], references: [idPieza], onUpdate: NoAction, map: "FK_piezaPerforador_pieza")
+}
+
+model pnq {
+  idPnq                    Int      @id(map: "PK_pnq") @default(autoincrement())
+  unidadNegocio            String   @db.VarChar(10)
+  distributionType         String   @db.VarChar(12)
+  inv_item1                String   @db.VarChar(12)
+  inv_item2                String?  @db.VarChar(12)
+  inv_item3                String?  @db.VarChar(12)
+  inv_item4                String?  @db.VarChar(12)
+  cantidad                 Int
+  estado                   String   @db.NChar(10)
+  fecha                    DateTime @default(now(), map: "DF_pnq_fecha") @db.DateTime
+  item_pnq_inv_item1Toitem item     @relation("pnq_inv_item1Toitem", fields: [inv_item1], references: [inv_item], onUpdate: NoAction, map: "FK_pnq_item1")
+  item_pnq_inv_item2Toitem item?    @relation("pnq_inv_item2Toitem", fields: [inv_item2], references: [inv_item], onDelete: NoAction, onUpdate: NoAction, map: "FK_pnq_item2")
+  item_pnq_inv_item3Toitem item?    @relation("pnq_inv_item3Toitem", fields: [inv_item3], references: [inv_item], onDelete: NoAction, onUpdate: NoAction, map: "FK_pnq_item3")
+  item_pnq_inv_item4Toitem item?    @relation("pnq_inv_item4Toitem", fields: [inv_item4], references: [inv_item], onDelete: NoAction, onUpdate: NoAction, map: "FK_pnq_item4")
+}
+
+model vfBomba {
+  idVfBomba Int @id(map: "PK_vfBomba")
+  vf1       Int
+  vf2       Int
+}
+
+model wellData {
+  idWellData    Int       @id(map: "PK_wellData") @default(autoincrement())
+  fecha         DateTime? @default(now(), map: "DF_wellData_fecha") @db.DateTime
+  hsBomba1      Decimal   @db.Decimal(18, 1)
+  hsBomba2      Decimal   @db.Decimal(18, 1)
+  hsBomba3      Decimal   @db.Decimal(18, 1)
+  lts           Decimal   @db.Decimal(18, 1)
+  perforador    Int?
+  jobId         String?   @db.NChar(30)
+  perforadorStr String?   @db.NChar(10)
+  onBomba1      Int?      @db.TinyInt
+  onBomba2      Int?      @db.TinyInt
+  onBomba3      Int?      @db.TinyInt
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61F765061A") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
+
+model locaciones {
+  id             Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(25)
+  nombre_clave   String?   @db.VarChar(25)
+  descripcion    String?   @db.VarChar(Max)
+  fecha_inicio   DateTime? @db.DateTime
+  fecha_fin      DateTime? @db.DateTime
+  coordenadas    String?   @db.VarChar(50)
+  ubicacion_id   Int?      @default(1)
+  deshabilitado  Boolean   @default(false)
+  eliminado      Boolean   @default(false)
+  creado_el      DateTime  @default(now()) @db.DateTime
+  actualizado_el DateTime  @default(now()) @db.DateTime
+
+  ubicacion                        ubicaciones?                       @relation(fields: [ubicacion_id], references: [id])
+  log_locaciones                   log_locaciones[]
+  perforador_locaciones            perforador_locaciones[]
+  locaciones_perforador_cronograma locaciones_perforador_cronograma[]
+}
+
+model perforadores {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  nombre_clave   String?  @db.VarChar(100)
+  numero         Int
+  descripcion    String?  @db.VarChar(Max)
+  estado         String?  @db.VarChar(50)
+  deshabilitado  Boolean  @default(false)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+  ubicacion_id   Int?
+
+  ubicacion ubicaciones? @relation(fields: [ubicacion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  perforador_locaciones   perforador_locaciones[]
+  planes_pozo             planes_pozo[]
+  estados_diagrama        estados_diagrama[]
+  componentes_perforador  componentes_perforador[]
+  log_elementos           log_elementos[]
+  deposito                depositos?
+  desgastes_cable         desgastes_cable[]
+  perforadores_cronograma perforadores_cronograma[]
+  perforadores_forecast   perforadores_forecast[]
+  usuarios                usuarios[]
+}
+
+model perforador_locaciones {
+  id             Int           @id @default(autoincrement())
+  activo         Boolean       @default(false)
+  locacion_id    Int
+  perforador_id  Int
+  fecha_inicio   DateTime?     @db.DateTime
+  fecha_fin      DateTime?     @db.DateTime
+  creado_el      DateTime      @default(now()) @db.DateTime
+  actualizado_el DateTime      @default(now()) @db.DateTime
+  locacion       locaciones    @relation(fields: [locacion_id], references: [id])
+  perforador     perforadores  @relation(fields: [perforador_id], references: [id])
+  planes_pozo    planes_pozo[]
+  pozos          pozos[]
+
+  @@index([perforador_id], map: "idx_perforador_locaciones_perforador_id")
+  @@index([locacion_id], map: "idx_perforador_locaciones_locacion_id")
+}
+
+model estados_pozo {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @unique @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+  pozos          pozos[]
+}
+
+model pozos {
+  id                     Int       @id @default(autoincrement())
+  nombre                 String?   @db.VarChar(255)
+  nombre_clave           String?   @db.VarChar(100)
+  descripcion            String?   @db.VarChar(Max)
+  profundidad            Decimal?  @db.Decimal(10, 2)
+  fecha_inicio           DateTime? @db.DateTime
+  fecha_fin              DateTime? @db.DateTime
+  activo                 Boolean   @default(false)
+  en_progreso            Boolean   @default(false)
+  estado_pozo_id         Int?
+  perforador_locacion_id Int?
+  plan_pozo_id           Int?
+  creado_el              DateTime  @default(now()) @db.DateTime
+  actualizado_el         DateTime  @default(now()) @db.DateTime
+
+  etapas_pozo              etapas_pozo[]
+  avances_pozo             avances_pozo[]
+  detalles_estado_diagrama detalles_estado_diagrama[]
+  plan_pozo                planes_pozo?               @relation(fields: [plan_pozo_id], references: [id])
+  estados_pozo             estados_pozo?              @relation(fields: [estado_pozo_id], references: [id])
+  perforador_locacion      perforador_locaciones?     @relation(fields: [perforador_locacion_id], references: [id])
+
+  @@index([plan_pozo_id], map: "idx_pozos_plan_pozo_id")
+  @@index([estado_pozo_id], map: "idx_pozos_estado_pozo_id")
+  @@index([perforador_locacion_id], map: "idx_pozos_perforador_locacion_id")
+}
+
+model tipos_etapa_pozo {
+  id             Int           @id @default(autoincrement())
+  nombre         String        @db.VarChar(255)
+  creado_el      DateTime      @default(now()) @db.DateTime
+  actualizado_el DateTime      @default(now()) @db.DateTime
+  etapas_pozo    etapas_pozo[]
+}
+
+model etapas_pozo {
+  id                       Int                        @id @default(autoincrement())
+  profundidad_desde        Decimal?                   @db.Decimal(10, 2)
+  profundidad_hasta        Decimal?                   @db.Decimal(10, 2)
+  duracion                 Int?                       @default(0) @db.Int
+  encamisado               Boolean                    @default(false)
+  casing                   String?                    @db.VarChar(255)
+  tipo_etapa_pozo_id       Int?
+  pozo_id                  Int?
+  creado_el                DateTime                   @default(now()) @db.DateTime
+  actualizado_el           DateTime                   @default(now()) @db.DateTime
+  pozo                     pozos?                     @relation(fields: [pozo_id], references: [id])
+  tipo_etapa_pozo          tipos_etapa_pozo?          @relation(fields: [tipo_etapa_pozo_id], references: [id])
+  detalles_avance_pozo     detalles_avance_pozo[]
+  detalles_estado_diagrama detalles_estado_diagrama[]
+
+  @@index([pozo_id], map: "idx_etapas_pozo_pozo_id")
+  @@index([tipo_etapa_pozo_id], map: "idx_etapas_pozo_tipo_etapa_pozo_id")
+}
+
+model planes_pozo {
+  id                     Int       @id @default(autoincrement())
+  perforador_id          Int
+  perforador_locacion_id Int
+  fecha_inicio           DateTime? @db.DateTime
+  fecha_fin              DateTime? @db.DateTime
+  activo                 Boolean   @default(false)
+  creado_el              DateTime  @default(now()) @db.DateTime
+  actualizado_el         DateTime  @default(now()) @db.DateTime
+
+  perforador          perforadores          @relation(fields: [perforador_id], references: [id], onUpdate: NoAction)
+  perforador_locacion perforador_locaciones @relation(fields: [perforador_locacion_id], references: [id], onUpdate: NoAction)
+  pozos               pozos[]
+  estado_diagrama     estados_diagrama?
+
+  @@index([perforador_id], map: "idx_planes_pozo_perforador_id")
+  @@index([perforador_locacion_id], map: "idx_planes_pozo_perforador_locacion_id")
+}
+
+model avances_pozo {
+  id              Int      @id @default(autoincrement())
+  pozo_id         Int
+  nivel_trepano   Decimal? @default(0) @db.Decimal(10, 2)
+  profundidad     Decimal? @default(0) @db.Decimal(10, 2)
+  velocidad       Decimal? @db.Decimal(10, 2)
+  curva_de_avance Decimal? @db.Decimal(10, 2)
+  creado_el       DateTime @default(now()) @db.DateTime
+  actualizado_el  DateTime @default(now()) @db.DateTime
+
+  pozo                 pozos                  @relation(fields: [pozo_id], references: [id], onUpdate: NoAction)
+  detalles_avance_pozo detalles_avance_pozo[]
+
+  @@index([pozo_id], map: "idx_avances_pozo_pozo_id")
+}
+
+model detalles_avance_pozo {
+  id                   Int      @id @default(autoincrement())
+  avance_pozo_id       Int
+  etapa_pozo_id        Int
+  metros_acumulados    Decimal? @db.Decimal(10, 2)
+  porcentaje_alcanzado Decimal? @db.Decimal(10, 2)
+  creado_el            DateTime @default(now()) @db.DateTime
+  actualizado_el       DateTime @default(now()) @db.DateTime
+
+  etapa_pozo  etapas_pozo  @relation(fields: [etapa_pozo_id], references: [id], onUpdate: NoAction)
+  avance_pozo avances_pozo @relation(fields: [avance_pozo_id], references: [id], onUpdate: NoAction)
+
+  @@index([etapa_pozo_id], map: "idx_detalles_avance_pozo_etapa_pozo")
+  @@index([avance_pozo_id], map: "idx_detalles_avance_pozo_avance_pozo_id")
+}
+
+model estados_diagrama {
+  id                       Int                        @id @default(autoincrement())
+  plan_pozo_id             Int                        @unique
+  perforador_id            Int
+  creado_el                DateTime                   @default(now()) @db.DateTime
+  actualizado_el           DateTime                   @default(now()) @db.DateTime
+  detalles_estado_diagrama detalles_estado_diagrama[]
+
+  perforador perforadores @relation(fields: [perforador_id], references: [id], onUpdate: NoAction)
+  plan_pozo  planes_pozo  @relation(fields: [plan_pozo_id], references: [id])
+
+  @@index([plan_pozo_id], map: "idx_pozos_plan_pozo_id")
+  @@index([perforador_id], map: "idx_estados_diagrama_perforador_id")
+}
+
+model detalles_estado_diagrama {
+  id                 Int      @id @default(autoincrement())
+  estado_diagrama_id Int
+  pozo_id            Int
+  etapa_pozo_id      Int
+  conecta_con_etapa  Int?
+  creado_el          DateTime @default(now()) @db.DateTime
+  actualizado_el     DateTime @default(now()) @db.DateTime
+
+  pozo            pozos            @relation(fields: [pozo_id], references: [id], onUpdate: NoAction)
+  etapa_pozo      etapas_pozo      @relation(fields: [etapa_pozo_id], references: [id], onUpdate: NoAction)
+  estado_diagrama estados_diagrama @relation(fields: [estado_diagrama_id], references: [id], onUpdate: NoAction)
+
+  @@index([pozo_id], map: "idx_detalles_estado_diagrama_pozo_id")
+  @@index([etapa_pozo_id], map: "idx_detalles_estado_diagrama_etapa_pozo_id")
+  @@index([estado_diagrama_id], map: "idx_detalles_estado_diagrama_estado_diagrama_id")
+}
+
+model componentes {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  componentes_perforador componentes_perforador[]
+}
+
+model componentes_perforador {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  componente_id  Int
+  perforador_id  Int
+  estado         String?  @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  componente           componentes            @relation(fields: [componente_id], references: [id], onUpdate: NoAction)
+  perforador           perforadores           @relation(fields: [perforador_id], references: [id], onUpdate: NoAction)
+  elementos_componente elementos_componente[]
+  desgastes_cable      desgastes_cable[]
+
+  @@index([componente_id], map: "idx_componentes_perforador_componente_id")
+  @@index([perforador_id], map: "idx_componentes_perforador_perforador_id")
+}
+
+model tipos_elemento {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  horas_desde    Int?
+  horas_hasta    Int?
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  elementos elementos[]
+}
+
+model elementos {
+  id               Int      @id @default(autoincrement())
+  nombre           String?  @db.VarChar(255)
+  tipo_elemento_id Int
+  creado_el        DateTime @default(now()) @db.DateTime
+  actualizado_el   DateTime @default(now()) @db.DateTime
+
+  tipo_elemento        tipos_elemento         @relation(fields: [tipo_elemento_id], references: [id])
+  elementos_componente elementos_componente[]
+
+  @@index([tipo_elemento_id], map: "idx_elementos_tipo_elemento_id")
+}
+
+model elementos_componente {
+  id                       Int      @id @default(autoincrement())
+  componente_perforador_id Int
+  elemento_id              Int
+  estado                   String?  @db.VarChar(255)
+  stock                    Int
+  creado_el                DateTime @default(now()) @db.DateTime
+  actualizado_el           DateTime @default(now()) @db.DateTime
+
+  componente_perforador componentes_perforador @relation(fields: [componente_perforador_id], references: [id], onUpdate: NoAction)
+  elemento              elementos              @relation(fields: [elemento_id], references: [id], onUpdate: NoAction)
+  elementos_deposito    elementos_deposito[]
+  desgastes_cable       desgastes_cable[]
+
+  @@index([componente_perforador_id], map: "idx_elementos_componente_componente_perforador_id")
+  @@index([elemento_id], map: "idx_elementos_componente_elemento_id")
+}
+
+model depositos {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  perforador_id  Int      @unique
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  perforador         perforadores         @relation(fields: [perforador_id], references: [id])
+  elementos_deposito elementos_deposito[]
+
+  @@index([perforador_id], map: "idx_depositos_perforador_id")
+}
+
+model marcas {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  modelos            modelos[]
+  elementos_deposito elementos_deposito[]
+}
+
+model modelos {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  marca_id       Int?
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  marca              marcas?              @relation(fields: [marca_id], references: [id])
+  elementos_deposito elementos_deposito[]
+
+  @@index([marca_id], map: "idx_modelos_marca_id")
+}
+
+model tipos_rosca {
+  id                 Int                  @id @default(autoincrement())
+  nombre             String?              @db.VarChar(255)
+  creado_el          DateTime             @default(now()) @db.DateTime
+  actualizado_el     DateTime             @default(now()) @db.DateTime
+  elementos_deposito elementos_deposito[]
+}
+
+model diametros {
+  id                 Int                  @id @default(autoincrement())
+  pulgadas           String?              @db.VarChar(255)
+  corte              Decimal?             @db.Decimal(18, 1)
+  largo_corte        Decimal?             @db.Decimal(18, 1)
+  metros_cable       Decimal?             @db.Decimal(18, 1)
+  metros_despliegue  Decimal?             @db.Decimal(18, 1)
+  creado_el          DateTime             @default(now()) @db.DateTime
+  actualizado_el     DateTime             @default(now()) @db.DateTime
+  elementos_deposito elementos_deposito[]
+}
+
+model elementos_deposito {
+  id                     Int       @id @default(autoincrement())
+  codigo                 String?   @db.VarChar(255)
+  serie                  String?   @db.VarChar(255)
+  horas_iniciales        BigInt?   @db.BigInt
+  horas_en_uso           BigInt?   @db.BigInt
+  horas_de_uso           BigInt?   @db.BigInt
+  horas_actuales         BigInt?   @db.BigInt
+  recambio               Boolean   @default(false)
+  en_uso                 Boolean   @default(false)
+  baja                   Boolean   @default(false)
+  motivo_baja            String?   @db.VarChar(255)
+  condicion              String?   @db.VarChar(255)
+  marca_id               Int?
+  modelo_id              Int?
+  diametro_id            Int?
+  tipo_rosca_id          Int?
+  deposito_id            Int?
+  elemento_componente_id Int?
+  fecha_instalacion      DateTime? @db.DateTime
+  fecha_retiro           DateTime? @db.DateTime
+  fecha_ingreso          DateTime? @db.DateTime
+  creado_el              DateTime  @default(now()) @db.DateTime
+  actualizado_el         DateTime  @default(now()) @db.DateTime
+
+  marca               marcas?               @relation(fields: [marca_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  modelo              modelos?              @relation(fields: [modelo_id], references: [id])
+  diametro            diametros?            @relation(fields: [diametro_id], references: [id])
+  deposito            depositos?            @relation(fields: [deposito_id], references: [id])
+  tipo_rosca          tipos_rosca?          @relation(fields: [tipo_rosca_id], references: [id])
+  elemento_componente elementos_componente? @relation(fields: [elemento_componente_id], references: [id])
+  log_elementos       log_elementos[]
+  cortes_cable        cortes_cable[]
+  desgastes_cable     desgastes_cable[]
+
+  @@index([deposito_id], map: "idx_elementos_deposito_deposito_id")
+  @@index([modelo_id], map: "idx_elementos_deposito_modelo_id")
+  @@index([elemento_componente_id], map: "idx_elementos_deposito_elemento_componente_id")
+}
+
+model log_elementos {
+  id                   Int       @id @default(autoincrement())
+  perforador_id        Int
+  elemento_deposito_id Int
+  baja                 Boolean   @default(false)
+  motivo_baja          String?   @db.VarChar(255)
+  horas_iniciales      BigInt?   @db.BigInt
+  horas_en_uso         BigInt?   @db.BigInt
+  horas_de_uso         BigInt?   @db.BigInt
+  usuario_id           Int?
+  fecha_recambio       DateTime?
+  fecha_baja           DateTime?
+  creado_el            DateTime  @default(now()) @db.DateTime
+  actualizado_el       DateTime  @default(now()) @db.DateTime
+
+  elemento_deposito elementos_deposito @relation(fields: [elemento_deposito_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  perforador        perforadores       @relation(fields: [perforador_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  usuario           usuarios?          @relation(fields: [usuario_id], references: [id])
+
+  @@index([perforador_id], map: "idx_log_elementos_perforador_id")
+  @@index([elemento_deposito_id], map: "idx_log_elementos_elemento_deposito_id")
+}
+
+model cortes_cable {
+  id                   Int                @id @default(autoincrement())
+  metros_corte         Decimal?           @db.Decimal(18, 1)
+  fecha_corte          DateTime?
+  remanente            Decimal?           @db.Decimal(18, 1)
+  motivo               String?            @db.VarChar(255)
+  elemento_deposito_id Int
+  creado_el            DateTime           @default(now()) @db.DateTime
+  actualizado_el       DateTime           @default(now()) @db.DateTime
+  elemento_deposito    elementos_deposito @relation(fields: [elemento_deposito_id], references: [id])
+}
+
+model usuarios {
+  id                      Int      @id @default(autoincrement())
+  alias                   String   @unique @db.VarChar(255)
+  ultimo_ingreso          DateTime @default(now()) @db.DateTime
+  creado_el               DateTime @default(now()) @db.DateTime
+  actualizado_el          DateTime @default(now()) @db.DateTime
+  perforador_seleccionado Int?
+
+  perforadores perforadores? @relation(fields: [perforador_seleccionado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  cronogramas        cronogramas[]
+  log_elementos      log_elementos[]
+  log_locaciones     log_locaciones[]
+  cronogramas_backup cronogramas_backup[]
+}
+
+model desgastes_cable {
+  id                       Int      @id @default(autoincrement())
+  perforador_id            Int
+  elemento_deposito_id     Int
+  elemento_componente_id   Int
+  componente_perforador_id Int
+  bit_weight               Decimal? @db.Decimal(18, 9)
+  block_height             Decimal? @db.Decimal(18, 9)
+  desgaste                 Decimal? @db.Decimal(18, 9)
+  creado_el                DateTime @default(now()) @db.DateTime
+  actualizado_el           DateTime @default(now()) @db.DateTime
+
+  elemento_componente   elementos_componente   @relation(fields: [elemento_componente_id], references: [id])
+  componente_perforador componentes_perforador @relation(fields: [componente_perforador_id], references: [id])
+  elemento_deposito     elementos_deposito     @relation(fields: [elemento_deposito_id], references: [id], onUpdate: NoAction)
+  perforador            perforadores           @relation(fields: [perforador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([perforador_id], map: "idx_desgastes_cable_perforador_id")
+  @@index([elemento_deposito_id], map: "idx_desgastes_cable_elemento_deposito_id")
+  @@index([elemento_componente_id], map: "idx_desgastes_cable_elementos_componente_id")
+  @@index([componente_perforador_id], map: "idx_desgastes_cable_componente_perforador_id")
+}
+
+model ubicaciones {
+  id             Int      @id @default(autoincrement())
+  nombre         String?  @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  locaciones         locaciones[]
+  perforadores       perforadores[]
+  cronogramas        cronogramas[]
+  cronogramas_backup cronogramas_backup[]
+}
+
+model log_locaciones {
+  id             Int        @id @default(autoincrement())
+  locacion_id    Int
+  usuario_id     Int
+  alta           Boolean    @default(false)
+  baja           Boolean    @default(false)
+  modificacion   Boolean    @default(false)
+  creado_el      DateTime   @default(now()) @db.DateTime
+  actualizado_el DateTime   @default(now()) @db.DateTime
+  locacion       locaciones @relation(fields: [locacion_id], references: [id])
+  usuario        usuarios   @relation(fields: [usuario_id], references: [id])
+
+  @@index([locacion_id], map: "idx_log_locaciones_locacion_id")
+}
+
+model wellDataErrors {
+  idWellData    Int       @id(map: "PK_wellDataErrors") @default(autoincrement())
+  fecha         DateTime? @default(now(), map: "DF_wellDataErrors_fecha") @db.DateTime
+  hsBomba1      Decimal   @db.Decimal(18, 1)
+  hsBomba2      Decimal   @db.Decimal(18, 1)
+  hsBomba3      Decimal   @db.Decimal(18, 1)
+  lts           Decimal   @db.Decimal(18, 1)
+  perforador    Int?
+  jobId         String?   @db.NChar(30)
+  perforadorStr String?   @db.NChar(10)
+  onBomba1      Int?      @db.TinyInt
+  onBomba2      Int?      @db.TinyInt
+  onBomba3      Int?      @db.TinyInt
+}
+
+model estados_cronograma {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  cronogramas        cronogramas[]
+  cronogramas_backup cronogramas_backup[]
+
+  @@index([nombre], map: "idx_estados_cronograma_nombre")
+}
+
+model cronogramas {
+  id                   Int      @id @default(autoincrement())
+  nombre               String   @db.VarChar(255)
+  fecha_inicio         DateTime
+  fecha_fin            DateTime
+  usuario_id           Int
+  ubicacion_id         Int
+  estado_cronograma_id Int
+  eliminado            Boolean  @default(false)
+  creado_el            DateTime @default(now()) @db.DateTime
+  actualizado_el       DateTime @default(now()) @db.DateTime
+
+  usuario           usuarios           @relation(fields: [usuario_id], references: [id])
+  ubicacion         ubicaciones        @relation(fields: [ubicacion_id], references: [id])
+  estado_cronograma estados_cronograma @relation(fields: [estado_cronograma_id], references: [id])
+
+  perforadores_cronograma perforadores_cronograma[]
+  perforadores_forecast   perforadores_forecast[]
+  cronogramas_backup      cronogramas_backup[]
+
+  @@index([nombre], map: "idx_cronogramas_nombre")
+  @@index([estado_cronograma_id], map: "idx_cronogramas_estado_cronograma_id")
+  @@index([ubicacion_id, eliminado], map: "idx_cronogramas_ubicacion_id_eliminado")
+}
+
+model cronogramas_backup {
+  id                               Int      @id @default(autoincrement())
+  nombre                           String   @db.VarChar(255)
+  fecha_inicio                     DateTime
+  fecha_fin                        DateTime
+  usuario_id                       Int
+  ubicacion_id                     Int
+  estado_cronograma_id             Int
+  cronograma_id                    Int
+  perforadores_cronograma          String   @db.NVarChar(Max)
+  locaciones_perforador_cronograma String   @db.NVarChar(Max)
+  creado_el                        DateTime @default(now()) @db.DateTime
+  actualizado_el                   DateTime @default(now()) @db.DateTime
+
+  usuarios           usuarios?           @relation(fields: [usuario_id], references: [id])
+  ubicaciones        ubicaciones?        @relation(fields: [ubicacion_id], references: [id])
+  estados_cronograma estados_cronograma? @relation(fields: [estado_cronograma_id], references: [id])
+  cronograma         cronogramas?        @relation(fields: [cronograma_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model perforadores_cronograma {
+  id             Int      @id @default(autoincrement())
+  cronograma_id  Int
+  perforador_id  Int
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  cronograma cronogramas  @relation(fields: [cronograma_id], references: [id], onDelete: Cascade)
+  perforador perforadores @relation(fields: [perforador_id], references: [id])
+
+  locaciones_perforador_cronograma locaciones_perforador_cronograma[]
+
+  @@index([cronograma_id, perforador_id], map: "idx_perforadores_cronograma_perforador_id_cronograma_id")
+}
+
+model locaciones_perforador_cronograma {
+  id                       Int      @id @default(autoincrement())
+  fecha_inicio             DateTime
+  fecha_fin                DateTime
+  locacion_id              Int
+  perforador_cronograma_id Int
+  cantidad_pozos           Int
+  deshabilitado            Boolean  @default(false)
+  creado_el                DateTime @default(now()) @db.DateTime
+  actualizado_el           DateTime @default(now()) @db.DateTime
+
+  perforador_cronograma perforadores_cronograma @relation(fields: [perforador_cronograma_id], references: [id], onDelete: Cascade)
+  locacion              locaciones              @relation(fields: [locacion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tareas_forecast       tareas_forecast[]
+}
+
+model perforadores_forecast {
+  id             Int       @id @default(autoincrement())
+  cronograma_id  Int
+  perforador_id  Int
+  fecha_inicio   DateTime
+  fecha_fin      DateTime?
+  eliminado      Boolean   @default(false)
+  creado_el      DateTime  @default(now()) @db.DateTime
+  actualizado_el DateTime  @default(now()) @db.DateTime
+
+  cronograma      cronogramas       @relation(fields: [cronograma_id], references: [id], onDelete: Cascade)
+  perforador      perforadores      @relation(fields: [perforador_id], references: [id])
+  tareas_forecast tareas_forecast[]
+}
+
+model tipos_tarea_forecast {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  nombre_clave   String   @db.VarChar(255)
+  color          String   @db.VarChar(255)
+  tipo           String   @db.VarChar(255)
+  eliminado      Boolean  @default(false)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tareas_forecast tareas_forecast[]
+}
+
+model tareas_forecast {
+  id                                Int      @id @default(autoincrement())
+  perforador_forecast_id            Int
+  tipo_tarea_forecast_id            Int
+  locacion_perforador_cronograma_id Int?
+  numero_pozo                       Int?
+  fecha                             DateTime
+  eliminado                         Boolean  @default(false)
+  creado_el                         DateTime @default(now()) @db.DateTime
+  actualizado_el                    DateTime @default(now()) @db.DateTime
+
+  tipo_tarea_forecast            tipos_tarea_forecast              @relation(fields: [tipo_tarea_forecast_id], references: [id])
+  perforador_forecast            perforadores_forecast             @relation(fields: [perforador_forecast_id], references: [id], onDelete: Cascade)
+  locacion_perforador_cronograma locaciones_perforador_cronograma? @relation(fields: [locacion_perforador_cronograma_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  planificaciones                planificaciones[]
+  planificacion_notas            planificacion_notas[]
+}
+
+model planificacion_areas {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @unique @db.VarChar(255)
+  deshabilitado  Boolean  @default(false)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  planificacion_notas       planificacion_notas[]
+  planificacion_actividades planificacion_actividades[]
+}
+
+model planificacion_actividades {
+  id                    Int      @id @default(autoincrement())
+  nombre                String   @db.VarChar(255)
+  planificacion_area_id Int
+  deshabilitado         Boolean  @default(false)
+  creado_el             DateTime @default(now()) @db.DateTime
+  actualizado_el        DateTime @default(now()) @db.DateTime
+
+  planificacion_area planificacion_areas @relation(fields: [planificacion_area_id], references: [id], onDelete: Cascade)
+  planificaciones    planificaciones[]
+}
+
+model planificacion_notas {
+  id                    Int      @id @default(autoincrement())
+  tarea_forecast_id     Int
+  planificacion_area_id Int?
+  nota                  String   @db.Text()
+  eliminado             Boolean  @default(false)
+  creado_el             DateTime @default(now()) @db.DateTime
+  actualizado_el        DateTime @default(now()) @db.DateTime
+
+  tareas_forecast    tareas_forecast      @relation(fields: [tarea_forecast_id], references: [id], onDelete: Cascade)
+  planificacion_area planificacion_areas? @relation(fields: [planificacion_area_id], references: [id], onDelete: Cascade)
+
+  @@unique([tarea_forecast_id, planificacion_area_id])
+}
+
+model planificaciones {
+  id                         Int      @id @default(autoincrement())
+  planificacion_actividad_id Int
+  tarea_forecast_id          Int
+  eliminado                  Boolean  @default(false)
+  creado_el                  DateTime @default(now()) @db.DateTime
+  actualizado_el             DateTime @default(now()) @db.DateTime
+
+  planificacion_actividad planificacion_actividades @relation(fields: [planificacion_actividad_id], references: [id], onDelete: Cascade)
+  tarea_forecast          tareas_forecast           @relation(fields: [tarea_forecast_id], references: [id], onDelete: Cascade)
+}

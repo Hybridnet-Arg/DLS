@@ -1,0 +1,45 @@
+.simple-floatingedges {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 800px;
+  width: 100%;
+  position: relative;
+}
+.simple-floatingedges .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: #bbb;
+}
+.simple-floatingedges .react-flow__handle-top {
+  top: -15px;
+}
+.simple-floatingedges .react-flow__handle-bottom {
+  bottom: -15px;
+}
+.simple-floatingedges .react-flow__handle-left {
+  left: -15px;
+}
+.simple-floatingedges .react-flow__handle-right {
+  right: -15px;
+}
+.simple-floatingedges .react-flow__node-custom {
+  background: #fff;
+  border: 1px solid #1a192b;
+  border-radius: 3px;
+  color: #222;
+  font-size: 12px;
+  padding: 10px;
+  text-align: center;
+  width: 230px;
+}
+
+@keyframes shadowPulse {
+  0% {
+    box-shadow: 0px 4px 25px -5px rgba(12, 140, 49, 1);
+  }
+
+  100% {
+    box-shadow: 0px 4px 25px 4px rgba(12, 140, 49, 0.92);
+  }
+}

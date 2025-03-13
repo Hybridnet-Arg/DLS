@@ -1,0 +1,4 @@
+export const TIPO_MOTIVO_BAJA = {
+  RECAMBIO: 'RECAMBIO',
+  ALMACEN: 'ALMACEN',
+};

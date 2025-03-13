@@ -1,0 +1,4453 @@
+[
+    {
+        "id": "4ec669b8a2a4ef34",
+        "type": "tab",
+        "label": "API WELLDATA + ELEMENTOS",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "16ea78f3dc809663",
+        "type": "inject",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "300",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 380,
+        "wires": [
+            [
+                "f1cedf87569972ef",
+                "b70d3fba0fe1db4e"
+            ]
+        ]
+    },
+    {
+        "id": "c8f17cee3baa0db8",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "GetToken",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/tokens/token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "ApplicationID",
+                "valueType": "other",
+                "valueValue": "E4FC9AEB-0CF9-481C-99F6-A4FA8A5D11C9"
+            }
+        ],
+        "x": 460,
+        "y": 140,
+        "wires": [
+            [
+                "15a37f4609ad0fc3",
+                "b61328fb6c92826d"
+            ]
+        ]
+    },
+    {
+        "id": "11e78d2da6c8a52b",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo165",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 770,
+        "y": 600,
+        "wires": [
+            [
+                "bca0b9884de4d2f0",
+                "5bf1748221306294"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "15a37f4609ad0fc3",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "saveToken",
+        "func": "global.set(\"token\", msg.payload.token);\n//return msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5a5d3b36282c83fd",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "API WELLDATA",
+        "info": "",
+        "x": 220,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "fbdfbab12120a5a8",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 165",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare39\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Cubic meter.0\"\n        },\n        {\n            \"id\": \"Spare59\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177397\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177398\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"FdSvyDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Feet.1\"\n        },\n        {\n            \"id\": \"DbaBitPositionHeaveComp\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Length.Feet.1\"\n        },\n        {\n            \"id\": \"GammaRayDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"165\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 600,
+        "wires": [
+            [
+                "a055eff1783f793c"
+            ]
+        ]
+    },
+    {
+        "id": "024ea8489bd941b2",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "horaDesde",
+        "func": "global.set(\"horaDesde\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b70d3fba0fe1db4e",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 420,
+        "y": 420,
+        "wires": [
+            [
+                "36a3a687ec79893d"
+            ]
+        ]
+    },
+    {
+        "id": "1114fec88ba6617f",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "horaHasta",
+        "func": "global.set(\"horaHasta\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 420,
+        "wires": [
+            [
+                "4daf143eee17f098"
+            ]
+        ]
+    },
+    {
+        "id": "f44f7ae1fe1bba4f",
+        "type": "inject",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "900",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 140,
+        "wires": [
+            [
+                "c8f17cee3baa0db8"
+            ]
+        ]
+    },
+    {
+        "id": "fa29981f1d8dc850",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "GetJobs",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/jobs?jobStatus=ActiveJobs",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "6977fbd9af895bc3",
+                "caba0e6d351911b3"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "93db3b1d059320f1",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "setup",
+        "func": "msg.token = global.get(\"token\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 240,
+        "wires": [
+            [
+                "fa29981f1d8dc850"
+            ]
+        ]
+    },
+    {
+        "id": "6977fbd9af895bc3",
+        "type": "split",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 690,
+        "y": 240,
+        "wires": [
+            [
+                "4c280818c7bc4576"
+            ]
+        ]
+    },
+    {
+        "id": "4c280818c7bc4576",
+        "type": "split",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 850,
+        "y": 240,
+        "wires": [
+            [
+                "1ff8c64ebacc443e"
+            ]
+        ]
+    },
+    {
+        "id": "1ff8c64ebacc443e",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "jobInfo",
+        "func": "let id = msg.payload.id;\nlet name = msg.payload.name;\nlet rigNameAux = msg.payload.assetInfoList[0].name;\nlet rigName = rigNameAux.replace(' ', '');\nlet job = {\n   \"jobId\": id,\n   \"name\": name,\n   \"hsBomba1\":0,\n   \"hsBomba2\": 0,\n   \"hsBomba3\": 0,\n   \"ltsTanque\": 0\n\n};\nglobal.set(rigName,job)\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a055eff1783f793c",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 600,
+        "wires": [
+            [
+                "11e78d2da6c8a52b"
+            ]
+        ]
+    },
+    {
+        "id": "923cafaa06f92fd9",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "DLS-165",
+        "info": "",
+        "x": 220,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "4f9d32233c930e14",
+        "type": "inject",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 240,
+        "wires": [
+            [
+                "93db3b1d059320f1"
+            ]
+        ]
+    },
+    {
+        "id": "ec54af79cded8ee0",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1230,
+        "y": 540,
+        "wires": [
+            [],
+            [
+                "21d8c7c6e1473ead",
+                "49786e290135343c"
+            ]
+        ]
+    },
+    {
+        "id": "39f9c98902ac4441",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "actualizaLogWellData",
+        "func": "let perforadorNro = msg.perforadorNro;\n\nconst perforador = global.get(perforadorNro);\nlet jobId=perforador.jobId;\nlet hsBomba1 = perforador.hsBomba1;\nlet hsBomba2 = perforador.hsBomba2;\nlet hsBomba3 = perforador.hsBomba3;\nlet on1 = perforador.on1;\nlet on2 = perforador.on2;\nlet on3 = perforador.on3;\nlet lts=perforador.ltsTanque;\n\nconst factu = perforador.factu;\nconst fechaFormateada = factu.slice(0, 19).replace(\"T\", \" \");\n\nlet perforadorNroStr = perforadorNro;\nif(perforadorNro === 'PAE001'){\n    perforadorNro = 1;\n    perforadorNroStr = '001';\n}\n\nconst actualizaHorasBomba1 = msg.actualizaHsBomba1;\nconst actualizaHorasBomba2 = msg.actualizaHsBomba2;\nconst actualizaHorasBomba3 = msg.actualizaHsBomba3;\n\nlet tableName = 'wellData';\nif (!actualizaHorasBomba1 && !actualizaHorasBomba2 && !actualizaHorasBomba3){\n    tableName = 'wellDataErrors'\n}\nmsg.payload = `INSERT INTO [${tableName}] ([hsBomba1],[hsBomba2],[hsBomba3],[lts],perforador,jobId,[perforadorStr], [onBomba1], [onBomba2], [onBomba3], [fecha])\nVALUES (${hsBomba1}, ${hsBomba2}, ${hsBomba3}, ${lts}, ${perforadorNro}, '${jobId}', '${perforadorNroStr}', ${on1}, ${on2}, ${on3}, '${fechaFormateada}')`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2220,
+        "y": 580,
+        "wires": [
+            [
+                "ab7391524edc2ca0",
+                "e5e940b84032ff13"
+            ]
+        ]
+    },
+    {
+        "id": "fdbe739884eceacc",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "actualizaLogHsPiezas",
+        "func": "const actualizaLogHsPiezas = msg.actualizaLogHsPiezas;\nlet perforadorNro = msg.perforadorNro;\nif(perforadorNro === 'PAE001'){\n    perforadorNro = '001';\n}\nif(actualizaLogHsPiezas){\n    msg.payload = `INSERT INTO [logPieza] ([idPerforadorPieza],[hs],[hsInst]) select idPerforadorPieza,hs,hsInst from [perforadorPieza] where enUso=1 and baja=0 and perforador='${perforadorNro}'`;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2740,
+        "y": 460,
+        "wires": [
+            [
+                "ab0b7ef5ba3904e7",
+                "677b88eabe711b98"
+            ]
+        ]
+    },
+    {
+        "id": "b61328fb6c92826d",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 317",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e7dd7a995e7707de",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo156",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 750,
+        "y": 1180,
+        "wires": [
+            [
+                "d70c1ceea8da3a2f",
+                "7a845983efd665a9"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "ef1d670c4880c465",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 156",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n        {\n            \"id\": \"Spare2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PitVolume11\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"156\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1180,
+        "wires": [
+            [
+                "373fbaeb00082189"
+            ]
+        ]
+    },
+    {
+        "id": "373fbaeb00082189",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 550,
+        "y": 1180,
+        "wires": [
+            [
+                "e7dd7a995e7707de"
+            ]
+        ]
+    },
+    {
+        "id": "49bba0981eab139d",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "DLS-156",
+        "info": "",
+        "x": 200,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "d70c1ceea8da3a2f",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"156\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs1Aux=0;\nlet hs2Aux = 0;\nlet on1=0;\nlet on2=0;\nlet actualiza=false;\nlet lts=0;\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1)/60;\n    // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n  \n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 3600;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n  \n} catch { }\n\ntry {\n    on1 = data[2][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[4][1].toFixed(3)*159;\n} catch { }\n\n\nif ( hs1 != 0 || hs2 != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"ltsTanque\": lts\n\n    };\n    global.set(\"156\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '156';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 1180,
+        "wires": [
+            [
+                "aad7457ec4f85ecd"
+            ]
+        ]
+    },
+    {
+        "id": "aad7457ec4f85ecd",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1150,
+        "y": 1180,
+        "wires": [
+            [],
+            [
+                "4c8b9e52ba4a98eb",
+                "fc815385413ef3ed"
+            ]
+        ]
+    },
+    {
+        "id": "240c1d29b6745955",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 205",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 185,
+        "y": 1180,
+        "wires": [
+            [
+                "ef1d670c4880c465"
+            ]
+        ]
+    },
+    {
+        "id": "4daf143eee17f098",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out Perforadores",
+        "mode": "link",
+        "links": [
+            "240c1d29b6745955",
+            "939faf95f56171ad",
+            "131ee012d5d706cb",
+            "fdd9d00453fd68fd",
+            "2fe1444e328d1b4b",
+            "f33b8d713a356349",
+            "cd4755c1b3cd6864",
+            "17ab1edd93b9bc15",
+            "378c6cfc5d769cbd",
+            "b872d40a14ca7768",
+            "d155f89c9ef13d36",
+            "15b7841e927aa275",
+            "4ee104ad74981162",
+            "148778e1c30f6c3f"
+        ],
+        "x": 1005,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "73e05fc9a95d14c6",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo 173",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 750,
+        "y": 1500,
+        "wires": [
+            [
+                "32483ced4165bc7a",
+                "3ecd3cc76ed106ae"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "f70e670aa96353a1",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 173",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n        {\n            \"id\": \"Spare2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PitVolume11\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n        \n\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"173\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1500,
+        "wires": [
+            [
+                "48563de8f7797b8b"
+            ]
+        ]
+    },
+    {
+        "id": "48563de8f7797b8b",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 550,
+        "y": 1500,
+        "wires": [
+            [
+                "73e05fc9a95d14c6"
+            ]
+        ]
+    },
+    {
+        "id": "088c238812e05ed4",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "DLS-173",
+        "info": "",
+        "x": 220,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "32483ced4165bc7a",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"173\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1Aux=0;\nlet hs2Aux = 0;\nlet hs1=0;\nlet hs2=0;\nlet on1=0;\nlet on2=0;\nlet actualiza=false;\nlet lts = 0;\n\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1)/60;\n      // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 60;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n} catch { }\n\ntry {\n    on1 = data[2][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[4][1].toFixed(3) * 159;\n} catch { }\n\n\nif ( hs1 != 0 || hs2 != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"ltsTanque\": lts\n\n    };\n    global.set(\"173\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '173';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 1500,
+        "wires": [
+            [
+                "d47f3f30c081a3df"
+            ]
+        ]
+    },
+    {
+        "id": "d47f3f30c081a3df",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1150,
+        "y": 1500,
+        "wires": [
+            [],
+            [
+                "12bb8553c009dba3",
+                "f520ed1f2c08456d"
+            ]
+        ]
+    },
+    {
+        "id": "f33b8d713a356349",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 206",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 185,
+        "y": 1500,
+        "wires": [
+            [
+                "f70e670aa96353a1"
+            ]
+        ]
+    },
+    {
+        "id": "6d732304572588f8",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo160",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 750,
+        "y": 1800,
+        "wires": [
+            [
+                "ba41d7674c21ba51",
+                "0a832cf6b9609637"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "46c903f715a95e57",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 160",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n        {\n            \"id\": \"Spare6\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PitVolume11\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"160\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1800,
+        "wires": [
+            [
+                "18178ce2652eeca8"
+            ]
+        ]
+    },
+    {
+        "id": "18178ce2652eeca8",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 550,
+        "y": 1800,
+        "wires": [
+            [
+                "6d732304572588f8"
+            ]
+        ]
+    },
+    {
+        "id": "16a441ec176510bd",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "DLS-160",
+        "info": "",
+        "x": 220,
+        "y": 1740,
+        "wires": []
+    },
+    {
+        "id": "ba41d7674c21ba51",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs 160",
+        "func": "let jobOld = global.get(\"160\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet on1=0;\nlet on2=0;\nlet actualiza=false;\nlet hs2Aux=0;\nlet hs1Aux = 0;\nlet lts=0;\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1)/3600;\n    // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n  \n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 3600;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n} catch { }\n\ntry {\n    on1 = data[2][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[4][1].toFixed(3) * 159;\n} catch { }\n\n\nif ( hs1 != 0 || hs2 != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"ltsTanque\": lts\n    };\n    global.set(\"160\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '160';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 1800,
+        "wires": [
+            [
+                "0f40c85036b0cc98"
+            ]
+        ]
+    },
+    {
+        "id": "0f40c85036b0cc98",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1150,
+        "y": 1800,
+        "wires": [
+            [],
+            [
+                "c9fd806eaf960fa7",
+                "d2c4ab416c30c4c0"
+            ]
+        ]
+    },
+    {
+        "id": "cd4755c1b3cd6864",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 207",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 185,
+        "y": 1800,
+        "wires": [
+            [
+                "46c903f715a95e57"
+            ]
+        ]
+    },
+    {
+        "id": "27b35b337a737247",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"170\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[1][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[3][1].toFixed(1) * 1;\n} catch { }\ntry {\n    lts = data[0][1].toFixed(3)*159;\n    lts=lts.toFixed(0);\n} catch { }\ntry {\n    on1 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[6][1].toFixed(0) * 1;\n} catch { }\n\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"170\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '170';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 2120,
+        "wires": [
+            [
+                "559ee6903ac8f9a3"
+            ]
+        ]
+    },
+    {
+        "id": "19a80d200a85aca5",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo170",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 760,
+        "y": 2120,
+        "wires": [
+            [
+                "27b35b337a737247",
+                "f9dfa0ae108e3302"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "1a62cca0cd18b137",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare79\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        },\n        {\n            \"id\": \"RS-1342177412\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177413\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177414\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"170\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2120,
+        "wires": [
+            [
+                "a4df7e1c15dea33e"
+            ]
+        ]
+    },
+    {
+        "id": "a4df7e1c15dea33e",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 2120,
+        "wires": [
+            [
+                "19a80d200a85aca5"
+            ]
+        ]
+    },
+    {
+        "id": "226345691a44b094",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "DLS-170",
+        "info": "",
+        "x": 200,
+        "y": 2060,
+        "wires": []
+    },
+    {
+        "id": "559ee6903ac8f9a3",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1190,
+        "y": 2100,
+        "wires": [
+            [],
+            [
+                "12eab928cb2044dd",
+                "75bcf521918ac540"
+            ]
+        ]
+    },
+    {
+        "id": "b872d40a14ca7768",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 208",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 185,
+        "y": 2120,
+        "wires": [
+            [
+                "1a62cca0cd18b137"
+            ]
+        ]
+    },
+    {
+        "id": "c2186697e3788b54",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"PAE001\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[1][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[3][1].toFixed(1) * 1;\n} catch { }\ntry {\n    lts = data[0][1].toFixed(3)*1;\n    lts=lts.toFixed(0);\n} catch { }\ntry {\n    on1 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[6][1].toFixed(0) * 1;\n} catch { }\n\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"PAE001\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = 'PAE001';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 2420,
+        "wires": [
+            [
+                "1c5b3a168aab1cef"
+            ]
+        ]
+    },
+    {
+        "id": "4dddd702dab7f1c1",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo001",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 760,
+        "y": 2420,
+        "wires": [
+            [
+                "c2186697e3788b54",
+                "92f24f4fbd77764e"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "eb521863cd0b803e",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare100\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Liter.5\"\n        },\n        {\n            \"id\": \"RS-1342177412\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177413\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"RS-1342177414\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"PAE001\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2420,
+        "wires": [
+            [
+                "a34a5b728de28756"
+            ]
+        ]
+    },
+    {
+        "id": "a34a5b728de28756",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 2420,
+        "wires": [
+            [
+                "4dddd702dab7f1c1"
+            ]
+        ]
+    },
+    {
+        "id": "f6b499e87b00da76",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-001",
+        "info": "",
+        "x": 220,
+        "y": 2340,
+        "wires": []
+    },
+    {
+        "id": "1c5b3a168aab1cef",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1220,
+        "y": 2400,
+        "wires": [
+            [],
+            [
+                "f1ea83d5e1dd87d8",
+                "67b6af0221db6353"
+            ]
+        ]
+    },
+    {
+        "id": "131ee012d5d706cb",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 209",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 185,
+        "y": 2420,
+        "wires": [
+            [
+                "eb521863cd0b803e"
+            ]
+        ]
+    },
+    {
+        "id": "7a845983efd665a9",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 318",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "bca0b9884de4d2f0",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 319",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b3b3578eba430a6d",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"168\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[1][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[6][1].toFixed(3) * 1000;\n} catch { }\n\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"168\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '168';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 2700,
+        "wires": [
+            [
+                "1efcafc87d0322c5"
+            ]
+        ]
+    },
+    {
+        "id": "6bed5b220d43052d",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo168",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 770,
+        "y": 2700,
+        "wires": [
+            [
+                "b3b3578eba430a6d",
+                "4ac0d468a8b3f6a0"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "e2521002e067d034",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 168",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n          {\n            \"id\": \"Spare493\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare492\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare491\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"Spare5\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Cubic meter.0\"\n        },\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"168\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2700,
+        "wires": [
+            [
+                "1e5bed048046dcfe"
+            ]
+        ]
+    },
+    {
+        "id": "1e5bed048046dcfe",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 2700,
+        "wires": [
+            [
+                "6bed5b220d43052d"
+            ]
+        ]
+    },
+    {
+        "id": "1078417bdf210918",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-168",
+        "info": "",
+        "x": 220,
+        "y": 2640,
+        "wires": []
+    },
+    {
+        "id": "1efcafc87d0322c5",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1230,
+        "y": 2680,
+        "wires": [
+            [],
+            [
+                "dd1c8facab70941e",
+                "48652078c34e9cc9"
+            ]
+        ]
+    },
+    {
+        "id": "2fe1444e328d1b4b",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 210",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 195,
+        "y": 2700,
+        "wires": [
+            [
+                "e2521002e067d034"
+            ]
+        ]
+    },
+    {
+        "id": "2925974d8be93280",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo163",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 780,
+        "y": 3020,
+        "wires": [
+            [
+                "21837bc25988127e",
+                "a22eff596b228cc3"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "40a805b6c6bfcd51",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n         {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"Spare5\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Length.Meter.0\"\n        },\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        }\n     \n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"163\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 3020,
+        "wires": [
+            [
+                "ba5650c579b8124f"
+            ]
+        ]
+    },
+    {
+        "id": "ba5650c579b8124f",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 580,
+        "y": 3020,
+        "wires": [
+            [
+                "2925974d8be93280"
+            ]
+        ]
+    },
+    {
+        "id": "9a7350575265a76a",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-163",
+        "info": "",
+        "x": 240,
+        "y": 2960,
+        "wires": []
+    },
+    {
+        "id": "45ad2c1fd1db1401",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1240,
+        "y": 3000,
+        "wires": [
+            [],
+            [
+                "b62fc899324c4e78",
+                "a055db194b533549"
+            ]
+        ]
+    },
+    {
+        "id": "4ee104ad74981162",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 211",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 205,
+        "y": 3020,
+        "wires": [
+            [
+                "40a805b6c6bfcd51",
+                "b4f07459d613eadd"
+            ]
+        ]
+    },
+    {
+        "id": "923b4de0e10e3b48",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"166\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[1][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[6][1].toFixed(3) * 1000;\n} catch { }\n\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"166\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '166';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 3400,
+        "wires": [
+            [
+                "50037d3d7afe7cad"
+            ]
+        ]
+    },
+    {
+        "id": "e354cb18676a8b0d",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo166",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 790,
+        "y": 3400,
+        "wires": [
+            [
+                "923b4de0e10e3b48",
+                "78bd63c8416c8620"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "ed9d958e377842b7",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 166",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n         {\n            \"id\": \"Spare493\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare492\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare491\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"Spare5\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Cubic meter.0\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 120,\n    \"isDifferential\": true\n}\nlet job = global.get(\"166\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 3400,
+        "wires": [
+            [
+                "e4f9f3a3e4258d34"
+            ]
+        ]
+    },
+    {
+        "id": "e4f9f3a3e4258d34",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 3400,
+        "wires": [
+            [
+                "e354cb18676a8b0d"
+            ]
+        ]
+    },
+    {
+        "id": "7a614d33f110f47e",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-166",
+        "info": "",
+        "x": 240,
+        "y": 3340,
+        "wires": []
+    },
+    {
+        "id": "50037d3d7afe7cad",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1250,
+        "y": 3380,
+        "wires": [
+            [],
+            [
+                "ca6d6a37716d956c",
+                "caf7413d8a135c28"
+            ]
+        ]
+    },
+    {
+        "id": "fdd9d00453fd68fd",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 212",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 215,
+        "y": 3400,
+        "wires": [
+            [
+                "ed9d958e377842b7"
+            ]
+        ]
+    },
+    {
+        "id": "f9dfa0ae108e3302",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 320",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 2160,
+        "wires": []
+    },
+    {
+        "id": "5b79a7a5006d6de2",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"167\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[1][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[6][1].toFixed(3) * 1000;\n} catch { }\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"167\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '167';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 3680,
+        "wires": [
+            [
+                "24a21902c011270f"
+            ]
+        ]
+    },
+    {
+        "id": "95dda01ae6dda525",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo167",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 790,
+        "y": 3680,
+        "wires": [
+            [
+                "5b79a7a5006d6de2",
+                "01aaffd97e3bedc6"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "2266de9ed2bc1a55",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 167",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare493\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare492\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare491\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PitVolume10\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Cubic meter.0\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"167\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 3680,
+        "wires": [
+            [
+                "788e10292302caca"
+            ]
+        ]
+    },
+    {
+        "id": "788e10292302caca",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 3680,
+        "wires": [
+            [
+                "95dda01ae6dda525"
+            ]
+        ]
+    },
+    {
+        "id": "b57a4eca718ad5dc",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-167",
+        "info": "",
+        "x": 240,
+        "y": 3620,
+        "wires": []
+    },
+    {
+        "id": "24a21902c011270f",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1250,
+        "y": 3660,
+        "wires": [
+            [],
+            [
+                "e8dc625d8ab5725d",
+                "f5af41ed29cd2523"
+            ]
+        ]
+    },
+    {
+        "id": "d155f89c9ef13d36",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 213",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 215,
+        "y": 3680,
+        "wires": [
+            [
+                "2266de9ed2bc1a55"
+            ]
+        ]
+    },
+    {
+        "id": "b297055421a5aec7",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"169\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\ntry {\n    hs1 = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[1][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[6][1].toFixed(3) * 1000;\n} catch { }\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"169\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '169';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 3980,
+        "wires": [
+            [
+                "7e14da40f4742113"
+            ]
+        ]
+    },
+    {
+        "id": "c7ccd90ef2c255c3",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo169",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 790,
+        "y": 3980,
+        "wires": [
+            [
+                "b297055421a5aec7",
+                "dd8cafac0f865689"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "82ca5e6bc2042a03",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"Spare493\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare492\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"Spare491\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Hour.2\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"Spare3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Cubic meter.0\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 120,\n    \"isDifferential\": true\n}\nlet job = global.get(\"169\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 3980,
+        "wires": [
+            [
+                "d851b0279fe6587e"
+            ]
+        ]
+    },
+    {
+        "id": "d851b0279fe6587e",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 3980,
+        "wires": [
+            [
+                "c7ccd90ef2c255c3"
+            ]
+        ]
+    },
+    {
+        "id": "c5eb51cce0264d3f",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-169",
+        "info": "",
+        "x": 240,
+        "y": 3920,
+        "wires": []
+    },
+    {
+        "id": "7e14da40f4742113",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1250,
+        "y": 3960,
+        "wires": [
+            [],
+            [
+                "fe35cf9519e937ca",
+                "5b7273828da3cdfc"
+            ]
+        ]
+    },
+    {
+        "id": "17ab1edd93b9bc15",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 214",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 215,
+        "y": 3980,
+        "wires": [
+            [
+                "82ca5e6bc2042a03"
+            ]
+        ]
+    },
+    {
+        "id": "78bd63c8416c8620",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 321",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 3520,
+        "wires": []
+    },
+    {
+        "id": "01aaffd97e3bedc6",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 322",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 3760,
+        "wires": []
+    },
+    {
+        "id": "dd8cafac0f865689",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 323",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 4060,
+        "wires": []
+    },
+    {
+        "id": "3ecd3cc76ed106ae",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 324",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "0a832cf6b9609637",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 325",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 1840,
+        "wires": []
+    },
+    {
+        "id": "92f24f4fbd77764e",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 326",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "4ac0d468a8b3f6a0",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 327",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 2780,
+        "wires": []
+    },
+    {
+        "id": "6530366d0aca0bbd",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"161\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\nlet hs1Aux=0;\nlet hs2Aux = 0;\nlet hs3Aux = 0;\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1) / 3600;\n    // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 3600;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n} catch { }\ntry {\n    hs3Aux = (data[2][1].toFixed(1) * 1) / 3600;\n    // @ts-ignore\n    hs3 = hs3Aux.toFixed(1) * 1;\n} catch { }\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[6][1].toFixed(3) * 159;\n    lts=lts.toFixed(0);\n} catch { }\nif ( hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"161\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '161';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 4240,
+        "wires": [
+            [
+                "39b5c19c157afad7"
+            ]
+        ]
+    },
+    {
+        "id": "4a28b7e0d8a415e1",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo161",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 790,
+        "y": 4240,
+        "wires": [
+            [
+                "6530366d0aca0bbd",
+                "e64dbff1891e6347"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "7cb3b77629204e9b",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 161",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"RS-1342177412\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n        {\n            \"id\": \"RS-1342177413\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n        {\n            \"id\": \"RS-1342177414\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Second.0\"\n        },\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm3\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"Spare79\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 120,\n    \"isDifferential\": true\n}\nlet job = global.get(\"161\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 4240,
+        "wires": [
+            [
+                "ec8fdb959a9d0432"
+            ]
+        ]
+    },
+    {
+        "id": "ec8fdb959a9d0432",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 4240,
+        "wires": [
+            [
+                "4a28b7e0d8a415e1"
+            ]
+        ]
+    },
+    {
+        "id": "25df5f68b3d15059",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-161",
+        "info": "",
+        "x": 240,
+        "y": 4180,
+        "wires": []
+    },
+    {
+        "id": "39b5c19c157afad7",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1250,
+        "y": 4220,
+        "wires": [
+            [],
+            [
+                "487ca2722657f1d9",
+                "f8337e0b97728611"
+            ]
+        ]
+    },
+    {
+        "id": "15b7841e927aa275",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 215",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 215,
+        "y": 4240,
+        "wires": [
+            [
+                "7cb3b77629204e9b"
+            ]
+        ]
+    },
+    {
+        "id": "e64dbff1891e6347",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 328",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 4320,
+        "wires": []
+    },
+    {
+        "id": "b27ec2718707daa6",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo174",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 790,
+        "y": 4480,
+        "wires": [
+            [
+                "c512af299dd1fad8",
+                "93510f1bf5420a32"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "c3027b699d1d0269",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 174",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n         {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n        {\n            \"id\": \"Spare2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n         {\n            \"id\": \"PitVolume11\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 120,\n    \"isDifferential\": true\n}\nlet job = global.get(\"174\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 4480,
+        "wires": [
+            [
+                "38ff7e37e47dc49d"
+            ]
+        ]
+    },
+    {
+        "id": "38ff7e37e47dc49d",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 4480,
+        "wires": [
+            [
+                "b27ec2718707daa6"
+            ]
+        ]
+    },
+    {
+        "id": "4b5917f8d208990b",
+        "type": "comment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PAE-174",
+        "info": "",
+        "x": 240,
+        "y": 4420,
+        "wires": []
+    },
+    {
+        "id": "378c6cfc5d769cbd",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 216",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 215,
+        "y": 4480,
+        "wires": [
+            [
+                "c3027b699d1d0269"
+            ]
+        ]
+    },
+    {
+        "id": "c512af299dd1fad8",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 329",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 4560,
+        "wires": []
+    },
+    {
+        "id": "93510f1bf5420a32",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"174\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1Aux=0;\nlet hs2Aux = 0;\nlet hs1=0;\nlet hs2=0;\nlet on1=0;\nlet on2=0;\nlet actualiza=false;\nlet lts = 0;\n\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1)/60;\n      // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 60;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n} catch { }\n\ntry {\n    on1 = data[2][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[4][1].toFixed(3) * 159;\n} catch { }\n\n\nif ( hs1 != 0 || hs2 != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"ltsTanque\": lts\n\n    };\n    global.set(\"174\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '174';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 4480,
+        "wires": [
+            [
+                "53294ef2255aedb3",
+                "c512af299dd1fad8"
+            ]
+        ]
+    },
+    {
+        "id": "53294ef2255aedb3",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1250,
+        "y": 4480,
+        "wires": [
+            [],
+            [
+                "353fd724c13e90ef",
+                "9878470c0e4beaa7"
+            ]
+        ]
+    },
+    {
+        "id": "21837bc25988127e",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 330",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 3140,
+        "wires": []
+    },
+    {
+        "id": "5bf1748221306294",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"165\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\n\n\ntry {\n    hs1 = data[1][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[2][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[3][1].toFixed(1) * 1;\n} catch { }\ntry {\n    lts = data[0][1].toFixed(3) * 1000;\n} catch { }\ntry {\n    on1 = data[4][1].toFixed(0) * 1; \n} catch { }\ntry {\n    on2 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[6][1].toFixed(0) * 1;\n} catch { }\n\nif (hs1 != 0 || hs2 != 0 || hs3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"hsBomba3\": hs3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"165\", job);\n}\nmsg.perforadorNro = '165';\nmsg.payload=actualiza;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 600,
+        "wires": [
+            [
+                "ec54af79cded8ee0",
+                "5c86d6e0e0bace01"
+            ]
+        ]
+    },
+    {
+        "id": "a22eff596b228cc3",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"163\");\nlet vfBomba=flow.get(\"vfBomba\");\nlet vf1=vfBomba.vf1*1;\nlet vf2=vfBomba.vf2*1;\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1=0;\nlet hs2=0;\nlet hs3=0;\nlet lts=0;\nlet on1=0;\nlet on2=0;\nlet on3=0;\nlet actualiza=false;\nlet hsvfBomba1 = 0;\nlet hsvfBomba2 = 0;\nlet hsvfBomba3 = 0;\nlet ltsm = data[6][1];\n\ntry {\n    hs1 = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    hs2 = data[1][1].toFixed(1) * 1;\n} catch { }\ntry {\n    hs3 = data[2][1].toFixed(1) * 1;\n} catch { }\n\ntry {\n    on1 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[4][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on3 = data[5][1].toFixed(0) * 1;\n} catch { }\ntry {\n    if(ltsm != 'NaN'){\n        ltsm=ltsm*100;\n        lts = -0.0036 * (ltsm * ltsm * ltsm) + 1.5243 * (ltsm * ltsm) + 126.45 * ltsm - 831.61;\n        lts=lts.toFixed(0);\n    }\n} catch { }\n\nswitch (vf1) {\n    case 1:\n        hsvfBomba1=hs1;\n        break;\n    case 2:\n        hsvfBomba2=hs1;\n        break;\n    case3:\n        hsvfBomba3=hs1;\n        break;\n}\n\nswitch (vf2) {\n    case 1:\n        hsvfBomba1 = hs2;\n        break;\n    case 2:\n        hsvfBomba2 = hs2;\n        break;\n    case 3:\n        hsvfBomba3 = hs2;\n        break;\n}\n\n\n\nif (hsvfBomba1 != 0 || hsvfBomba2 != 0 || hsvfBomba3 != 0 || lts != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hsvfBomba1,\n        \"hsBomba2\": hsvfBomba2,\n        \"hsBomba3\": hsvfBomba3,\n        \"ltsTanque\": lts,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"on3\": on3\n    };\n    global.set(\"163\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '163';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 3020,
+        "wires": [
+            [
+                "45ad2c1fd1db1401"
+            ]
+        ]
+    },
+    {
+        "id": "b4f07459d613eadd",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "buscaVfBomba",
+        "func": "msg.payload = \"BEGIN SELECT * FROM [vfBomba]; END\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 3200,
+        "wires": [
+            [
+                "f63a8f852059e573"
+            ]
+        ]
+    },
+    {
+        "id": "66819b951b6b641e",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosVfBomba",
+        "func": "let data = msg.payload;\n\nlet vf1 = data[0].vf1;\nlet vf2 = data[0].vf2;\nlet vfBomba = {\n    \"vf1\": data[0].vf1,\n    \"vf2\": data[0].vf2,\n    \n};\n/* let vf1 = data.recordset[0].vf1;\nlet vf2 = data.recordset[0].vf2;\n\nlet vfBomba = {\n    \"vf1\": data.recordset[0].vf1,\n    \"vf2\": data.recordset[0].vf2,\n    \n}; */\nflow.set(\"vfBomba\", vfBomba);\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 3200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "939faf95f56171ad",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 217",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 235,
+        "y": 600,
+        "wires": [
+            [
+                "fbdfbab12120a5a8"
+            ]
+        ]
+    },
+    {
+        "id": "a5c47f7e2863b1d1",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2480,
+        "y": 460,
+        "wires": [
+            [
+                "645b41523f223ef6",
+                "fdbe739884eceacc"
+            ]
+        ]
+    },
+    {
+        "id": "f63a8f852059e573",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 710,
+        "y": 3200,
+        "wires": [
+            [
+                "66819b951b6b641e",
+                "f96f911c5ef9a733"
+            ]
+        ]
+    },
+    {
+        "id": "f1cedf87569972ef",
+        "type": "moment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "topic": "",
+        "input": "payload",
+        "inputType": "msg",
+        "inTz": "ETC/UTC",
+        "adjAmount": "4",
+        "adjType": "minutes",
+        "adjDir": "subtract",
+        "format": "",
+        "locale": "es-ES",
+        "output": "payload",
+        "outputType": "msg",
+        "outTz": "Etc/GMT",
+        "x": 460,
+        "y": 340,
+        "wires": [
+            [
+                "024ea8489bd941b2"
+            ]
+        ]
+    },
+    {
+        "id": "36a3a687ec79893d",
+        "type": "moment",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "topic": "",
+        "input": "",
+        "inputType": "date",
+        "inTz": "ETC/UTC",
+        "adjAmount": "4",
+        "adjType": "minutes",
+        "adjDir": "subtract",
+        "format": "",
+        "locale": "es-ES",
+        "output": "payload",
+        "outputType": "msg",
+        "outTz": "Etc/GMT",
+        "x": 660,
+        "y": 420,
+        "wires": [
+            [
+                "1114fec88ba6617f"
+            ]
+        ]
+    },
+    {
+        "id": "5c86d6e0e0bace01",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 331",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1230,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "4c8b9e52ba4a98eb",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1160,
+        "y": 1240,
+        "wires": [
+            [
+                "44b6f97ea864b8c8"
+            ]
+        ]
+    },
+    {
+        "id": "12bb8553c009dba3",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1160,
+        "y": 1560,
+        "wires": [
+            [
+                "37ab91386018a03a"
+            ]
+        ]
+    },
+    {
+        "id": "c9fd806eaf960fa7",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1160,
+        "y": 1860,
+        "wires": [
+            [
+                "50a3250b0f36f9eb"
+            ]
+        ]
+    },
+    {
+        "id": "12eab928cb2044dd",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1200,
+        "y": 2160,
+        "wires": [
+            [
+                "a9ce2541d8f68389"
+            ]
+        ]
+    },
+    {
+        "id": "f1ea83d5e1dd87d8",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1220,
+        "y": 2460,
+        "wires": [
+            [
+                "0bea4d389e60cf04"
+            ]
+        ]
+    },
+    {
+        "id": "dd1c8facab70941e",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1240,
+        "y": 2740,
+        "wires": [
+            [
+                "343174cabb160b76"
+            ]
+        ]
+    },
+    {
+        "id": "b62fc899324c4e78",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1240,
+        "y": 3060,
+        "wires": [
+            [
+                "1434c0a260a08eae"
+            ]
+        ]
+    },
+    {
+        "id": "ca6d6a37716d956c",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 3440,
+        "wires": [
+            [
+                "e74fb988c3207699"
+            ]
+        ]
+    },
+    {
+        "id": "e8dc625d8ab5725d",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 3720,
+        "wires": [
+            [
+                "6ef7f3d3beb84ee6"
+            ]
+        ]
+    },
+    {
+        "id": "fe35cf9519e937ca",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 4020,
+        "wires": [
+            [
+                "7b2e22518fa79643"
+            ]
+        ]
+    },
+    {
+        "id": "487ca2722657f1d9",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 4280,
+        "wires": [
+            [
+                "d796900195a577f0"
+            ]
+        ]
+    },
+    {
+        "id": "353fd724c13e90ef",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 4540,
+        "wires": [
+            [
+                "5a74c87c86e2e991"
+            ]
+        ]
+    },
+    {
+        "id": "645b41523f223ef6",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 345",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2650,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "f96f911c5ef9a733",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 346",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 3280,
+        "wires": []
+    },
+    {
+        "id": "caba0e6d351911b3",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 435",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "21d8c7c6e1473ead",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1260,
+        "y": 600,
+        "wires": [
+            [
+                "9b53df5f5c882f95"
+            ]
+        ]
+    },
+    {
+        "id": "5d950ce95409aa79",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaEnWellData",
+        "func": "let perforadorNro = msg.perforadorNro;\nconst elementoDepositos = msg.payload;\n//const elementoDepositos = msg.payload?.recordsets[0];\nif(perforadorNro === 'PAE001'){\n    perforadorNro = '001';\n}\nif(elementoDepositos && elementoDepositos.length > 0){\n    let d =  elementoDepositos[0].fecha_instalacion;\n    const fecha = d.toISOString().replace('T', ' ').replace('Z', '');\n    const query = `WITH OrderedData AS (\n        SELECT *,\n            LEAD(onBomba1) OVER (ORDER BY fecha ASC) AS next_onBomba1,\n            LEAD(onBomba2) OVER (ORDER BY fecha ASC) AS next_onBomba2,\n            LEAD(onBomba3) OVER (ORDER BY fecha ASC) AS next_onBomba3\n        FROM wellData\n        WHERE perforador = '${perforadorNro}'\n        AND fecha >= CONVERT(datetime, '${fecha}', 121)\n    )\n    SELECT *\n    FROM OrderedData;\n    `;\n    msg.elementoDeposito = elementoDepositos[0];\n    msg.payload = query;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2280,
+        "y": 740,
+        "wires": [
+            [
+                "386b0e3ffce8abdd",
+                "1de05fb25f7eebe7"
+            ]
+        ]
+    },
+    {
+        "id": "386b0e3ffce8abdd",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2580,
+        "y": 780,
+        "wires": [
+            [
+                "b534c8930dd5cd04",
+                "290325fe99561e1a"
+            ]
+        ]
+    },
+    {
+        "id": "b534c8930dd5cd04",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "calcHorasTopDrive",
+        "func": "//const perforadorNro = msg.perforadorNro;\nconst wellDataRows = msg.payload;\n//const wellDataRows = msg.payload?.recordsets[0];\nlet toma1, toma2, toma3 = 0;\nlet parciales = [];\nlet primerRegistro = null;\nlet ultimoRegistro = null;\nif(wellDataRows && wellDataRows.length > 0){\n    for (let i = 0; i < wellDataRows.length; i++){\n        const wellDataRow = wellDataRows[i];\n        if (wellDataRow.onBomba1 > 0 || toma1 === 1) {\n            primerRegistro = primerRegistro || wellDataRow;\n            if (wellDataRow.next_onBomba1 > 0) {\n                toma1 = 1;\n                toma2 = 0;\n                toma3 = 0;\n            } else {\n                toma1 = 0;\n                toma2 = 0;\n                toma3 = 0;\n                ultimoRegistro = ultimoRegistro || wellDataRow;\n                const inicio = new Date(primerRegistro.fecha);\n                const fin = new Date(ultimoRegistro.fecha);\n                const diferenciaMs = fin.getTime() - inicio.getTime();\n                const diferenciaHoras = diferenciaMs / (1000 * 60 * 60);\n                const horas = ultimoRegistro.hsBomba1 - primerRegistro.hsBomba1;\n                if (horas > 0 && horas <= diferenciaHoras){\n                    parciales.push(horas);\n                }\n                //parciales.push({first: primerRegistro, last: ultimoRegistro, result: ultimoRegistro.hsBomba1 - primerRegistro.hsBomba1});\n                primerRegistro = null;\n                ultimoRegistro = null;\n            }\n        } else if (wellDataRow.onBomba2 > 0 || toma2 === 1) {\n            primerRegistro = primerRegistro || wellDataRow;\n            if (wellDataRow.next_onBomba2 > 0) {\n                toma1 = 0;\n                toma2 = 1;\n                toma3 = 0;\n            } else {\n                toma1 = 0;\n                toma2 = 0;\n                toma3 = 0;\n                ultimoRegistro = ultimoRegistro || wellDataRow;\n                const inicio = new Date(primerRegistro.fecha);\n                const fin = new Date(ultimoRegistro.fecha);\n                const diferenciaMs = fin.getTime() - inicio.getTime();\n                const diferenciaHoras = diferenciaMs / (1000 * 60 * 60);\n                const horas = ultimoRegistro.hsBomba2 - primerRegistro.hsBomba2;\n                if (horas > 0 && horas <= diferenciaHoras) {\n                    parciales.push(horas);\n                }\n                //parciales.push({first: primerRegistro, last: ultimoRegistro, result: ultimoRegistro.hsBomba2 - primerRegistro.hsBomba2});                \n                primerRegistro = null;\n                ultimoRegistro = null;\n            } \n        } else if (wellDataRow.onBomba3 > 0 || toma3 === 1) {\n          primerRegistro = primerRegistro || wellDataRow;\n          if (wellDataRow.next_onBomba3 > 0) {\n              toma1 = 0;\n              toma2 = 0;\n              toma3 = 1;\n          } else {\n              toma1 = 0;\n              toma2 = 0;\n              toma3 = 0;\n              ultimoRegistro = ultimoRegistro || wellDataRow;\n              const inicio = new Date(primerRegistro.fecha);\n              const fin = new Date(ultimoRegistro.fecha);\n              const diferenciaMs = fin.getTime() - inicio.getTime();\n              const diferenciaHoras = diferenciaMs / (1000 * 60 * 60);\n              const horas = ultimoRegistro.hsBomba3 - primerRegistro.hsBomba3;\n              if (horas > 0 && horas <= diferenciaHoras) {\n                  parciales.push(horas);\n              }\n              //parciales.push({ first: primerRegistro, last: ultimoRegistro, result: ultimoRegistro.hsBomba3 - primerRegistro.hsBomba3 });\n              primerRegistro = null;\n              ultimoRegistro = null;\n          }\n        }\n    }\n}\nconst totalHorasEnUso = parciales.reduce((acumulador, valorActual) => acumulador + valorActual, 0);\n\nmsg.totalHorasEnUso = totalHorasEnUso;\nmsg.elementoDeposito = msg.elementoDeposito;\nmsg.parciales = parciales;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2790,
+        "y": 780,
+        "wires": [
+            [
+                "268f91dc7212fcfa",
+                "529a5bb7e49aae1b"
+            ]
+        ]
+    },
+    {
+        "id": "268f91dc7212fcfa",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 512",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 3010,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "290325fe99561e1a",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 513",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2770,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "1de05fb25f7eebe7",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 514",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2570,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "94e6e52d98c940c8",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaWashPipeEnUso",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst componenteId = 1; // Topdrive\nconst elemento_id = 4; // WashPipe\n\nconst query = `select p.id as perforador_id, \n    cp.id as componente_perforador_id, \n    c.nombre  as componente_nombre,\n    ec.id as elemento_componente_id,\n    ed.id as elementos_deposito_id, \n    ec.elemento_id,\n    e.nombre,\n    ed.en_uso, \n    ed.baja,\n    ed.horas_iniciales,\n    ed.horas_en_uso,\n    ed.fecha_instalacion \n    from perforadores p  \n    inner join componentes_perforador cp on cp.perforador_id = p.id \n    inner join componentes c on c.id = cp.componente_id\n    inner join elementos_componente ec on ec.componente_perforador_id = cp.id\n    inner join elementos e on e.id = ec.elemento_id \n    inner join elementos_deposito ed on ed.elemento_componente_id = ec.id \n    where p.nombre_clave = '${perforadorNro === 'PAE001' ? '1' : perforadorNro}'\n    and c.id = ${componenteId}\n    and ec.elemento_id = ${elemento_id}\n    and ed.en_uso = 1\n    and ed.baja = 0;\n `;\n\nmsg.payload = query;\nmsg.perforadorNro = perforadorNro;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1850,
+        "y": 740,
+        "wires": [
+            [
+                "f73b770df4e2a057"
+            ]
+        ]
+    },
+    {
+        "id": "f73b770df4e2a057",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2060,
+        "y": 740,
+        "wires": [
+            [
+                "5d950ce95409aa79",
+                "0683b307afe2269e"
+            ]
+        ]
+    },
+    {
+        "id": "529a5bb7e49aae1b",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "actualizarHs",
+        "func": "const totalHorasEnUso = msg.totalHorasEnUso;\nconst elementoDeposito = msg.elementoDeposito;\n\nif(elementoDeposito){\n    const query = `UPDATE elementos_deposito\n        SET horas_en_uso=${totalHorasEnUso}, actualizado_el=getdate()\n        WHERE id = ${elementoDeposito.elementos_deposito_id};\n    `;\n    msg.payload = query;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 3010,
+        "y": 780,
+        "wires": [
+            [
+                "e80440b2cd6c11b5",
+                "43fee6abf6c9170f"
+            ]
+        ]
+    },
+    {
+        "id": "e80440b2cd6c11b5",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 3260,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "43fee6abf6c9170f",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 515",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 3270,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "0683b307afe2269e",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 516",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2270,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "9c7938481aafbc02",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaUpperEnUso",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst componenteId = 1; // Topdrive\nconst elemento_id = 2; // Upper\n\nconst query = `select p.id as perforador_id, \n    cp.id as componente_perforador_id, \n    c.nombre  as componente_nombre,\n    ec.id as elemento_componente_id,\n    ed.id as elementos_deposito_id, \n    ec.elemento_id,\n    e.nombre,\n    ed.en_uso, \n    ed.baja,\n    ed.horas_iniciales,\n    ed.horas_en_uso,\n    ed.fecha_instalacion \n    from perforadores p  \n    inner join componentes_perforador cp on cp.perforador_id = p.id \n    inner join componentes c on c.id = cp.componente_id\n    inner join elementos_componente ec on ec.componente_perforador_id = cp.id\n    inner join elementos e on e.id = ec.elemento_id \n    inner join elementos_deposito ed on ed.elemento_componente_id = ec.id \n    where p.nombre_clave = '${perforadorNro === 'PAE001' ? '1' : perforadorNro}'\n    and c.id = ${componenteId}\n    and ec.elemento_id = ${elemento_id}\n    and ed.en_uso = 1\n    and ed.baja = 0;\n `;\n\nmsg.payload = query;\nmsg.perforadorNro = perforadorNro;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1860,
+        "y": 780,
+        "wires": [
+            [
+                "f73b770df4e2a057"
+            ]
+        ]
+    },
+    {
+        "id": "acab648673c68717",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaLowerEnUso",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst componenteId = 1; // Topdrive\nconst elemento_id = 1; // Lower\n\nconst query = `select p.id as perforador_id, \n    cp.id as componente_perforador_id, \n    c.nombre  as componente_nombre,\n    ec.id as elemento_componente_id,\n    ed.id as elementos_deposito_id, \n    ec.elemento_id,\n    e.nombre,\n    ed.en_uso, \n    ed.baja,\n    ed.horas_iniciales,\n    ed.horas_en_uso,\n    ed.fecha_instalacion \n    from perforadores p  \n    inner join componentes_perforador cp on cp.perforador_id = p.id \n    inner join componentes c on c.id = cp.componente_id\n    inner join elementos_componente ec on ec.componente_perforador_id = cp.id\n    inner join elementos e on e.id = ec.elemento_id \n    inner join elementos_deposito ed on ed.elemento_componente_id = ec.id \n    where p.nombre_clave = '${perforadorNro === 'PAE001' ? '1' : perforadorNro}'\n    and c.id = ${componenteId}\n    and ec.elemento_id = ${elemento_id}\n    and ed.en_uso = 1\n    and ed.baja = 0;\n `;\n\nmsg.payload = query;\nmsg.perforadorNro = perforadorNro;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1860,
+        "y": 820,
+        "wires": [
+            [
+                "f73b770df4e2a057"
+            ]
+        ]
+    },
+    {
+        "id": "934d81c0af440f93",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaSaverSubEnUso",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst componenteId = 1; // Topdrive\nconst elemento_id = 3; // SaverSub\n\nconst query = `select p.id as perforador_id, \n    cp.id as componente_perforador_id, \n    c.nombre  as componente_nombre,\n    ec.id as elemento_componente_id,\n    ed.id as elementos_deposito_id, \n    ec.elemento_id,\n    e.nombre,\n    ed.en_uso, \n    ed.baja,\n    ed.horas_iniciales,\n    ed.horas_en_uso,\n    ed.fecha_instalacion \n    from perforadores p  \n    inner join componentes_perforador cp on cp.perforador_id = p.id \n    inner join componentes c on c.id = cp.componente_id\n    inner join elementos_componente ec on ec.componente_perforador_id = cp.id\n    inner join elementos e on e.id = ec.elemento_id \n    inner join elementos_deposito ed on ed.elemento_componente_id = ec.id \n    where p.nombre_clave = '${perforadorNro === 'PAE001' ? '1' : perforadorNro}'\n    and c.id = ${componenteId}\n    and ec.elemento_id = ${elemento_id}\n    and ed.en_uso = 1\n    and ed.baja = 0;\n `;\n\nmsg.payload = query;\nmsg.perforadorNro = perforadorNro;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1850,
+        "y": 860,
+        "wires": [
+            [
+                "f73b770df4e2a057"
+            ]
+        ]
+    },
+    {
+        "id": "9b53df5f5c882f95",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 90",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1365,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "64422f87befd129d",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 244",
+        "links": [
+            "44b6f97ea864b8c8",
+            "37ab91386018a03a",
+            "50a3250b0f36f9eb",
+            "a9ce2541d8f68389",
+            "0bea4d389e60cf04",
+            "343174cabb160b76",
+            "1434c0a260a08eae",
+            "e74fb988c3207699",
+            "6ef7f3d3beb84ee6",
+            "7b2e22518fa79643",
+            "d796900195a577f0",
+            "5a74c87c86e2e991",
+            "9b53df5f5c882f95",
+            "9c32a70c3ff795df"
+        ],
+        "x": 1485,
+        "y": 820,
+        "wires": [
+            [
+                "4fc671f323c34482"
+            ]
+        ]
+    },
+    {
+        "id": "4fc671f323c34482",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1640,
+        "y": 740,
+        "wires": [
+            [
+                "94e6e52d98c940c8",
+                "0c58f47005deb3be"
+            ]
+        ]
+    },
+    {
+        "id": "0c58f47005deb3be",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1640,
+        "y": 780,
+        "wires": [
+            [
+                "9c7938481aafbc02",
+                "f02619c707878500"
+            ]
+        ]
+    },
+    {
+        "id": "f02619c707878500",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1640,
+        "y": 820,
+        "wires": [
+            [
+                "acab648673c68717",
+                "598e4162ea0bf0a9"
+            ]
+        ]
+    },
+    {
+        "id": "598e4162ea0bf0a9",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1640,
+        "y": 860,
+        "wires": [
+            [
+                "934d81c0af440f93"
+            ]
+        ]
+    },
+    {
+        "id": "44b6f97ea864b8c8",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 91",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1285,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "37ab91386018a03a",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 92",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1295,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "50a3250b0f36f9eb",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 93",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1295,
+        "y": 1860,
+        "wires": []
+    },
+    {
+        "id": "a9ce2541d8f68389",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 94",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1325,
+        "y": 2160,
+        "wires": []
+    },
+    {
+        "id": "0bea4d389e60cf04",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 95",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1365,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "343174cabb160b76",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 96",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1365,
+        "y": 2740,
+        "wires": []
+    },
+    {
+        "id": "1434c0a260a08eae",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 97",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1375,
+        "y": 3060,
+        "wires": []
+    },
+    {
+        "id": "e74fb988c3207699",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 98",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1395,
+        "y": 3440,
+        "wires": []
+    },
+    {
+        "id": "6ef7f3d3beb84ee6",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 99",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1385,
+        "y": 3720,
+        "wires": []
+    },
+    {
+        "id": "7b2e22518fa79643",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 100",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1385,
+        "y": 4020,
+        "wires": []
+    },
+    {
+        "id": "d796900195a577f0",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 101",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1375,
+        "y": 4280,
+        "wires": []
+    },
+    {
+        "id": "5a74c87c86e2e991",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 102",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1385,
+        "y": 4540,
+        "wires": []
+    },
+    {
+        "id": "49786e290135343c",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "consultaUltimoRegWellData",
+        "func": "let perforadorNro = msg.perforadorNro;\nif(perforadorNro === 'PAE001'){\n    perforadorNro = 1;\n}\nconst query = `SELECT TOP 1 *\n    FROM wellData wd\n    WHERE wd.perforador = ${perforadorNro} \n    ORDER BY fecha DESC;\n `;\n\nmsg.payload = query;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1540,
+        "y": 460,
+        "wires": [
+            [
+                "f48d551ec5dfe31b",
+                "c014c141c2286c55"
+            ]
+        ]
+    },
+    {
+        "id": "f48d551ec5dfe31b",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 1760,
+        "y": 460,
+        "wires": [
+            [
+                "8d0f2806c7152352",
+                "28d07ade4723676f"
+            ]
+        ]
+    },
+    {
+        "id": "8d0f2806c7152352",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "verificarActualizacion",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst perforador = global.get(perforadorNro);\nconst hsBomba1 = perforador.hsBomba1;\nconst hsBomba2 = perforador.hsBomba2;\nconst hsBomba3 = perforador.hsBomba3; \n\nconst factu = perforador.factu;\n\nlet actualizaHsBomba1 = false;\nlet actualizaHsBomba2 = false;\nlet actualizaHsBomba3 = false;\n\n\nconst ultimoRegWellData = msg.payload;\n//const ultimoRegWellData = msg.payload?.recordsets[0];\n\nif (ultimoRegWellData && ultimoRegWellData.length > 0) {\n    let d = ultimoRegWellData[0];\n    \n    const inicio = new Date(d.fecha);\n    const fin = new Date(factu);\n    const diferenciaMs = fin.getTime() - inicio.getTime();\n    const diferenciaHoras = parseFloat((diferenciaMs / (1000 * 60 * 60)).toFixed(1));\n\n    const diffHsBomba1 = Math.abs(parseFloat((hsBomba1 - d.hsBomba1).toFixed(1)));\n    if (diffHsBomba1 >= 0 && diffHsBomba1 <= diferenciaHoras) {\n        actualizaHsBomba1 = true;\n    }\n    const diffHsBomba2 = Math.abs(parseFloat((hsBomba2 - d.hsBomba2).toFixed(1)));\n    if (diffHsBomba2 >= 0 && diffHsBomba2 <= diferenciaHoras) {\n        actualizaHsBomba2 = true;\n    }\n    const diffHsBomba3 = Math.abs(parseFloat((hsBomba3 - d.hsBomba3).toFixed(1)));\n    if (diffHsBomba3 >= 0 && diffHsBomba3 <= diferenciaHoras) {\n        actualizaHsBomba3 = true;\n    }\n    msg.inicio = inicio;\n    msg.fin = fin;\n    msg.diferenciaHoras = diferenciaHoras;\n    msg.diffHsBomba1 = diffHsBomba1;\n    msg.diffHsBomba2 = diffHsBomba2;\n    msg.diffHsBomba3 = diffHsBomba3;\n    msg.factu = factu;\n}\n\nmsg.payload = {\n    actualizaHsBomba1: actualizaHsBomba1,\n    actualizaHsBomba2: actualizaHsBomba2,\n    actualizaHsBomba3: actualizaHsBomba3\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1960,
+        "y": 460,
+        "wires": [
+            [
+                "4cb2341ee72fdb94",
+                "f3ccb6f9afbc0587"
+            ]
+        ]
+    },
+    {
+        "id": "4cb2341ee72fdb94",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 617",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2150,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "28d07ade4723676f",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 618",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1950,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "f3ccb6f9afbc0587",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "actualizaHsPiezas",
+        "func": "let perforador = global.get(msg.perforadorNro);\nlet perforadorNro = msg.perforadorNro;\nlet hsBomba1 = perforador.hsBomba1;\nlet hsBomba2 = perforador.hsBomba2;\nlet hsBomba3 = perforador.hsBomba3;\n\nconst actualizaHorasBomba1 = msg.payload.actualizaHsBomba1;\nconst actualizaHorasBomba2 = msg.payload.actualizaHsBomba2;\nconst actualizaHorasBomba3 = msg.payload.actualizaHsBomba3;\n\nlet queries = [];\n\nif(perforadorNro === 'PAE001'){\n    perforadorNro = '001';\n}\n\nif (actualizaHorasBomba1) {\n    queries.push(\n        `update [perforadorPieza] set hs=hs+(${hsBomba1}-hsInst),hsInst=${hsBomba1} where baja=0 and enUso=1 and bomba=1 and perforador='${perforadorNro}' and ${hsBomba1}>hsInst;`,\n        `update [perforadorPieza] set hs=${hsBomba1}+hs, hsInst=${hsBomba1} where baja=0 and enUso=1 and bomba=1 and perforador='${perforadorNro}' and FLOOR(${hsBomba1})<FLOOR(hsInst) AND ${hsBomba1}>0;`\n    );\n}\n\nif (actualizaHorasBomba2) {\n    queries.push(\n        `update [perforadorPieza] set hs=hs+(${hsBomba2}-hsInst),hsInst=${hsBomba2} where baja=0 and enUso=1 and bomba=2 and perforador='${perforadorNro}' and ${hsBomba2}>hsInst;`,\n        `update [perforadorPieza] set hs=${hsBomba2}+hs, hsInst=${hsBomba2} where baja=0 and enUso=1 and bomba=2 and perforador='${perforadorNro}' and FLOOR(${hsBomba2})<FLOOR(hsInst) AND ${hsBomba2}>0;`\n    );\n}\n\nif (actualizaHorasBomba3 && perforadorNro !== '156' && perforadorNro !== '173' \n    && perforadorNro !== '160' && perforadorNro !== '174') {\n    queries.push(\n        `update [perforadorPieza] set hs=hs+(${hsBomba3}-hsInst),hsInst=${hsBomba3} where baja=0 and enUso=1 and bomba=3 and perforador='${perforadorNro}' and ${hsBomba3}>hsInst;`,\n        `update [perforadorPieza] set hs=${hsBomba3}+hs, hsInst=${hsBomba3} where baja=0 and enUso=1 and bomba=3 and perforador='${perforadorNro}' and FLOOR(${hsBomba3})<FLOOR(hsInst) AND ${hsBomba3}>0;`\n    );\n}\n\nif (queries.length > 0){\n    // Combinar las consultas en un solo bloque SQL\n    msg.payload = `BEGIN ${queries.join(\" \")} END`;\n    msg.actualizaLogHsPiezas = true;\n}\n\nmsg.actualizaHsBomba1 = actualizaHorasBomba1;\nmsg.actualizaHsBomba2 = actualizaHorasBomba2;\nmsg.actualizaHsBomba3 = actualizaHorasBomba3;\nmsg.perforadorNro = msg.perforadorNro;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2210,
+        "y": 460,
+        "wires": [
+            [
+                "a5c47f7e2863b1d1",
+                "1114c11a0957dc86",
+                "c238d0c7f0cd593a"
+            ]
+        ]
+    },
+    {
+        "id": "ab0b7ef5ba3904e7",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2960,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1114c11a0957dc86",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 2200,
+        "y": 520,
+        "wires": [
+            [
+                "39f9c98902ac4441"
+            ]
+        ]
+    },
+    {
+        "id": "ab7391524edc2ca0",
+        "type": "MSSQL",
+        "z": "4ec669b8a2a4ef34",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2500,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bd4539c62802f3d7",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 270",
+        "links": [
+            "724a934c2a873de1",
+            "fc815385413ef3ed",
+            "f520ed1f2c08456d",
+            "d2c4ab416c30c4c0",
+            "75bcf521918ac540",
+            "67b6af0221db6353",
+            "48652078c34e9cc9",
+            "a055db194b533549",
+            "caf7413d8a135c28",
+            "f5af41ed29cd2523",
+            "5b7273828da3cdfc",
+            "f8337e0b97728611",
+            "9878470c0e4beaa7",
+            "4b7000b111cd86ae"
+        ],
+        "x": 1495,
+        "y": 560,
+        "wires": [
+            [
+                "49786e290135343c"
+            ]
+        ]
+    },
+    {
+        "id": "fc815385413ef3ed",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 139",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1285,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "f520ed1f2c08456d",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 140",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1295,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "d2c4ab416c30c4c0",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 141",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1295,
+        "y": 1800,
+        "wires": []
+    },
+    {
+        "id": "75bcf521918ac540",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 142",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1325,
+        "y": 2100,
+        "wires": []
+    },
+    {
+        "id": "67b6af0221db6353",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 143",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1365,
+        "y": 2400,
+        "wires": []
+    },
+    {
+        "id": "48652078c34e9cc9",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 144",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1365,
+        "y": 2680,
+        "wires": []
+    },
+    {
+        "id": "a055db194b533549",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 145",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1375,
+        "y": 3000,
+        "wires": []
+    },
+    {
+        "id": "caf7413d8a135c28",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 146",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1395,
+        "y": 3380,
+        "wires": []
+    },
+    {
+        "id": "f5af41ed29cd2523",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 147",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1385,
+        "y": 3660,
+        "wires": []
+    },
+    {
+        "id": "5b7273828da3cdfc",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 148",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1385,
+        "y": 3960,
+        "wires": []
+    },
+    {
+        "id": "f8337e0b97728611",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 149",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1375,
+        "y": 4220,
+        "wires": []
+    },
+    {
+        "id": "9878470c0e4beaa7",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 150",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1385,
+        "y": 4480,
+        "wires": []
+    },
+    {
+        "id": "c014c141c2286c55",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 620",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1730,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "e5e940b84032ff13",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 621",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2510,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "c238d0c7f0cd593a",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 622",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2390,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "677b88eabe711b98",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 623",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2950,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "148778e1c30f6c3f",
+        "type": "link in",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link in 272",
+        "links": [
+            "4daf143eee17f098"
+        ],
+        "x": 225,
+        "y": 4680,
+        "wires": [
+            [
+                "a8936996be115d61"
+            ]
+        ]
+    },
+    {
+        "id": "a8936996be115d61",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "parametros 171",
+        "func": "let horaD = global.get(\"horaDesde\");\nlet horaH = global.get(\"horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n         {\n            \"id\": \"Spare\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n        {\n            \"id\": \"Spare2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Time.Minute.1\"\n        },\n\n        {\n            \"id\": \"PumpSpm\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n        {\n            \"id\": \"PumpSpm2\",\n            \"mode\": \"Last\",\n            \"unitId\": \"CountRate.Strokes per minute.1\"\n        },\n         {\n            \"id\": \"PitVolume11\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Volume.Barrel.4\"\n        }\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 120,\n    \"isDifferential\": true\n}\nlet job = global.get(\"171\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 4680,
+        "wires": [
+            [
+                "52ce68efac769bb2"
+            ]
+        ]
+    },
+    {
+        "id": "52ce68efac769bb2",
+        "type": "change",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 4680,
+        "wires": [
+            [
+                "e29d81152e12e7c6"
+            ]
+        ]
+    },
+    {
+        "id": "e29d81152e12e7c6",
+        "type": "http request",
+        "z": "4ec669b8a2a4ef34",
+        "name": "PostInfo171",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 800,
+        "y": 4680,
+        "wires": [
+            [
+                "2aa0d3ca90c7de1a",
+                "3b64f68423889f7e"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "2aa0d3ca90c7de1a",
+        "type": "debug",
+        "z": "4ec669b8a2a4ef34",
+        "name": "debug 647",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 4760,
+        "wires": []
+    },
+    {
+        "id": "3b64f68423889f7e",
+        "type": "function",
+        "z": "4ec669b8a2a4ef34",
+        "name": "SetDatosJobs",
+        "func": "let jobOld = global.get(\"171\");\nlet fecAct = msg.payload.timeRecords[0].timestamp;\nlet data = msg.payload.timeRecords[0].values;\nlet hs1Aux=0;\nlet hs2Aux = 0;\nlet hs1=0;\nlet hs2=0;\nlet on1=0;\nlet on2=0;\nlet actualiza=false;\nlet lts = 0;\n\n\ntry {\n    hs1Aux = (data[0][1].toFixed(1) * 1)/60;\n      // @ts-ignore\n    hs1 = hs1Aux.toFixed(1) * 1;\n}catch{}\ntry {\n    hs2Aux = (data[1][1].toFixed(1) * 1) / 60;\n    // @ts-ignore\n    hs2 = hs2Aux.toFixed(1) * 1;\n} catch { }\n\ntry {\n    on1 = data[2][1].toFixed(0) * 1;\n} catch { }\ntry {\n    on2 = data[3][1].toFixed(0) * 1;\n} catch { }\ntry {\n    lts = data[4][1].toFixed(3) * 159;\n} catch { }\n\n\nif ( hs1 != 0 || hs2 != 0){\n    actualiza=true;\n    let job = {\n        \"jobId\": jobOld.jobId,\n        \"name\": jobOld.name,\n        \"hsBomba1\": hs1,\n        \"hsBomba2\": hs2,\n        \"factu\": fecAct,\n        \"on1\": on1,\n        \"on2\": on2,\n        \"ltsTanque\": lts\n\n    };\n    global.set(\"171\", job);\n}\nmsg.payload=actualiza;\nmsg.perforadorNro = '171';\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 4680,
+        "wires": [
+            [
+                "7b0e8a9d812f83fd",
+                "2aa0d3ca90c7de1a"
+            ]
+        ]
+    },
+    {
+        "id": "7b0e8a9d812f83fd",
+        "type": "switch",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1260,
+        "y": 4680,
+        "wires": [
+            [],
+            [
+                "89e6b738f9d069e3",
+                "4b7000b111cd86ae"
+            ]
+        ]
+    },
+    {
+        "id": "89e6b738f9d069e3",
+        "type": "delay",
+        "z": "4ec669b8a2a4ef34",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1270,
+        "y": 4740,
+        "wires": [
+            [
+                "9c32a70c3ff795df"
+            ]
+        ]
+    },
+    {
+        "id": "4b7000b111cd86ae",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 162",
+        "mode": "link",
+        "links": [
+            "bd4539c62802f3d7"
+        ],
+        "x": 1395,
+        "y": 4680,
+        "wires": []
+    },
+    {
+        "id": "9c32a70c3ff795df",
+        "type": "link out",
+        "z": "4ec669b8a2a4ef34",
+        "name": "link out 163",
+        "mode": "link",
+        "links": [
+            "64422f87befd129d"
+        ],
+        "x": 1395,
+        "y": 4740,
+        "wires": []
+    },
+    {
+        "id": "8c922d743060092b",
+        "type": "MSSQL-CN",
+        "name": "LOCAL SGIPAPP",
+        "server": "localhost",
+        "encyption": false,
+        "database": "DMS-Test"
+    }
+]

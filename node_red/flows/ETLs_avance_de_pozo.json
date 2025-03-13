@@ -1,0 +1,2982 @@
+[
+    {
+        "id": "fee27221764bde5a",
+        "type": "tab",
+        "label": "ETls Avance de Pozo",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "4540ba9bfc4f6540",
+        "type": "inject",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 340,
+        "wires": [
+            [
+                "392021861ce57b94",
+                "98b95468f0ca585f"
+            ]
+        ]
+    },
+    {
+        "id": "25cb2498bec24338",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "GetToken",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/tokens/token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "ApplicationID",
+                "valueType": "other",
+                "valueValue": "E4FC9AEB-0CF9-481C-99F6-A4FA8A5D11C9"
+            }
+        ],
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "6e9793f0f579aec7",
+                "2cf6798bd3350455"
+            ]
+        ]
+    },
+    {
+        "id": "8ce4bd177bc0a5db",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo165",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 560,
+        "wires": [
+            [
+                "5e3e437a437fa2de",
+                "b38be5fd90afe7bd"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "6e9793f0f579aec7",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "saveToken",
+        "func": "global.set(\"token\", msg.payload.token);\n//return msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "35391ff7c28c5007",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "ETLS Avance de Pozo WELLDATA",
+        "info": "# Alcances\n\n 1. Consulta Nivel de Trepano para cada perforador\n 2. Se almacena el nivel de trepano en la base de datos\n",
+        "x": 180,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "0a21afb6b0f7183b",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 165",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_165\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\"+job.jobId+\"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 560,
+        "wires": [
+            [
+                "ed68050c9455e841"
+            ]
+        ]
+    },
+    {
+        "id": "2b2a89a20250a119",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "horaDesde",
+        "func": "flow.set(\"etl_avance_pozo_horaDesde\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98b95468f0ca585f",
+        "type": "delay",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 340,
+        "y": 380,
+        "wires": [
+            [
+                "1f792879e5bcddfd"
+            ]
+        ]
+    },
+    {
+        "id": "e9abc8b02a7f74f5",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "horaHasta",
+        "func": "flow.set(\"etl_avance_pozo_horaHasta\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 380,
+        "wires": [
+            [
+                "3c219d411361ee47"
+            ]
+        ]
+    },
+    {
+        "id": "49f09db1e9d955b5",
+        "type": "inject",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "900",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "25cb2498bec24338"
+            ]
+        ]
+    },
+    {
+        "id": "cc873ce8e61d59f1",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "GetJobs",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://data.welldata.net/api/v1/jobs?jobStatus=ActiveJobs",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 440,
+        "y": 200,
+        "wires": [
+            [
+                "4028585c527ba4cb",
+                "bbaefdbc31f004f5"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "58b3e47837bdafa3",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "setup",
+        "func": "msg.token = global.get(\"token\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 200,
+        "wires": [
+            [
+                "cc873ce8e61d59f1"
+            ]
+        ]
+    },
+    {
+        "id": "4028585c527ba4cb",
+        "type": "split",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 610,
+        "y": 200,
+        "wires": [
+            [
+                "85a56e4ac335b3e1"
+            ]
+        ]
+    },
+    {
+        "id": "85a56e4ac335b3e1",
+        "type": "split",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 770,
+        "y": 200,
+        "wires": [
+            [
+                "da4f0ce0771804ce"
+            ]
+        ]
+    },
+    {
+        "id": "da4f0ce0771804ce",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "jobInfo",
+        "func": "let id = msg.payload.id;\nlet name = msg.payload.name;\nlet rigNameAux = msg.payload.assetInfoList[0].name;\nlet rigName = rigNameAux.replace(' ', '');\nlet job = {\n   \"jobId\": id,\n   \"idPozo\": null,\n   \"name\": name,\n   \"bitPosition\":0,\n};\nglobal.set('etl_avance_pozo_'+rigName,job)\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ed68050c9455e841",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 560,
+        "wires": [
+            [
+                "8ce4bd177bc0a5db"
+            ]
+        ]
+    },
+    {
+        "id": "5c7e451320b1b998",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-165",
+        "info": "",
+        "x": 140,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "df4c419a36728bea",
+        "type": "inject",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "58b3e47837bdafa3"
+            ]
+        ]
+    },
+    {
+        "id": "6be0ae34ef7a0713",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "actualizaEtlsLog",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst perforador = global.get(`etl_avance_pozo_${perforadorNro}`);\nconst nivelTrepano = perforador.bitPosition;\nconst profundidad = perforador.holeDepth;\n\nmsg.payload = `\n    BEGIN TRANSACTION;\n\n    -- Insertar nuevo avance del pozo\n    INSERT INTO [dbo].[avances_pozo] \n    ([pozo_id], [nivel_trepano], [velocidad], [curva_de_avance], [profundidad]) \n    VALUES (${perforador.idPozo}, ${nivelTrepano}, 0, 0, ${profundidad});\n\n    -- Actualizar pozo actual a \"en progreso\"\n    UPDATE [dbo].[pozos]\n    SET en_progreso = 1, actualizado_el = GETDATE()\n    WHERE id = ${perforador.idPozo} AND \n    perforador_locacion_id = ${perforador.perforadorLocacionId};\n\n    -- Actualizar otros pozos a \"no en progreso\"\n    UPDATE [dbo].[pozos]\n    SET en_progreso = 0, actualizado_el = GETDATE()\n    WHERE id != ${perforador.idPozo} AND \n    perforador_locacion_id = ${perforador.perforadorLocacionId};\n\n    COMMIT;\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2180,
+        "y": 560,
+        "wires": [
+            [
+                "ecf47be6524b63ef",
+                "3945dac301336588"
+            ]
+        ]
+    },
+    {
+        "id": "2cf6798bd3350455",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 239",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "0f3e671fa615d029",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo156",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 820,
+        "wires": [
+            [
+                "69e9d7a6e6b8fe78",
+                "46a5ce5bb5a180ef"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "8362aa7e4a3a2412",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 156",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_156\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 820,
+        "wires": [
+            [
+                "d85728b81a7b1d08"
+            ]
+        ]
+    },
+    {
+        "id": "d85728b81a7b1d08",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 820,
+        "wires": [
+            [
+                "0f3e671fa615d029"
+            ]
+        ]
+    },
+    {
+        "id": "4f7d536e3970f4ca",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-156",
+        "info": "",
+        "x": 140,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "69e9d7a6e6b8fe78",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_156\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '156';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 820,
+        "wires": [
+            [
+                "fdeceede83083f80"
+            ]
+        ]
+    },
+    {
+        "id": "5c23f25b55dba4b0",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 193",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 125,
+        "y": 820,
+        "wires": [
+            [
+                "8362aa7e4a3a2412"
+            ]
+        ]
+    },
+    {
+        "id": "3c219d411361ee47",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out Perforadores",
+        "mode": "link",
+        "links": [
+            "5c23f25b55dba4b0",
+            "778d107375174773",
+            "42a1e2b31ed0bdf1",
+            "7c585b4a27762896",
+            "6654ec065aa1c41f",
+            "eede0fd94c9aa7e6",
+            "2ca024ea01684762",
+            "23388ccbcf31ca00",
+            "017d8f117a349f00",
+            "d9a8be73ab6f40e6",
+            "b9aed31a3daeade2",
+            "66f30637453514a6",
+            "676c3f4646f6465f",
+            "2c7587c11fd09362",
+            "869e66db1c56c7ec",
+            "f89f58095efe2d64"
+        ],
+        "x": 925,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "0df539d1a6cc0478",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo 173",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 1100,
+        "wires": [
+            [
+                "efe960ce52299ea1",
+                "415f381746db3177"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "299d22361c69ab78",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 173",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_173\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1100,
+        "wires": [
+            [
+                "3bc5ad4a2452e5ca"
+            ]
+        ]
+    },
+    {
+        "id": "3bc5ad4a2452e5ca",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 1100,
+        "wires": [
+            [
+                "0df539d1a6cc0478"
+            ]
+        ]
+    },
+    {
+        "id": "2334071ab5036858",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-173",
+        "info": "",
+        "x": 140,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "efe960ce52299ea1",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_173\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '173';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 1100,
+        "wires": [
+            [
+                "c50a67fd042f18cd"
+            ]
+        ]
+    },
+    {
+        "id": "eede0fd94c9aa7e6",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 194",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 125,
+        "y": 1100,
+        "wires": [
+            [
+                "299d22361c69ab78"
+            ]
+        ]
+    },
+    {
+        "id": "9802195617032a80",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo160",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 1380,
+        "wires": [
+            [
+                "1f0cfd74b6d07ac5",
+                "02efc62264bfc982"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "18a84ed2ccc7da0f",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 160",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_160\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1380,
+        "wires": [
+            [
+                "19d7955fd675e50c"
+            ]
+        ]
+    },
+    {
+        "id": "19d7955fd675e50c",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 1380,
+        "wires": [
+            [
+                "9802195617032a80"
+            ]
+        ]
+    },
+    {
+        "id": "2c462e637da54c17",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-160",
+        "info": "",
+        "x": 140,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "1f0cfd74b6d07ac5",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs 160",
+        "func": "const etlName = \"etl_avance_pozo_160\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '160';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 1380,
+        "wires": [
+            [
+                "14aa69a7636a7a3c"
+            ]
+        ]
+    },
+    {
+        "id": "2ca024ea01684762",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 195",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 125,
+        "y": 1380,
+        "wires": [
+            [
+                "18a84ed2ccc7da0f"
+            ]
+        ]
+    },
+    {
+        "id": "656a97e740213d13",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_170\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '170';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 1700,
+        "wires": [
+            [
+                "4aa079ac3a529096"
+            ]
+        ]
+    },
+    {
+        "id": "60c5a84040f31953",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo170",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 670,
+        "y": 1700,
+        "wires": [
+            [
+                "656a97e740213d13",
+                "d29dd279b8ea15db"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "8644ab227f0cc763",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_170\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 1700,
+        "wires": [
+            [
+                "c5722670d3ff5d5f"
+            ]
+        ]
+    },
+    {
+        "id": "c5722670d3ff5d5f",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1700,
+        "wires": [
+            [
+                "60c5a84040f31953"
+            ]
+        ]
+    },
+    {
+        "id": "c85112d6a73e9961",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-170",
+        "info": "",
+        "x": 140,
+        "y": 1640,
+        "wires": []
+    },
+    {
+        "id": "d9a8be73ab6f40e6",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 196",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 1700,
+        "wires": [
+            [
+                "8644ab227f0cc763"
+            ]
+        ]
+    },
+    {
+        "id": "2e0c7c9b729686e5",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_PAE001\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = 'PAE001';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1980,
+        "wires": [
+            [
+                "f76ebc68522085b9"
+            ]
+        ]
+    },
+    {
+        "id": "f564f9c92d18c6af",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo001",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 670,
+        "y": 1980,
+        "wires": [
+            [
+                "2e0c7c9b729686e5",
+                "021fe63bce271705"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "1ce166c0f89f2dfc",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_PAE001\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 1980,
+        "wires": [
+            [
+                "a2c4ae68dd50eb9a"
+            ]
+        ]
+    },
+    {
+        "id": "a2c4ae68dd50eb9a",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1980,
+        "wires": [
+            [
+                "f564f9c92d18c6af"
+            ]
+        ]
+    },
+    {
+        "id": "2393525272745c8e",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-001",
+        "info": "",
+        "x": 140,
+        "y": 1920,
+        "wires": []
+    },
+    {
+        "id": "42a1e2b31ed0bdf1",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 197",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 1980,
+        "wires": [
+            [
+                "1ce166c0f89f2dfc"
+            ]
+        ]
+    },
+    {
+        "id": "46a5ce5bb5a180ef",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 240",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "5e3e437a437fa2de",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 241",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "2c27569c42073251",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_168\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '168';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 2260,
+        "wires": [
+            [
+                "5647975ffd29b61b"
+            ]
+        ]
+    },
+    {
+        "id": "a72c9a4e8fa31db8",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo168",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 2260,
+        "wires": [
+            [
+                "2c27569c42073251",
+                "9be00c49a334f168"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "c14f408472ddb88d",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 168",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_168\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 2260,
+        "wires": [
+            [
+                "3a4727025a8482e2"
+            ]
+        ]
+    },
+    {
+        "id": "3a4727025a8482e2",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 2260,
+        "wires": [
+            [
+                "a72c9a4e8fa31db8"
+            ]
+        ]
+    },
+    {
+        "id": "0a4d13bf1c2a967f",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-168",
+        "info": "",
+        "x": 140,
+        "y": 2220,
+        "wires": []
+    },
+    {
+        "id": "6654ec065aa1c41f",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 198",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 2260,
+        "wires": [
+            [
+                "c14f408472ddb88d"
+            ]
+        ]
+    },
+    {
+        "id": "c57a0a400a913d91",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo163",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 2520,
+        "wires": [
+            [
+                "fd39e6e5420f24a5",
+                "ef52fb0dd412a45f"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "85c041e1ee75c071",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_163\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 2520,
+        "wires": [
+            [
+                "8b292b5d63f457de"
+            ]
+        ]
+    },
+    {
+        "id": "8b292b5d63f457de",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 2520,
+        "wires": [
+            [
+                "c57a0a400a913d91"
+            ]
+        ]
+    },
+    {
+        "id": "4db84d5e7775cfda",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-163",
+        "info": "",
+        "x": 140,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "676c3f4646f6465f",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 199",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 2520,
+        "wires": [
+            [
+                "85c041e1ee75c071"
+            ]
+        ]
+    },
+    {
+        "id": "90caac0f8ecbb405",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_166\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '166';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 2780,
+        "wires": [
+            [
+                "6c4bd875bfb51012"
+            ]
+        ]
+    },
+    {
+        "id": "5da53add43c3684f",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo166",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 2780,
+        "wires": [
+            [
+                "90caac0f8ecbb405",
+                "e9901f8107a07943"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "01491949a17b145e",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 166",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_166\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 2780,
+        "wires": [
+            [
+                "b851c66d278b742d"
+            ]
+        ]
+    },
+    {
+        "id": "b851c66d278b742d",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 2780,
+        "wires": [
+            [
+                "5da53add43c3684f"
+            ]
+        ]
+    },
+    {
+        "id": "e7de3dad67bfab1b",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-166",
+        "info": "",
+        "x": 140,
+        "y": 2720,
+        "wires": []
+    },
+    {
+        "id": "7c585b4a27762896",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 200",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 2780,
+        "wires": [
+            [
+                "01491949a17b145e"
+            ]
+        ]
+    },
+    {
+        "id": "d29dd279b8ea15db",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 242",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "8294879cdf3f7b09",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_167\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '167';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 3040,
+        "wires": [
+            [
+                "2bc41a4e8d23b6e6"
+            ]
+        ]
+    },
+    {
+        "id": "98f92837bd9f64d9",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo167",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 710,
+        "y": 3040,
+        "wires": [
+            [
+                "8294879cdf3f7b09",
+                "d46d02fbda68f26f"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "2a3b298d12724c0c",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 167",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_167\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 3040,
+        "wires": [
+            [
+                "884aae247b3dee4d"
+            ]
+        ]
+    },
+    {
+        "id": "884aae247b3dee4d",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 3040,
+        "wires": [
+            [
+                "98f92837bd9f64d9"
+            ]
+        ]
+    },
+    {
+        "id": "825ccc9620d7f433",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-167",
+        "info": "",
+        "x": 140,
+        "y": 2980,
+        "wires": []
+    },
+    {
+        "id": "b9aed31a3daeade2",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 201",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 3040,
+        "wires": [
+            [
+                "2a3b298d12724c0c"
+            ]
+        ]
+    },
+    {
+        "id": "5dfa9d32eeffe861",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_169\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '169';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 3280,
+        "wires": [
+            [
+                "0f88e5094cc2f5d2"
+            ]
+        ]
+    },
+    {
+        "id": "8e554f7a5b8649d4",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo169",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 3280,
+        "wires": [
+            [
+                "5dfa9d32eeffe861",
+                "1d722b21caacf893"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "25a5469306bca720",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_169\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 3280,
+        "wires": [
+            [
+                "ddf00933e141e088"
+            ]
+        ]
+    },
+    {
+        "id": "ddf00933e141e088",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 3280,
+        "wires": [
+            [
+                "8e554f7a5b8649d4"
+            ]
+        ]
+    },
+    {
+        "id": "7fc9388ab2734735",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-169",
+        "info": "",
+        "x": 140,
+        "y": 3220,
+        "wires": []
+    },
+    {
+        "id": "23388ccbcf31ca00",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 202",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 3280,
+        "wires": [
+            [
+                "25a5469306bca720"
+            ]
+        ]
+    },
+    {
+        "id": "e9901f8107a07943",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 243",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 2860,
+        "wires": []
+    },
+    {
+        "id": "d46d02fbda68f26f",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 244",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 3120,
+        "wires": []
+    },
+    {
+        "id": "1d722b21caacf893",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 245",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 3360,
+        "wires": []
+    },
+    {
+        "id": "415f381746db3177",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 246",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "02efc62264bfc982",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 247",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "021fe63bce271705",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 248",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2040,
+        "wires": []
+    },
+    {
+        "id": "9be00c49a334f168",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 249",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 2340,
+        "wires": []
+    },
+    {
+        "id": "4b70479142f29c9a",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "d": true,
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_161\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '161';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 4040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6db0718808339862",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "d": true,
+        "name": "PostInfo161",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 670,
+        "y": 4040,
+        "wires": [
+            [
+                "4b70479142f29c9a",
+                "bcb4f2f36352c07b"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "a847c6a3743ebe80",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "d": true,
+        "name": "parametros 161",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_161\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 4040,
+        "wires": [
+            [
+                "a3c57027d56dc9dd"
+            ]
+        ]
+    },
+    {
+        "id": "a3c57027d56dc9dd",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "d": true,
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 4040,
+        "wires": [
+            [
+                "6db0718808339862"
+            ]
+        ]
+    },
+    {
+        "id": "36d29cba57200910",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-161 (No viene ya como perforador activo)",
+        "info": "",
+        "x": 250,
+        "y": 3980,
+        "wires": []
+    },
+    {
+        "id": "bcb4f2f36352c07b",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "d": true,
+        "name": "debug 250",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 4120,
+        "wires": []
+    },
+    {
+        "id": "e4f6b03954b88902",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo174",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 3540,
+        "wires": [
+            [
+                "0bba7a06023ff19e",
+                "1ed2ba5a0d0ec926"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "09b433ba87863d2f",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 174",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_174\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 3540,
+        "wires": [
+            [
+                "f7fd13abb95f922a"
+            ]
+        ]
+    },
+    {
+        "id": "f7fd13abb95f922a",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 3540,
+        "wires": [
+            [
+                "e4f6b03954b88902"
+            ]
+        ]
+    },
+    {
+        "id": "d7421f7367900271",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "PAE-174",
+        "info": "",
+        "x": 140,
+        "y": 3480,
+        "wires": []
+    },
+    {
+        "id": "017d8f117a349f00",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 203",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 3540,
+        "wires": [
+            [
+                "09b433ba87863d2f"
+            ]
+        ]
+    },
+    {
+        "id": "0bba7a06023ff19e",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 251",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 3620,
+        "wires": []
+    },
+    {
+        "id": "1ed2ba5a0d0ec926",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_174\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '174';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 3540,
+        "wires": [
+            [
+                "a586c496b0617e92"
+            ]
+        ]
+    },
+    {
+        "id": "fd39e6e5420f24a5",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 252",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 2580,
+        "wires": []
+    },
+    {
+        "id": "b38be5fd90afe7bd",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_165\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth=0;\nlet bitPosition=0;\n\nlet actualiza=false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n}catch{}\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0){\n    actualiza=true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '165';\nmsg.payload=actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 560,
+        "wires": [
+            [
+                "2f357694be59455c"
+            ]
+        ]
+    },
+    {
+        "id": "ef52fb0dd412a45f",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_163\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '163';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 2520,
+        "wires": [
+            [
+                "a8a078bc737f81fe"
+            ]
+        ]
+    },
+    {
+        "id": "778d107375174773",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 204",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 125,
+        "y": 560,
+        "wires": [
+            [
+                "0a21afb6b0f7183b"
+            ]
+        ]
+    },
+    {
+        "id": "3945dac301336588",
+        "type": "MSSQL",
+        "z": "fee27221764bde5a",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2380,
+        "y": 560,
+        "wires": [
+            [
+                "47bd219c2dcc64c5"
+            ]
+        ]
+    },
+    {
+        "id": "392021861ce57b94",
+        "type": "moment",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "topic": "",
+        "input": "payload",
+        "inputType": "msg",
+        "inTz": "ETC/UTC",
+        "adjAmount": "20",
+        "adjType": "minutes",
+        "adjDir": "subtract",
+        "format": "",
+        "locale": "es-ES",
+        "output": "payload",
+        "outputType": "msg",
+        "outTz": "Etc/GMT",
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [
+                "2b2a89a20250a119"
+            ]
+        ]
+    },
+    {
+        "id": "1f792879e5bcddfd",
+        "type": "moment",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "topic": "",
+        "input": "",
+        "inputType": "date",
+        "inTz": "ETC/UTC",
+        "adjAmount": "20",
+        "adjType": "minutes",
+        "adjDir": "subtract",
+        "format": "",
+        "locale": "es-ES",
+        "output": "payload",
+        "outputType": "msg",
+        "outTz": "Etc/GMT",
+        "x": 580,
+        "y": 380,
+        "wires": [
+            [
+                "e9abc8b02a7f74f5"
+            ]
+        ]
+    },
+    {
+        "id": "9e92429cbfc3fba0",
+        "type": "switch",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1990,
+        "y": 560,
+        "wires": [
+            [
+                "3a3014cc62099e45"
+            ],
+            [
+                "6be0ae34ef7a0713"
+            ]
+        ]
+    },
+    {
+        "id": "3a3014cc62099e45",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 254",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2170,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "93924ea23b4f6025",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "consultaPozo",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst perforador = global.get(`etl_avance_pozo_${perforadorNro}`);\nconst nombrePozo = perforador.name;\nmsg.payload = `SELECT p.* FROM pozos p\nINNER JOIN planes_pozo pp ON pp.id = p.plan_pozo_id \nWHERE p.nombre_clave = '${nombrePozo}' and pp.activo = 1;`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1400,
+        "y": 560,
+        "wires": [
+            [
+                "d413566e176f1f69",
+                "e980f8c61cc84dcf"
+            ]
+        ]
+    },
+    {
+        "id": "d413566e176f1f69",
+        "type": "MSSQL",
+        "z": "fee27221764bde5a",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 1600,
+        "y": 560,
+        "wires": [
+            [
+                "4b62855046716e87",
+                "3445969ab1a7b1df"
+            ]
+        ]
+    },
+    {
+        "id": "4b62855046716e87",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 265",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1830,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "3445969ab1a7b1df",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "setDatosPozo",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst perforador = global.get(`etl_avance_pozo_${perforadorNro}`);\n//const data = msg.payload?.recordsets[0];\nconst data = msg.payload;\nlet exitePozoInDB = false;\nif(data && data.length > 0){\n    exitePozoInDB = true;\n    const id = data[0].id;\n    const perforadorLocacionId = data[0].perforador_locacion_id;\n    perforador.idPozo = id;\n    perforador.perforadorLocacionId = perforadorLocacionId;\n    perforador.planPozoId = data[0].plan_pozo_id;\n    global.set(`etl_avance_pozo_${perforadorNro}`, perforador);\n}\nmsg.payload = exitePozoInDB;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1820,
+        "y": 560,
+        "wires": [
+            [
+                "9e92429cbfc3fba0"
+            ]
+        ]
+    },
+    {
+        "id": "2f357694be59455c",
+        "type": "switch",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1210,
+        "y": 560,
+        "wires": [
+            [
+                "4381352079108772"
+            ],
+            [
+                "93924ea23b4f6025"
+            ]
+        ]
+    },
+    {
+        "id": "4381352079108772",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 266",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1390,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "e980f8c61cc84dcf",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 267",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1610,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "ecf47be6524b63ef",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 268",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2390,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "bbaefdbc31f004f5",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 269",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fdeceede83083f80",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 151",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1075,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "e245f29c53787a27",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 271",
+        "links": [
+            "fdeceede83083f80",
+            "c50a67fd042f18cd",
+            "14aa69a7636a7a3c",
+            "4aa079ac3a529096",
+            "f76ebc68522085b9",
+            "5647975ffd29b61b",
+            "a8a078bc737f81fe",
+            "6c4bd875bfb51012",
+            "2bc41a4e8d23b6e6",
+            "0f88e5094cc2f5d2",
+            "a586c496b0617e92",
+            "d82546180ad7167f"
+        ],
+        "x": 1245,
+        "y": 680,
+        "wires": [
+            [
+                "2f357694be59455c"
+            ]
+        ]
+    },
+    {
+        "id": "c50a67fd042f18cd",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 152",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1085,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "14aa69a7636a7a3c",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 153",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1085,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "4aa079ac3a529096",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 154",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1045,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "f76ebc68522085b9",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 155",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1065,
+        "y": 1980,
+        "wires": []
+    },
+    {
+        "id": "5647975ffd29b61b",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 156",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1075,
+        "y": 2260,
+        "wires": []
+    },
+    {
+        "id": "a8a078bc737f81fe",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 157",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1105,
+        "y": 2520,
+        "wires": []
+    },
+    {
+        "id": "6c4bd875bfb51012",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 158",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1105,
+        "y": 2780,
+        "wires": []
+    },
+    {
+        "id": "2bc41a4e8d23b6e6",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 159",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1115,
+        "y": 3040,
+        "wires": []
+    },
+    {
+        "id": "0f88e5094cc2f5d2",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 160",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1095,
+        "y": 3280,
+        "wires": []
+    },
+    {
+        "id": "a586c496b0617e92",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 161",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1095,
+        "y": 3540,
+        "wires": []
+    },
+    {
+        "id": "47bd219c2dcc64c5",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "actualizaNivelTrepano",
+        "func": "const perforadorNro = msg.perforadorNro;\nconst perforador = global.get(`etl_avance_pozo_${perforadorNro}`);\nconst planPozoId = perforador.planPozoId;\n\nmsg.payload = `\n    BEGIN TRANSACTION;\n\n    -- Resetear nivel_trepano a 0 de los últimos avances de pozos no activos\n    WITH UltimosAvances AS (\n        SELECT \n            ap.id\n        FROM avances_pozo ap\n        INNER JOIN pozos p\n            ON ap.pozo_id = p.id\n        WHERE p.en_progreso = 0\n          AND p.plan_pozo_id = ${planPozoId} -- Variable dinámica\n          AND ap.creado_el = (\n              SELECT MAX(ap2.creado_el)\n              FROM dbo.avances_pozo ap2\n              WHERE ap2.pozo_id = ap.pozo_id\n          )\n    )\n    UPDATE ap\n    SET ap.nivel_trepano = 0\n    FROM avances_pozo ap\n    INNER JOIN UltimosAvances ua\n        ON ap.id = ua.id;\n\n    COMMIT;\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2580,
+        "y": 560,
+        "wires": [
+            [
+                "b98fb9450fd682de"
+            ]
+        ]
+    },
+    {
+        "id": "b98fb9450fd682de",
+        "type": "MSSQL",
+        "z": "fee27221764bde5a",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2780,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2887bb06c577dd0d",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "parametros 171",
+        "func": "let horaD = flow.get(\"etl_avance_pozo_horaDesde\");\nlet horaH = flow.get(\"etl_avance_pozo_horaHasta\");\nmsg.token = global.get(\"token\");\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 1,\n    \"isDifferential\": true\n}\nlet job = global.get(\"etl_avance_pozo_171\");\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 3720,
+        "wires": [
+            [
+                "5b28ef1a0f462225"
+            ]
+        ]
+    },
+    {
+        "id": "f89f58095efe2d64",
+        "type": "link in",
+        "z": "fee27221764bde5a",
+        "name": "link in 273",
+        "links": [
+            "3c219d411361ee47"
+        ],
+        "x": 115,
+        "y": 3720,
+        "wires": [
+            [
+                "2887bb06c577dd0d"
+            ]
+        ]
+    },
+    {
+        "id": "5b28ef1a0f462225",
+        "type": "change",
+        "z": "fee27221764bde5a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "urlWellData",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 3720,
+        "wires": [
+            [
+                "3ffa3dc6c146d7cd"
+            ]
+        ]
+    },
+    {
+        "id": "3ffa3dc6c146d7cd",
+        "type": "http request",
+        "z": "fee27221764bde5a",
+        "name": "PostInfo171",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Accept",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "other",
+                "keyValue": "token",
+                "valueType": "msg",
+                "valueValue": "token"
+            }
+        ],
+        "x": 690,
+        "y": 3720,
+        "wires": [
+            [
+                "42081d581f901e46",
+                "2f6c410ce2cb2174"
+            ]
+        ],
+        "info": "{\r\n  \"attributes\": [\r\n    {\r\n      \"id\": \"Spare39\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Volume.Cubic meter.0\"\r\n    },\r\n\t{\r\n      \"id\": \"Spare59\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177397\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    },\r\n\t{\r\n      \"id\": \"RS-1342177398\",\r\n      \"mode\": \"Last\",\r\n      \"unitId\": \"Time.Hour.2\"\r\n    }\r\n  ],\r\n  \"fromTime\": \"2023-01-05T19:58:35.336Z\",\r\n  \"toTime\": \"2023-01-05T19:58:36.336Z\",\r\n  \"interval\": 1,\r\n  \"isDifferential\": true\r\n}"
+    },
+    {
+        "id": "42081d581f901e46",
+        "type": "debug",
+        "z": "fee27221764bde5a",
+        "name": "debug 648",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 3800,
+        "wires": []
+    },
+    {
+        "id": "2f6c410ce2cb2174",
+        "type": "function",
+        "z": "fee27221764bde5a",
+        "name": "SetDatosJobs",
+        "func": "const etlName = \"etl_avance_pozo_171\";\nconst jobOld = global.get(etlName);\nconst fecAct = msg.payload.timeRecords[0].timestamp;\nconst data = msg.payload.timeRecords[0].values;\nlet holeDepth = 0;\nlet bitPosition = 0;\n\nlet actualiza = false;\n\ntry {\n    holeDepth = data[0][1].toFixed(1) * 1;\n} catch { }\ntry {\n    bitPosition = data[1][1].toFixed(1) * 1;\n} catch { }\n\n\nif (holeDepth != 0 || bitPosition != 0) {\n    actualiza = true;\n    const job = {\n        \"jobId\": jobOld.jobId,\n        \"idPozo\": null,\n        \"name\": jobOld.name,\n        \"bitPosition\": bitPosition,\n        \"holeDepth\": holeDepth,\n        \"perforadorLocacionId\": null,\n        \"planPozoId\": null,\n    };\n    global.set(etlName, job);\n}\nmsg.perforadorNro = '171';\nmsg.payload = actualiza;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 3720,
+        "wires": [
+            [
+                "d82546180ad7167f"
+            ]
+        ]
+    },
+    {
+        "id": "d82546180ad7167f",
+        "type": "link out",
+        "z": "fee27221764bde5a",
+        "name": "link out 165",
+        "mode": "link",
+        "links": [
+            "e245f29c53787a27"
+        ],
+        "x": 1095,
+        "y": 3720,
+        "wires": []
+    },
+    {
+        "id": "fd385b6e268d4c83",
+        "type": "comment",
+        "z": "fee27221764bde5a",
+        "name": "DLS-171",
+        "info": "",
+        "x": 140,
+        "y": 3660,
+        "wires": []
+    },
+    {
+        "id": "8c922d743060092b",
+        "type": "MSSQL-CN",
+        "name": "LOCAL SGIPAPP",
+        "server": "localhost",
+        "encyption": false,
+        "database": "DMS-Test"
+    }
+]
