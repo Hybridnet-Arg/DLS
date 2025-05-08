@@ -25,6 +25,7 @@ const WORK_ENVS = {
   PROD: 'production',
   DEV: 'development',
   TRAINING: 'training',
+  DEMO: 'demo',
 };
 
 export const CONFIG = {

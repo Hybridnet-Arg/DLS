@@ -5,6 +5,22 @@ import { CONFIG, COOKIES } from '@/constants';
 import { authenticateWithAD } from '@/services/ldap/auth.service';
 import { parseCookies, setCookie } from 'nookies';
 
+const DEMO_USER = {
+  username: 'demo.user',
+  permisos: [
+    'CN=SCHB-DLS4170-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4169-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4167-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4163-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=DMS-Administracion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4165-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4168-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=SCHB-DLS4166-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=NQN-GRP,OU=Groups,OU=Neuquen,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+    'CN=NQN-INET,OU=Groups,OU=Neuquen,OU=Argentina,OU=Locations,DC=lam,DC=domain',
+  ],
+};
+
 const REFRESH_HOUR = 0.5;
 const EXPIRATION_HOUR = 12;
 const EXPIRATION_HOUR_BASE = 3600;
@@ -62,7 +78,13 @@ const handlerNextAuth = (req, res) =>
           }
 
           try {
-            const user = await authenticateWithAD(credentials);
+            let user;
+
+            if (CONFIG.APP_ENV === CONFIG.WORK_ENVS.DEMO) {
+              user = DEMO_USER;
+            } else {
+              user = await authenticateWithAD(credentials);
+            }
 
             setCookie(
               { res },

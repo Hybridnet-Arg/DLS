@@ -13,7 +13,9 @@
     "migrate": "prisma migrate dev",
     "reset": "prisma migrate reset",
     "seed": "prisma db seed",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: dms_sqlserver
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: 'yourStrong#Password'
+      MSSQL_PID: 'Express'
+    ports:
+      - '1433:1433'
+    volumes:
+      - ./.docker/data/sqlserver:/var/opt/mssql
+
+  adminer:
+    image: adminer
+    container_name: dms_adminer
+    ports:
+      - '8081:8080'
+    depends_on:
+      - sqlserver
