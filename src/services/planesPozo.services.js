@@ -24,6 +24,14 @@ export const getAllPlanesPozo = async (params) => {
   return data;
 };
 
+export const obtenerPlanPozoPorPerforador = async (perforadorId, params) => {
+  const { data } = await axios.get(
+    `${ENDPOINTS.PLANES_POZO.BY_PERFORADOR}/${perforadorId}`,
+    { params }
+  );
+  return data;
+};
+
 export const finalizarPlanPozo = async (payload) => {
   const { data } = await axios.put(
     `${ENDPOINTS.PLANES_POZO.FINALIZAR}`,

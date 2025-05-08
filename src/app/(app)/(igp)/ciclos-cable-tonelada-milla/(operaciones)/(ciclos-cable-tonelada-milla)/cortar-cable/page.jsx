@@ -10,7 +10,7 @@ import { COMPONENTES } from '@/constants/componentes.constant';
 import { ELEMENTOS_CICLOS_CABLE_TONELADA_MILLA } from '@/constants/elementos.contant';
 import CortarCableForm from './_components/CortarCableForm';
 import { calcularPorcentaje } from '@/utils/formatters/percentage.formatter';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/shadcn/skeleton';
 import { obtenerDesgasteCablePorPerforador } from '@/services/desgastesCable.service';
 
 export default function CortarCable() {
@@ -32,7 +32,10 @@ export default function CortarCable() {
         };
         const piezas = await getAllElementosDepositoByFilters(queryParams, {});
         const desgasteCable = await obtenerDesgasteCablePorPerforador(
-          perforadorSeleccionado?.idPerforador
+          perforadorSeleccionado?.idPerforador,
+          {
+            nombre_perforador: perforadorSeleccionado?.nombre,
+          }
         );
 
         const bobina = piezas?.length > 0 ? piezas?.[0] : {};

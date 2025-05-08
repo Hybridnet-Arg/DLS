@@ -13,6 +13,7 @@ export default async function handler(req, res) {
             pieza: true,
             diametro: true,
             marca: true,
+            modelo: true,
           },
         },
       },

@@ -5,7 +5,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function PUT(req, { params }) {
   try {
-    const { id, recambio_id } = params;
+    const { id, recambio_id } = await params;
     const uid = req.headers.get('uid');
 
     const recambio = await prisma.$transaction(

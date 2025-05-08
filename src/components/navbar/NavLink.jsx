@@ -6,7 +6,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+} from '@/components/ui/shadcn/navigation-menu';
 
 export function NavLink({
   href = '',
@@ -52,13 +52,10 @@ export function NavLink({
         <span className={spanClasses}></span>
       </Link>
     ) : (
-      <button
-        className={`${linkClasses} cursor-pointer`}
-        onClick={handleOnClick}
-      >
+      <div className={`${linkClasses} cursor-pointer`} onClick={handleOnClick}>
         {children}
         <span className={spanClasses}></span>
-      </button>
+      </div>
     );
   }
 

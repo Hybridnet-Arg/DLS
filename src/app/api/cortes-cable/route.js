@@ -2,6 +2,33 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import apiErrorHandler, { ApiError } from '@/utils/handlers/apiError.handler';
 
+/**
+ * @swagger
+ * /api/cortes-cable:
+ *   post:
+ *     tags: [Cortes de Cable]
+ *     summary: Crear un corte de cable
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               elemento_deposito_id:
+ *                 type: number
+ *                 required: true
+ *               metros_corte:
+ *                 type: number
+ *                 required: true
+ *     responses:
+ *       200:
+ *         description: Corte de cable creado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 export async function POST(req) {
   try {
     const { elemento_deposito_id, ...data } = await req.json();

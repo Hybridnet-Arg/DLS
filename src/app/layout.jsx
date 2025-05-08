@@ -1,7 +1,7 @@
 import { Barlow } from 'next/font/google';
 import AuthState from '@/context/auth/authState';
 import BaseState from '@/context/base/baseState';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/shadcn/sonner';
 import '@/styles/globals.css';
 
 const barlow = Barlow({
@@ -19,7 +19,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <head />
       <body className={barlow.className}>
         <AuthState>
           <BaseState>{children}</BaseState>

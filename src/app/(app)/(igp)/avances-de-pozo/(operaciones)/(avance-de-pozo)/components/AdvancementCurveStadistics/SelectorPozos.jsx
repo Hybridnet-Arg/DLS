@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/shadcn/select';
 import { PERFORADORES_POR_PROVINCIA } from '@/constants';
 
 export default function SelectorPozos({

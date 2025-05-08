@@ -120,15 +120,18 @@ export default function AuthLayout({ children }) {
 
       estado = {
         fechaAct: fechaHoraFormateada,
-        hsBomba1: data.hsBomba1,
-        hsBomba2: data.hsBomba2,
-        hsBomba3: data.hsBomba3,
-        onBomba1: data.onBomba1,
-        onBomba2: data.onBomba2,
-        onBomba3: data.onBomba3,
+        hsBomba1: data?.hsBomba1,
+        hsBomba2: data?.hsBomba2,
+        hsBomba3: data?.hsBomba3,
+        onBomba1: data?.onBomba1,
+        onBomba2: data?.onBomba2,
+        onBomba3: data?.onBomba3,
         fechaActDate: fechaAct,
         lts: ltsTanque,
         fechalts: fechaLts,
+        tieneCambioHsBomba1: data?.tieneCambioHsBomba1,
+        tieneCambioHsBomba2: data?.tieneCambioHsBomba2,
+        tieneCambioHsBomba3: data?.tieneCambioHsBomba3,
       };
     }
     guardarEstado(estado);

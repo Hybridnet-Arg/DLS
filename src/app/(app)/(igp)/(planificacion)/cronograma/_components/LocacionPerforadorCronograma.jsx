@@ -2,84 +2,66 @@
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { Loader, Power } from 'lucide-react';
-import { CANTIDAD_POZOS_MAX } from '@/constants';
-
-const MAX_DIAS_SIN_MOVIMIENTO = 5;
-
-function calcularDiferenciaDias(current, next) {
-  const fechaFinCurrent = new Date(current?.fecha_fin);
-  const fechaInicioNext = new Date(next?.fecha_inicio);
-
-  if (isNaN(fechaFinCurrent) || isNaN(fechaInicioNext)) {
-    return;
-  }
-
-  const diferenciaMilisegundos = fechaInicioNext - fechaFinCurrent;
-  const diferenciaDias = diferenciaMilisegundos / (1000 * 60 * 60 * 24);
-
-  return diferenciaDias;
-}
 
 export default function LocacionPerforadorCronograma({
   locacionPerforadorCronograma,
   locacionesPerforadorCronograma,
   index,
   fechaInicioCronograma,
-  fechaFinCronograma,
+  mesWidth,
 }) {
   const [isLoadingOnOff] = useState(false);
-  const [intervalo, setIntervalo] = useState(null);
   const [anchoContenedor, setAnchoContenedor] = useState(0);
   const [marginLeftContenedor, setMarginLeftContenedor] = useState(0);
 
   useEffect(() => {
+    const calcularDiferenciaEnDias = (fechaInicio, fechaFin) => {
+      const inicio = new Date(fechaInicio);
+      const fin = new Date(fechaFin);
+
+      const diferenciaMs = fin - inicio;
+      const diferenciaDias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+
+      return diferenciaDias;
+    };
+
+    const primerDiaDelMes = (fecha) => {
+      const fechaObj = new Date(fecha);
+      fechaObj.setUTCDate(1);
+      return fechaObj.toISOString();
+    };
+
+    const calcularAnchoEnPixeles = (dias) => {
+      const anchoPorDia = mesWidth ? mesWidth / 30 : 100 / 30;
+      const anchoTotal = anchoPorDia * dias;
+      return anchoTotal;
+    };
+
+    const calcularAnchoContenedorLocacion = () => {
+      const dias = calcularDiferenciaEnDias(
+        locacionPerforadorCronograma.fecha_inicio,
+        locacionPerforadorCronograma.fecha_fin
+      );
+      const ancho = calcularAnchoEnPixeles(dias);
+      setAnchoContenedor(ancho);
+    };
+
+    const calcularMarginPrimeraLocacion = () => {
+      if (index === 0) {
+        const dias = calcularDiferenciaEnDias(
+          primerDiaDelMes(fechaInicioCronograma),
+          locacionPerforadorCronograma.fecha_inicio
+        );
+        if (dias > 0) {
+          const margenEnPixeles = calcularAnchoEnPixeles(dias);
+          setMarginLeftContenedor(margenEnPixeles);
+        }
+      }
+    };
+
     calcularAnchoContenedorLocacion();
     calcularMarginPrimeraLocacion();
-  }, [index, locacionesPerforadorCronograma]);
-
-  const calcularDiferenciaEnDias = (fechaInicio, fechaFin) => {
-    const inicio = new Date(fechaInicio);
-    const fin = new Date(fechaFin);
-
-    const diferenciaMs = fin - inicio;
-    const diferenciaDias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
-
-    return diferenciaDias;
-  };
-
-  const primerDiaDelMes = (fecha) => {
-    const fechaObj = new Date(fecha);
-    fechaObj.setUTCDate(1);
-    return fechaObj.toISOString();
-  };
-
-  const calcularAnchoEnPixeles = (dias) => {
-    const anchoPorDia = 100 / 30; //1 mes = 100px
-    const anchoTotal = anchoPorDia * dias;
-    return anchoTotal;
-  };
-
-  const calcularAnchoContenedorLocacion = () => {
-    const dias = calcularDiferenciaEnDias(
-      locacionPerforadorCronograma.fecha_inicio,
-      locacionPerforadorCronograma.fecha_fin
-    );
-    const ancho = calcularAnchoEnPixeles(dias);
-    setAnchoContenedor(ancho);
-  };
-
-  const calcularMarginPrimeraLocacion = () => {
-    if (index === 0) {
-      const dias = calcularDiferenciaEnDias(
-        primerDiaDelMes(fechaInicioCronograma),
-        locacionPerforadorCronograma.fecha_inicio
-      );
-      if (dias > 0) {
-        const margenEnPixeles = calcularAnchoEnPixeles(dias);
-        setMarginLeftContenedor(margenEnPixeles);
-      }
-    }
-  };
+  }, [index, locacionesPerforadorCronograma, mesWidth]);
 
   return (
     <div className="flex h-full">

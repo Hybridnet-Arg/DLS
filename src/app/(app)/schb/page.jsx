@@ -241,6 +241,7 @@ const Index = () => {
       await buscarEstado();
     };
     updateData();
+    console.log('perforador:', perforador);
   }, [perforador]);
 
   useEffect(() => {
@@ -459,6 +460,9 @@ const Index = () => {
         fechaActDate: fechaAct,
         lts: ltsTanque,
         fechalts: fechaLts,
+        tieneCambioHsBomba1: data?.tieneCambioHsBomba1,
+        tieneCambioHsBomba2: data?.tieneCambioHsBomba2,
+        tieneCambioHsBomba3: data?.tieneCambioHsBomba3,
       };
     }
     guardarEstado(estado);
@@ -492,6 +496,7 @@ const Index = () => {
               tipo={perforador ? perforador.tipoBomba : 'FD1600'}
               perforador={perforador ? perforador.idPerforador : ''}
               vf={vf.vfb1}
+              tieneCambioHs={estado?.tieneCambioHsBomba1}
             />
 
             <Bomba
@@ -511,6 +516,7 @@ const Index = () => {
               tipo={perforador ? perforador.tipoBomba : 'FD1600'}
               perforador={perforador ? perforador.idPerforador : ''}
               vf={vf.vfb2}
+              tieneCambioHs={estado?.tieneCambioHsBomba2}
             />
 
             {perforador && perforador.cantBombas > 2 ? (
@@ -531,6 +537,7 @@ const Index = () => {
                 tipo={perforador ? perforador.tipoBomba : 'FD1600'}
                 perforador={perforador ? perforador.idPerforador : ''}
                 vf={vf.vfb3}
+                tieneCambioHs={estado?.tieneCambioHsBomba3}
               />
             ) : (
               <></>

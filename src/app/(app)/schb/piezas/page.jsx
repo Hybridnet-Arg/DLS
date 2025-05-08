@@ -870,6 +870,9 @@ const Piezas = () => {
         fechaActDate: fechaAct,
         lts: ltsTanque,
         fechalts: fechaLts,
+        tieneCambioHsBomba1: data?.tieneCambioHsBomba1,
+        tieneCambioHsBomba2: data?.tieneCambioHsBomba2,
+        tieneCambioHsBomba3: data?.tieneCambioHsBomba3,
       };
     }
     guardarEstado(estado);
@@ -949,6 +952,7 @@ const Piezas = () => {
                             <th className="ml-1 py-1">Tipo</th>
                             <th className="ml-1 py-1 ">Diam.</th>
                             <th className="ml-1 py-1 ">Marca</th>
+                            <th className="ml-1 py-1 ">Modelo</th>
                             <th className="ml-1 py-1">Hs</th>
                             <th className="ml-1 py-1 ">N°Serie</th>
                           </tr>
@@ -978,6 +982,9 @@ const Piezas = () => {
                               </td>
                               <td className="border px-2 py-1">
                                 {item.marca ? item.marca.marca : ''}
+                              </td>
+                              <td className="border px-2 py-1">
+                                {item?.modelo ? item.modelo.modelo : ''}
                               </td>
                               <td className="border px-2 py-1">{item.hs}</td>
                               <td className="border px-2 py-1">{item.serie}</td>
@@ -1091,9 +1098,9 @@ const Piezas = () => {
                       s3={pieza3.semaforo.s3}
                       hs={pieza3.hs}
                       escala={{
-                        m1: 800,
-                        m2: 1200,
-                        max: 1600,
+                        m1: 2000,
+                        m2: 3000,
+                        max: 4000,
                       }}
                     />
                     <SemaforoPiezas
@@ -1225,9 +1232,9 @@ const Piezas = () => {
                       s3={pieza33.semaforo.s3}
                       hs={pieza33.hs}
                       escala={{
-                        m1: 2000,
-                        m2: 3000,
-                        max: 4000,
+                        m1: 3000,
+                        m2: 4000,
+                        max: 5000,
                       }}
                     />
                   </div>
@@ -1565,6 +1572,7 @@ const Piezas = () => {
                       </th>
                       <th className="ml-1 py-1">Tipo</th>
                       <th className="ml-1 py-1 ">Marca</th>
+                      <th className="ml-1 py-1 ">Modelo</th>
                       <th className="ml-1 py-1 ">Diam.</th>
                       <th
                         className="ml-1 py-1 cursor-pointer"
@@ -1596,6 +1604,9 @@ const Piezas = () => {
                         <td className="border px-2 py-1">{item.pieza.tipo}</td>
                         <td className="border px-2 py-1">
                           {item.marca ? item.marca.marca : ''}
+                        </td>
+                        <td className="border px-2 py-1">
+                          {item?.modelo ? item?.modelo?.modelo : ''}
                         </td>
                         <td className="border px-2 py-1">
                           {item.diametro ? item.diametro.diametro : ''}

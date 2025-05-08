@@ -10,7 +10,7 @@ import { getAllElementosDepositoByFilters } from '@/services/elementosDeposito.s
 import Medidor from '@/components/medidor';
 import Title from '@/components/ui/labels/Title';
 import Button from '@/components/ui/buttons/Button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/shadcn/skeleton';
 import TipoCable from './_components/TipoCable';
 import MapaCortes from './_components/MapaCortes/MapaCortes';
 import { obtenerDesgasteCablePorPerforador } from '@/services/desgastesCable.service';
@@ -20,6 +20,7 @@ export default function CiclosCableToneladaMillaPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [bobina, setBobina] = useState({});
   const [cableDesgastado, setCableDesgastado] = useState({});
+  const [almacen, setAlmacen] = useState([]);
 
   useEffect(() => {
     async function fetchBobina() {
@@ -33,11 +34,21 @@ export default function CiclosCableToneladaMillaPage() {
         };
 
         const piezas = await getAllElementosDepositoByFilters(queryParams);
+        const almacenRaw = await getAllElementosDepositoByFilters({
+          ...queryParams,
+          en_uso: false,
+          almacen_ciclos_cable: true,
+        });
+
         const desgasteCable = await obtenerDesgasteCablePorPerforador(
-          perforadorSeleccionado?.idPerforador
+          perforadorSeleccionado?.idPerforador,
+          {
+            nombre_perforador: perforadorSeleccionado?.nombre,
+          }
         );
         const bobina = piezas?.length > 0 ? piezas?.[0] : {};
 
+        setAlmacen(almacenRaw);
         setBobina(bobina);
         setCableDesgastado({
           tm: desgasteCable?.total_desgaste_cable,
@@ -95,7 +106,13 @@ export default function CiclosCableToneladaMillaPage() {
         <Link href={'/ciclos-cable-tonelada-milla/cortar-cable'}>
           <Button disabled={!bobina?.id}>cortar cable</Button>
         </Link>
-        <Link href={'/ciclos-cable-tonelada-milla/almacen?cambiarBobina=true'}>
+        <Link
+          href={
+            almacen?.length === 0
+              ? '/ciclos-cable-tonelada-milla/almacen'
+              : '/ciclos-cable-tonelada-milla/almacen?cambiarBobina=true'
+          }
+        >
           <Button>{bobina?.id ? 'cambiar bobina' : 'cargar bobina'}</Button>
         </Link>
       </div>

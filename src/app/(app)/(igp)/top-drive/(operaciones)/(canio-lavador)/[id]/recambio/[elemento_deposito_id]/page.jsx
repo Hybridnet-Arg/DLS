@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { getElementosComponenteById } from '@/services/elementosComponente.service';
 import { getAllElementosDepositoByFilters } from '@/services/elementosDeposito.service';
 import CanioLavadorImage from '../../../../components/CanioLavadorImage';
@@ -12,8 +12,7 @@ import Title from '@/components/ui/labels/Title';
 import { isSaverSub } from '../../../../helpers/elementType.helper';
 
 export default function RecambioPieza({ params }) {
-  const { id, elemento_deposito_id } = params;
-
+  const { id, elemento_deposito_id } = use(params);
   const [elemento, setElemento] = useState({});
   const [isMounted, setisMounted] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);

@@ -15,6 +15,8 @@ import StockPieza from '../_components/StockPieza';
 import CleanIcon from '@/components/icons/CleanIcon';
 import Button from '@/components/ui/buttons/Button';
 import CargarPiezaModal from '../../../_components/CargarPiezaModal';
+import { obtenerModelos } from '@/services/schb/modelo.service';
+import { obtenerDiametros } from '@/services/schb/diametro.service';
 
 function ItemList({
   records,
@@ -84,6 +86,8 @@ export default function AlmacenAgrupadoId() {
   const [modeloSeleccionado, setModeloSeleccionado] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [tiposPieza, setTiposPieza] = useState([]);
+  const [modelos, setModelos] = useState([]);
+  const [diametros, setDiametros] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -99,13 +103,20 @@ export default function AlmacenAgrupadoId() {
         queryParams.idModelo = modeloSeleccionado?.idModelo;
       }
       const promises = [
+        obtenerModelos(),
+        obtenerDiametros(),
         obtenerPiezaPorId(idPieza, queryParams),
         obtenerTiposPieza(),
       ];
-      const [pieza, tiposPieza] = await Promise.all(promises);
+      const [modelos, diametros, pieza, tiposPieza] =
+        await Promise.all(promises);
+      setModelos(modelos);
+      setDiametros(diametros);
       setPieza(pieza);
       setTiposPieza(tiposPieza);
     } catch (error) {
+      setModelos([]);
+      setDiametros([]);
       setPieza({});
       setTiposPieza([]);
     } finally {
@@ -116,6 +127,8 @@ export default function AlmacenAgrupadoId() {
   useEffect(() => {
     fetchData();
     return () => {
+      setModelos([]);
+      setDiametros([]);
       setPieza({});
       setTiposPieza([]);
     };
@@ -180,8 +193,8 @@ export default function AlmacenAgrupadoId() {
       </div>
       <CargarPiezaModal
         marcas={pieza?.marcas}
-        modelos={pieza?.modelos}
-        diametros={pieza?.diametros}
+        modelos={modelos}
+        diametros={diametros}
         piezas={[pieza]}
         tiposPieza={tiposPieza}
         setShowModal={setShowModal}

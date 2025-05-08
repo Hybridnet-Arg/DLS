@@ -62,14 +62,14 @@ const OPERACIONES_NAV = [
   {
     key: 'operaciones-8',
     label: 'Sistema de trazabilidad para tubulares',
-    href: '#',
-    disabled: true,
+    href: '/sistema-de-trazabilidad-para-tubulares',
+    disabled: CONFIG.APP_ENV !== CONFIG.WORK_ENVS.TEST,
   },
   {
     key: 'operaciones-9',
-    label: 'ER Gasoil',
-    href: '#',
-    disabled: true,
+    label: 'Tanques de Gasoil',
+    href: '/tanques-gasoil',
+    disabled: CONFIG.APP_ENV !== CONFIG.WORK_ENVS.TEST,
   },
 ];
 

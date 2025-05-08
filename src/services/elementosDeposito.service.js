@@ -48,3 +48,14 @@ export const eliminarElementoDeposito = async (id) => {
   const { data } = await axios.delete(`${base}/${id}`);
   return data;
 };
+
+export const obtenerElementoDepositoPorPerforador = async (
+  numero,
+  params = {}
+) => {
+  const { data } = await axios.get(
+    `${ENDPOINTS.ELEMENTOS_DEPOSITO.POR_PERFORADOR}/${numero}`,
+    { params }
+  );
+  return data;
+};

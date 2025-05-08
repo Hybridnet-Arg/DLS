@@ -61,7 +61,8 @@ export default function ForecastManualUbicacionIdPage() {
   const { ubicacion_id } = useParams();
   const router = useRouter();
 
-  const forecastRef = useRef();
+  const dayRef = useRef(null);
+  const forecastRef = useRef(null);
   const [cronograma, setCronograma] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [perforadoresPorUbicacion, setPerforadoresPorUbicacion] = useState([]);
@@ -245,7 +246,10 @@ export default function ForecastManualUbicacionIdPage() {
               {MESES_ES?.[mes]} {anio}
             </div>
             {expandible && (
-              <div className="bg-dark text-sm text-center text-warning rounded-lg py-1 uppercase w-[25%]">
+              <div
+                className="bg-dark text-sm text-center text-warning rounded-lg py-1 uppercase w-[25%]"
+                ref={dayRef}
+              >
                 {futureDate && MESES_ES?.[futureDate.getMonth()]}{' '}
                 {futureDate ? futureDate.getFullYear() : anio}
               </div>
@@ -279,7 +283,7 @@ export default function ForecastManualUbicacionIdPage() {
                   className={clsx(
                     'bg-dark uppercase text-xs text-warning text-center py-1 rounded-lg hover:opacity-80'
                   )}
-                  key={`${semana}-week`}
+                  key={`${semana}-forecast-week`}
                   style={{ flexBasis }}
                 >
                   Semana {semana + 1}
@@ -288,18 +292,17 @@ export default function ForecastManualUbicacionIdPage() {
             })}
           </div>
           <div className="flex flex-1 gap-1 mt-[2px]">
-            {semanas?.flat()?.map((dia) => (
-              <Fragment key={`${dia?.dia}-day`}>
+            {semanas?.flat()?.map((dia, indexDay) => (
+              <Fragment key={`${dia?.dia}-${indexDay}-forecast-day`}>
                 <div className="flex-1 bg-dark uppercase text-xs text-white text-center py-1 rounded-lg relative">
                   {dia?.dia}
                   {dia?.data?.esHoy && (
                     <div
-                      className="active-radar-cronograma absolute"
+                      className="active-radar-cronograma absolute min-h-[50vh] 2xl:min-h-[60vh]"
                       style={{
                         top: 'calc(100%)',
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        height: forecastRef?.current?.clientHeight,
                       }}
                     ></div>
                   )}
@@ -320,17 +323,21 @@ export default function ForecastManualUbicacionIdPage() {
         className="overflow-y-auto min-h-[50vh] 2xl:min-h-[60vh]"
         ref={forecastRef}
       >
-        {cronograma?.perforadores_forecast?.map((perforadorForecast) => (
-          <FilaTareasForecast
-            key={`${perforadorForecast?.id ?? Math.random()}-perf-forecast`}
-            perforadorForecast={perforadorForecast}
-            onReload={onReload}
-            setShowCreatePerforadorCronograma={
-              setShowCreatePerforadorCronograma
-            }
-            tiposTareasForecast={tiposTareasForecast}
-          />
-        ))}
+        {cronograma?.perforadores_forecast?.map(
+          (perforadorForecast, indexPerforadorForecast) => (
+            <FilaTareasForecast
+              key={`${perforadorForecast?.id}-${indexPerforadorForecast}-perforador-forecast`}
+              perforadorForecast={perforadorForecast}
+              onReload={onReload}
+              dayRef={dayRef}
+              expandibleDays={expandible}
+              setShowCreatePerforadorCronograma={
+                setShowCreatePerforadorCronograma
+              }
+              tiposTareasForecast={tiposTareasForecast}
+            />
+          )
+        )}
       </div>
       <CrearPerforadorForecast
         cronograma_id={cronograma?.id}

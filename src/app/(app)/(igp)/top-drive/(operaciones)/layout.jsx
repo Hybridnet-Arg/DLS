@@ -1,8 +1,38 @@
 'use client';
+import { useEffect, useState } from 'react';
+import usePerforadoresStore from '@/store/perforadores.store';
+import { COMPONENTES } from '@/constants/componentes.constant';
+import { obtenerElementoDepositoPorPerforador } from '@/services/elementosDeposito.service';
 import Submenu from '@/components/ui/tabs/Submenu';
 import { TopDriveIcon } from '@/components/icons/MenuIcons';
+import LastUpdateLabel from '@/components/ui/labels/LastUpdateLabel';
 
 export default function TopDriveOperacionesLayout({ children }) {
+  const { perforadorSeleccionado } = usePerforadoresStore();
+  const [ultimoElementoDeposito, setUltimoElementoDeposito] = useState({});
+
+  useEffect(() => {
+    async function fetchLastElementoDeposito() {
+      try {
+        const data = await obtenerElementoDepositoPorPerforador(
+          perforadorSeleccionado?.idPerforador,
+          {
+            nombre_perforador: perforadorSeleccionado?.nombre,
+            componente_id: COMPONENTES.TOP_DRIVE,
+          }
+        );
+
+        setUltimoElementoDeposito(data);
+      } catch (error) {
+        setUltimoElementoDeposito({});
+      }
+    }
+    fetchLastElementoDeposito();
+    return () => {
+      setUltimoElementoDeposito({});
+    };
+  }, [perforadorSeleccionado]);
+
   const options = [
     {
       key: 'caño_lavador',
@@ -56,7 +86,7 @@ export default function TopDriveOperacionesLayout({ children }) {
         <h2 className="uppercase font-medium text-sm text-ellipsis overflow-hidden whitespace-nowrap ps-20">
           Operaciones
         </h2>
-        <div></div>
+        <LastUpdateLabel fecha={ultimoElementoDeposito?.actualizado_el} />
       </div>
       <Submenu items={options}>{children}</Submenu>
     </div>

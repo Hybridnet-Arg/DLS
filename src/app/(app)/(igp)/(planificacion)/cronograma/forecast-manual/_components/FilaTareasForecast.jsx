@@ -8,6 +8,8 @@ export default function FilaTareasForecast({
   perforadorForecast,
   tiposTareasForecast = [],
   onReload = () => {},
+  dayRef,
+  expandibleDays,
   setShowCreatePerforadorCronograma = () => {},
 }) {
   const locacionesPerforadorCronograma =
@@ -30,7 +32,7 @@ export default function FilaTareasForecast({
         <div className="flex flex-1">
           {perforadorForecast?.tareas_forecast?.map((tareaForecast, index) => (
             <div
-              key={`${tareaForecast?.id}-tarea-forecast`}
+              key={`${tareaForecast?.id}-${index}-tarea-forecast`}
               className={clsx(
                 'flex flex-1 py-2 px-1 bg-white text-center justify-center items-center h-[80px]',
                 {
@@ -47,9 +49,9 @@ export default function FilaTareasForecast({
                 tiposTareasForecast={tiposTareasForecast}
                 fecha={tareaForecast?.data?.fecha}
                 onReload={onReload}
-                width={'2rem'}
+                width={dayRef?.current?.offsetWidth}
                 height={'3.5rem'}
-                explandible={explandible}
+                expandibleDays={expandibleDays}
               />
             </div>
           ))}
@@ -63,7 +65,7 @@ export default function FilaTareasForecast({
             {locacionesPerforadorCronograma?.map(
               (locacionesPerforadorCronograma) => (
                 <div
-                  key={locacionesPerforadorCronograma?.id}
+                  key={`${locacionesPerforadorCronograma?.id}-locacion-perforador-cronograma`}
                   className="flex flex-1 bg-dark text-white text-center justify-center items-center rounded"
                 >
                   {locacionesPerforadorCronograma?.locacion?.nombre}

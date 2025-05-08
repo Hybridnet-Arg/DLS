@@ -1,7 +1,63 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import { Prisma } from '@prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
+/**
+ * @swagger
+ * /api/plan-pozo:
+ *   get:
+ *     summary: Obtener planes de pozo
+ *     description: Retorna una lista de planes de pozo activos. Se puede filtrar por nombre y número de perforador, e incluir información relacionada como etapas, estados y locaciones.
+ *     tags:
+ *       - Plan Pozo
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         schema:
+ *           type: string
+ *         description: Nombre del plan pozo a buscar (filtro parcial).
+ *         example: Norte
+ *       - in: query
+ *         name: numero_perforador
+ *         schema:
+ *           type: integer
+ *         description: Número identificador del perforador.
+ *         example: 102
+ *       - in: query
+ *         name: include_etapas_pozo
+ *         schema:
+ *           type: boolean
+ *         description: Incluir etapas del pozo con su tipo.
+ *         example: true
+ *       - in: query
+ *         name: include_estados_pozo
+ *         schema:
+ *           type: boolean
+ *         description: Incluir estados del pozo.
+ *         example: true
+ *       - in: query
+ *         name: include_perforador_locacion
+ *         schema:
+ *           type: boolean
+ *         description: Incluir locación y perforador relacionado al pozo.
+ *         example: true
+ *     responses:
+ *       200:
+ *         description: Lista de planes de pozo obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 planesPozo:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     description: Plan pozo
+ *       500:
+ *         description: Error al obtener los planes de pozo
+ */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   try {
@@ -69,12 +125,86 @@ export async function GET(request) {
 
     return NextResponse.json({ planesPozo }, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los pozos' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al obtener los planes de pozo',
+    });
   }
 }
+
+/**
+ * @swagger
+ * /api/plan-pozo:
+ *   post:
+ *     summary: Crear un nuevo plan de pozo
+ *     description: Crea un plan de pozo asignando una locación a un perforador, crea los pozos con sus respectivas etapas y genera el estado del diagrama asociado.
+ *     tags:
+ *       - Plan Pozo
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - locacion_id
+ *               - perforador_id
+ *               - fecha_inicio
+ *               - fecha_fin
+ *               - pozos
+ *             properties:
+ *               locacion_id:
+ *                 type: integer
+ *                 example: 1
+ *               perforador_id:
+ *                 type: integer
+ *                 example: 3
+ *               fecha_inicio:
+ *                 type: string
+ *                 format: date
+ *                 example: '2025-05-01'
+ *               fecha_fin:
+ *                 type: string
+ *                 format: date
+ *                 example: '2025-06-01'
+ *               pozos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     etapas_pozo:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           tipo_etapa_pozo_id:
+ *                             type: integer
+ *                             example: 2
+ *                           fecha_inicio:
+ *                             type: string
+ *                             format: date
+ *                             example: '2025-05-02'
+ *                           fecha_fin:
+ *                             type: string
+ *                             format: date
+ *                             example: '2025-05-10'
+ *     responses:
+ *       200:
+ *         description: Plan pozo creado con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Plan pozo creado con exito
+ *                 planPozo:
+ *                   type: object
+ *       400:
+ *         description: Error en la solicitud
+ *       500:
+ *         description: Error al crear el plan de pozo
+ */
 
 export async function POST(req) {
   try {
@@ -175,9 +305,8 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { message: error.message || 'Error al crear el plan pozo.' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al crear el plan de pozo',
+    });
   }
 }

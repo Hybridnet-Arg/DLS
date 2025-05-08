@@ -1,7 +1,4 @@
 export const ENDPOINTS = {
-  ESTADOS_POZO: {
-    BASE: '/api/estados-pozo',
-  },
   LOCACIONES: {
     BASE: '/api/locaciones',
     POR_UBICACION: '/api/locaciones/por-ubicacion',
@@ -19,6 +16,7 @@ export const ENDPOINTS = {
   PLANES_POZO: {
     BASE: '/api/planes-pozo',
     FINALIZAR: '/api/planes-pozo/finalizar',
+    BY_PERFORADOR: '/api/planes-pozo/perforador',
   },
   POZOS: {
     BASE: '/api/pozos',
@@ -37,6 +35,7 @@ export const ENDPOINTS = {
   },
   ELEMENTOS_DEPOSITO: {
     BASE: '/api/elementos-deposito',
+    POR_PERFORADOR: '/api/elementos-deposito/perforador',
   },
   MARCAS: {
     BASE: '/api/marcas',
@@ -85,6 +84,45 @@ export const ENDPOINTS = {
     BASE: '/api/planificaciones',
     TAREAS_FORECAST: '/api/planificaciones/tareas-forecast',
   },
+  TUBULARES_ADQUISICIONES: {
+    BASE: '/api/tubulares-adquisiciones',
+  },
+  TUBULARES_RANGOS: {
+    BASE: '/api/tubulares-rangos',
+  },
+  TUBULARES_PROVEEDORES: {
+    BASE: '/api/tubulares-proveedores',
+  },
+  TUBULARES_TIPOS_BARRA: {
+    BASE: '/api/tubulares-tipos-barra',
+  },
+  TUBULARES_TIPOS_CONEXION: {
+    BASE: '/api/tubulares-tipos-conexion',
+  },
+  TUBULARES_DESTINOS: {
+    BASE: '/api/tubulares-destinos',
+  },
+  TUBULARES: {
+    BASE: '/api/tubulares',
+    POR_PERFORADOR: '/api/tubulares/perforador',
+  },
+  TUBULARES_TALLERES: {
+    BASE: '/api/tubulares-talleres',
+  },
+  TUBULARES_MOVIMIENTOS: {
+    BASE: '/api/tubulares-movimientos',
+  },
+  TUBULARES_DOCUMENTOS: {
+    BASE: '/api/tubulares-documentos',
+  },
+  PLANTA: {
+    BOMBAS_ESTADO: '/api/planta/bombas',
+    TOPDRIVE_ESTADO: '/api/planta/topdrive',
+    CABLE_ESTADO: '/api/planta/cable',
+  },
+  TANQUES: {
+    NIVELES: '/api/tanques',
+  },
 };
 
 export const SHDB_ENDPOINTS = {
@@ -95,4 +133,5 @@ export const SHDB_ENDPOINTS = {
   MODELO: { BASE: '/api/modelo' },
   DIAMETRO: { BASE: '/api/diametro' },
   NROSERIE: { BASE: '/api/base/nroSerie' },
+  WELL_DATA: { BASE: '/api/well-data' },
 };

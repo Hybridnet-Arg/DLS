@@ -14,6 +14,7 @@ model diametro {
   item            item[]
   perforadorPieza perforadorPieza[]
   piezaDiametro   piezaDiametro[]
+  modelos         modelo[]
 }
 
 model item {
@@ -62,12 +63,16 @@ model marca {
 }
 
 model modelo {
-  idModelo Int    @id(map: "PK_modelo") @default(autoincrement())
-  modelo   String @db.NChar(50)
-  idMarca  Int
+  idModelo    Int    @id(map: "PK_modelo") @default(autoincrement())
+  modelo      String @db.NChar(50)
+  idMarca     Int
+  idTipoPieza Int?
+  idDiametro  Int?
 
   marca           marca             @relation(fields: [idMarca], references: [idMarca])
+  tiposPieza      tiposPieza?       @relation(fields: [idTipoPieza], references: [idTipoPieza])
   perforadorPieza perforadorPieza[]
+  diametro        diametro?         @relation(fields: [idDiametro], references: [idDiametro])
 }
 
 model perforador {
@@ -147,6 +152,7 @@ model tiposPieza {
 
   piezas          pieza[]
   marcasTipoPieza marcasTipoPieza[]
+  modelos         modelo[]
 }
 
 model marcasTipoPieza {
@@ -214,6 +220,7 @@ model wellData {
   onBomba1      Int?      @db.TinyInt
   onBomba2      Int?      @db.TinyInt
   onBomba3      Int?      @db.TinyInt
+  ymm           Float?
 }
 
 model sysdiagrams {
@@ -270,21 +277,28 @@ model perforadores {
   perforadores_cronograma perforadores_cronograma[]
   perforadores_forecast   perforadores_forecast[]
   usuarios                usuarios[]
+  tubulares_adquisiciones tubulares_adquisiciones[]
+  tubulares_movimientos   tubulares_movimientos[]
+  tubulares               tubulares[]
+  tanques                 tanques[]
 }
 
 model perforador_locaciones {
-  id             Int           @id @default(autoincrement())
-  activo         Boolean       @default(false)
+  id             Int       @id @default(autoincrement())
+  activo         Boolean   @default(false)
   locacion_id    Int
   perforador_id  Int
-  fecha_inicio   DateTime?     @db.DateTime
-  fecha_fin      DateTime?     @db.DateTime
-  creado_el      DateTime      @default(now()) @db.DateTime
-  actualizado_el DateTime      @default(now()) @db.DateTime
-  locacion       locaciones    @relation(fields: [locacion_id], references: [id])
-  perforador     perforadores  @relation(fields: [perforador_id], references: [id])
-  planes_pozo    planes_pozo[]
-  pozos          pozos[]
+  fecha_inicio   DateTime? @db.DateTime
+  fecha_fin      DateTime? @db.DateTime
+  creado_el      DateTime  @default(now()) @db.DateTime
+  actualizado_el DateTime  @default(now()) @db.DateTime
+
+  locacion              locaciones              @relation(fields: [locacion_id], references: [id])
+  perforador            perforadores            @relation(fields: [perforador_id], references: [id])
+  planes_pozo           planes_pozo[]
+  pozos                 pozos[]
+  tubulares_movimientos tubulares_movimientos[]
+  tubulares             tubulares[]
 
   @@index([perforador_id], map: "idx_perforador_locaciones_perforador_id")
   @@index([locacion_id], map: "idx_perforador_locaciones_locacion_id")
@@ -368,6 +382,7 @@ model planes_pozo {
   perforador_locacion perforador_locaciones @relation(fields: [perforador_locacion_id], references: [id], onUpdate: NoAction)
   pozos               pozos[]
   estado_diagrama     estados_diagrama?
+  tubulares           tubulares[]
 
   @@index([perforador_id], map: "idx_planes_pozo_perforador_id")
   @@index([perforador_locacion_id], map: "idx_planes_pozo_perforador_locacion_id")
@@ -648,10 +663,12 @@ model usuarios {
 
   perforadores perforadores? @relation(fields: [perforador_seleccionado], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  cronogramas        cronogramas[]
-  log_elementos      log_elementos[]
-  log_locaciones     log_locaciones[]
-  cronogramas_backup cronogramas_backup[]
+  cronogramas           cronogramas[]
+  log_elementos         log_elementos[]
+  log_locaciones        log_locaciones[]
+  cronogramas_backup    cronogramas_backup[]
+  tubulares_movimientos tubulares_movimientos[]
+  tanques               tanques[]
 }
 
 model desgastes_cable {
@@ -901,4 +918,243 @@ model planificaciones {
 
   planificacion_actividad planificacion_actividades @relation(fields: [planificacion_actividad_id], references: [id], onDelete: Cascade)
   tarea_forecast          tareas_forecast           @relation(fields: [tarea_forecast_id], references: [id], onDelete: Cascade)
+}
+
+model tubulares_rangos {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_adquisiciones tubulares_adquisiciones[]
+  tubulares_movimientos   tubulares_movimientos[]
+}
+
+model tubulares_proveedores {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_adquisiciones tubulares_adquisiciones[]
+}
+
+model tubulares_tipos_barra {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_adquisiciones tubulares_adquisiciones[]
+  tubulares_movimientos   tubulares_movimientos[]
+}
+
+model tubulares_tipos_conexion {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_adquisiciones tubulares_adquisiciones[]
+  tubulares_movimientos   tubulares_movimientos[]
+}
+
+model tubulares_estados_barra {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(255)
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_adquisiciones tubulares_adquisiciones[]
+  tubulares_movimientos   tubulares_movimientos[]
+}
+
+model tubulares_adquisiciones {
+  id                         Int       @id @default(autoincrement())
+  cantidad                   Int
+  numero_remito              String?
+  numero_reporte             String?
+  enlace_documento           String?
+  fecha                      DateTime?
+  perforador_id              Int
+  tubulares_rango_id         Int
+  tubulares_proveedor_id     Int
+  tubulares_tipo_barra_id    Int
+  tubulares_tipo_conexion_id Int
+  tubulares_estado_barra_id  Int?
+  creado_el                  DateTime  @default(now()) @db.DateTime
+  actualizado_el             DateTime  @default(now()) @db.DateTime
+
+  perforador              perforadores             @relation(fields: [perforador_id], references: [id])
+  tubulares_rango         tubulares_rangos         @relation(fields: [tubulares_rango_id], references: [id])
+  tubulares_proveedor     tubulares_proveedores    @relation(fields: [tubulares_proveedor_id], references: [id])
+  tubulares_tipo_barra    tubulares_tipos_barra    @relation(fields: [tubulares_tipo_barra_id], references: [id])
+  tubulares_tipo_conexion tubulares_tipos_conexion @relation(fields: [tubulares_tipo_conexion_id], references: [id])
+  tubulares_estados_barra tubulares_estados_barra? @relation(fields: [tubulares_estado_barra_id], references: [id])
+}
+
+model tubulares_destinos {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_movimientos tubulares_movimientos[]
+}
+
+model tubulares {
+  id                     Int      @id @default(autoincrement())
+  activo                 Boolean  @default(true)
+  cantidad_inicial       Int?
+  remanente              Int?
+  plan_pozo_id           Int?
+  perforador_id          Int?
+  perforador_locacion_id Int?
+  creado_el              DateTime @default(now()) @db.DateTime
+  actualizado_el         DateTime @default(now()) @db.DateTime
+
+  tubulares_movimientos           tubulares_movimientos[]
+  tubulares_movimientos_prestamos tubulares_movimientos_prestamos[]
+
+  perforador_locacion perforador_locaciones? @relation(fields: [perforador_locacion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  plan_pozo           planes_pozo?           @relation(fields: [plan_pozo_id], references: [id])
+  perforador          perforadores?          @relation(fields: [perforador_id], references: [id])
+}
+
+model tubulares_movimientos {
+  id                         Int      @id @default(autoincrement())
+  estado                     String
+  fecha                      DateTime
+  cantidad                   Int?
+  usuario_id                 Int
+  tubular_id                 Int
+  perforador_id              Int
+  tubulares_taller_id        Int?
+  tubulares_destino_id       Int
+  tubulares_estado_barra_id  Int?
+  perforador_locacion_id     Int?
+  tubulares_rango_id         Int?
+  tubulares_tipo_barra_id    Int?
+  tubulares_tipo_conexion_id Int?
+  creado_el                  DateTime @default(now()) @db.DateTime
+  actualizado_el             DateTime @default(now()) @db.DateTime
+
+  tubular                 tubulares                 @relation(fields: [tubular_id], references: [id], onDelete: Cascade)
+  usuario                 usuarios                  @relation(fields: [usuario_id], references: [id])
+  perforador              perforadores              @relation(fields: [perforador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tubulares_taller        tubulares_talleres?       @relation(fields: [tubulares_taller_id], references: [id])
+  tubulares_destino       tubulares_destinos?       @relation(fields: [tubulares_destino_id], references: [id])
+  tubulares_estado_barra  tubulares_estados_barra?  @relation(fields: [tubulares_estado_barra_id], references: [id])
+  perforador_locacion     perforador_locaciones?    @relation(fields: [perforador_locacion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tubulares_rango         tubulares_rangos?         @relation(fields: [tubulares_rango_id], references: [id])
+  tubulares_tipo_barra    tubulares_tipos_barra?    @relation(fields: [tubulares_tipo_barra_id], references: [id])
+  tubulares_tipo_conexion tubulares_tipos_conexion? @relation(fields: [tubulares_tipo_conexion_id], references: [id])
+
+  tubulares_documentos                     tubulares_documentos[]
+  tubulares_movimientos_conexiones_origen  tubulares_movimientos_conexiones[] @relation("tubulares_movimientos_conexiones_origen")
+  tubulares_movimientos_conexiones_destino tubulares_movimientos_conexiones[] @relation("tubulares_movimientos_conexiones_destino")
+  tubulares_movimientos_prestamos_origen   tubulares_movimientos_prestamos[]  @relation("tubulares_movimientos_prestamos_origen")
+  tubulares_movimientos_prestamos_destino  tubulares_movimientos_prestamos[]  @relation("tubulares_movimientos_prestamos_destino")
+}
+
+model tubulares_movimientos_prestamos {
+  id                              Int      @id @default(autoincrement())
+  cantidad                        Int
+  tubular_id                      Int
+  tubulares_movimiento_origen_id  Int
+  tubulares_movimiento_destino_id Int
+  creado_el                       DateTime @default(now()) @db.DateTime
+  actualizado_el                  DateTime @default(now()) @db.DateTime
+
+  tubular            tubulares             @relation(fields: [tubular_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  movimiento_origen  tubulares_movimientos @relation("tubulares_movimientos_prestamos_origen", fields: [tubulares_movimiento_origen_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  movimiento_destino tubulares_movimientos @relation("tubulares_movimientos_prestamos_destino", fields: [tubulares_movimiento_destino_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tubulares_movimientos_conexiones {
+  id                              Int      @id @default(autoincrement())
+  tubulares_movimiento_origen_id  Int
+  tubulares_movimiento_destino_id Int
+  creado_el                       DateTime @default(now()) @db.DateTime
+  actualizado_el                  DateTime @default(now()) @db.DateTime
+
+  movimiento_origen  tubulares_movimientos @relation("tubulares_movimientos_conexiones_origen", fields: [tubulares_movimiento_origen_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  movimiento_destino tubulares_movimientos @relation("tubulares_movimientos_conexiones_destino", fields: [tubulares_movimiento_destino_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tubulares_movimiento_origen_id, tubulares_movimiento_destino_id])
+  @@index([tubulares_movimiento_origen_id])
+  @@index([tubulares_movimiento_destino_id])
+}
+
+model tubulares_talleres {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  creado_el      DateTime @default(now()) @db.DateTime
+  actualizado_el DateTime @default(now()) @db.DateTime
+
+  tubulares_movimientos tubulares_movimientos[]
+}
+
+model tubulares_documentos {
+  id                      Int       @id @default(autoincrement())
+  tipo                    String
+  fecha                   DateTime
+  fecha_expiracion        DateTime?
+  numero                  String?
+  ruta                    String
+  tubulares_movimiento_id Int
+  creado_el               DateTime  @default(now()) @db.DateTime
+  actualizado_el          DateTime  @default(now()) @db.DateTime
+
+  tubulares_movimiento tubulares_movimientos @relation(fields: [tubulares_movimiento_id], references: [id], onDelete: Cascade)
+}
+
+model tanques {
+  id                  Int       @id @default(autoincrement())
+  perforador_id       Int
+  capacidad           Int?
+  nivel_critico       Int?
+  nivel_alerta        Int?
+  habilitado          Boolean   @default(true)
+  en_uso              Boolean   @default(true)
+  usuario_id          Int?
+  fecha_activacion    DateTime? @db.DateTime
+  fecha_desactivacion DateTime? @db.DateTime
+  actualizado_el      DateTime  @default(now()) @db.DateTime
+  creado_el           DateTime  @default(now()) @db.DateTime
+
+  perforadores    perforadores       @relation(fields: [perforador_id], references: [id])
+  usuarios        usuarios?          @relation(fields: [usuario_id], references: [id])
+  tanque_cubitaje tanques_cubitajes?
+}
+
+model cubitajes {
+  id             Int      @id @default(autoincrement())
+  actualizado_el DateTime @default(now()) @db.DateTime
+  creado_el      DateTime @default(now()) @db.DateTime
+
+  items   cubitaje_items[]
+  tanques tanques_cubitajes[]
+}
+
+model cubitaje_items {
+  id             Int      @id @default(autoincrement())
+  cubitaje_id    Int
+  ymm            Float?
+  litros         Float?
+  actualizado_el DateTime @default(now()) @db.DateTime
+  creado_el      DateTime @default(now()) @db.DateTime
+
+  cubitaje cubitajes @relation(fields: [cubitaje_id], references: [id])
+}
+
+model tanques_cubitajes {
+  id             Int      @id @default(autoincrement())
+  tanque_id      Int      @unique
+  cubitaje_id    Int
+  actualizado_el DateTime @default(now()) @db.DateTime
+  creado_el      DateTime @default(now()) @db.DateTime
+
+  tanque   tanques   @relation(fields: [tanque_id], references: [id])
+  cubitaje cubitajes @relation(fields: [cubitaje_id], references: [id])
 }

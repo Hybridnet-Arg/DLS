@@ -21,7 +21,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "3600",
+        "repeat": "900",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -133,7 +133,7 @@
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
-        "url": "https://data.welldata.net/api/v1/jobs?jobStatus=AllJobs&startDateMin=2024-08-01T18:55:00&take=1425&total=true",
+        "url": "https://data.welldata.net/api/v1/jobs?jobStatus=AllJobs&startDateMin=2024-08-01T18:55:00&take=2500&total=true",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -330,7 +330,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "prepararRequest",
-        "func": "msg.token = global.get(\"token\");\nconst job = msg.payload;\nlet dateUTC = new Date(job.endDate); \nlet horaH = dateUTC.toISOString();\n\nlet date = new Date(job.endDate);\n// Restar 30 horas\ndate.setHours(date.getHours() - 30);\nlet horaD = date.toISOString();\n\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 60,\n    \"isDifferential\": true\n}\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nmsg.jobName = job.name;\nreturn msg;",
+        "func": "msg.token = global.get(\"token\");\nconst job = msg.payload;\nlet dateUTC = new Date(job.endDate); \nlet horaH = dateUTC.toISOString();\n\nlet date = new Date(job.endDate);\n// Restar 5 horas\ndate.setHours(date.getHours() - 5);\nlet horaD = date.toISOString();\n\nmsg.payload = {\n    \"attributes\": [\n        {\n            \"id\": \"HoleDepth\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n        {\n            \"id\": \"BitPosition\",\n            \"mode\": \"Last\",\n            \"unitId\": \"Depth.Meter.0\"\n        },\n    ],\n    \"fromTime\": horaD,\n    \"toTime\": horaH,\n    \"interval\": 30,\n    \"isDifferential\": true\n}\nmsg.urlWellData = \"https://data.welldata.net/api/v1/jobs/\" + job.jobId + \"/data/time\";\nmsg.jobName = job.name;\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -397,7 +397,7 @@
         "name": "",
         "query": "",
         "outField": "payload",
-        "x": 2340,
+        "x": 2800,
         "y": 420,
         "wires": [
             []
@@ -424,7 +424,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "consultaIdPozo",
-        "func": "const jobName = msg.jobName;\nif(jobName){\n    msg.payload = `SELECT p.* FROM pozos p\nINNER JOIN planes_pozo pp ON pp.id = p.plan_pozo_id \nWHERE p.nombre_clave = '${jobName}' and pp.activo = 1;`;\n}\nreturn msg;",
+        "func": "const jobName = msg.jobName;\nif(jobName){\n    msg.payload = `SELECT p.* FROM pozos p\n    INNER JOIN planes_pozo pp ON pp.id = p.plan_pozo_id \n    WHERE p.nombre_clave = '${jobName}' and pp.activo = 1;`;\n}\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -453,7 +453,7 @@
         "wires": [
             [
                 "6ba7bd62c061b91a",
-                "3a2c34d787837aef"
+                "7aa2c632ad4a408f"
             ]
         ]
     },
@@ -462,14 +462,14 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "actualizarHistorico",
-        "func": "//const data = msg.payload.recordsets[0];\nconst data = msg.payload;\nconst maxHoleDepthValue = msg.maxHoleDepthValue;\nconst maxBitPositionValue = msg.maxBitPositionValue;\n\nif (data.length > 0 && maxHoleDepthValue > 0) {\n    const idPozo = data[0].id; //id pozo\n    msg.payload = `\n        INSERT INTO [dbo].[avances_pozo] \n        ([pozo_id], [nivel_trepano], [velocidad], [curva_de_avance], [profundidad]) \n        VALUES (${idPozo}, 0, 0, 0, ${maxHoleDepthValue});\n    `;\n}\nreturn msg;\n",
+        "func": "//const data = msg.payload.recordsets[0];\nconst data = msg.payload;\nconst maxHoleDepthValue = msg.maxHoleDepthValue;\nconst maxBitPositionValue = msg.maxBitPositionValue;\n\nif (data.length > 0 && maxHoleDepthValue > 0 && data[0].profundidad < maxHoleDepthValue) {\n    const idPozo = data[0].pozo_id;\n    msg.payload = `\n        INSERT INTO [dbo].[avances_pozo] \n        ([pozo_id], [nivel_trepano], [velocidad], [curva_de_avance], [profundidad]) \n        VALUES (${idPozo}, 0, 0, 0, ${maxHoleDepthValue});\n    `;\n}\nreturn msg;\n",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2130,
+        "x": 2610,
         "y": 420,
         "wires": [
             [
@@ -489,8 +489,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 2110,
-        "y": 360,
+        "x": 2150,
+        "y": 480,
         "wires": []
     },
     {
@@ -534,7 +534,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 168",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_168\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended');\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_168\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended');\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -592,7 +592,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 165",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_165\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_165\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -667,7 +667,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 156",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_156\")));\netls.map((e, i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter((e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_156\")));\netls.map((e, i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter((e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -700,7 +700,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 173",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_173\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_173\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -733,7 +733,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 160",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_160\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_160\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -766,7 +766,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 170",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_170\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_170\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -799,7 +799,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded PAE001",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_PAE001\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_PAE001\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -832,7 +832,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 163",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_163\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_163\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -865,7 +865,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 166",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_166\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_166\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -898,7 +898,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 167",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_167\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_167\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -931,7 +931,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 169",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_169\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_169\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -964,7 +964,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 174",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_174\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_174\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -997,7 +997,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 161",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_161\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_161\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1355,7 +1355,7 @@
         "type": "function",
         "z": "5e5a0f50e0190a4e",
         "name": "procesarJobsEnded 171",
-        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_171\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && !e.endDate && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
+        "func": "let etls = JSON.parse(JSON.stringify(global.get(\"etl_avance_pozo_his_171\")));\netls.map((e,i) => {\n    if (e.jobStatus === 'Ended' && e.lastDataDate) {\n        etls[i]['endDate'] = e.lastDataDate;\n    }\n});\nmsg.payload = etls.filter( (e) => e.jobStatus === 'Ended' && e.endDate);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1392,6 +1392,42 @@
         "wires": [
             [
                 "11a104ef23644dfc"
+            ]
+        ]
+    },
+    {
+        "id": "7aa2c632ad4a408f",
+        "type": "function",
+        "z": "5e5a0f50e0190a4e",
+        "name": "consultaIUltimoValorAvancePozo",
+        "func": "//const data = msg.payload.recordsets[0];\nconst data = msg.payload;\nif (data.length > 0) {\n    msg.payload = `SELECT TOP 1 * \n        FROM avances_pozo ap \n        WHERE ap.pozo_id = ${data[0].id} \n        ORDER BY ap.creado_el DESC;`;\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2180,
+        "y": 420,
+        "wires": [
+            [
+                "dfdf663a858bc3b2"
+            ]
+        ]
+    },
+    {
+        "id": "dfdf663a858bc3b2",
+        "type": "MSSQL",
+        "z": "5e5a0f50e0190a4e",
+        "mssqlCN": "8c922d743060092b",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 2420,
+        "y": 420,
+        "wires": [
+            [
+                "3a2c34d787837aef"
             ]
         ]
     },

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import { serializedData } from '@/lib/prisma/utils';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -56,9 +57,8 @@ export async function GET(request) {
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los pozos' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al obtener los elementos de componente',
+    });
   }
 }

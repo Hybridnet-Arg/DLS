@@ -7,7 +7,10 @@ export const usePlanPozoStore = create(
       isLoading: false,
       planPozo: {},
       pozoActivo: {},
+      ultimaActualizacion: null,
       setIsLoading: (isLoading) => set(() => ({ isLoading })),
+      setUltimaActualizacion: (ultimaActualizacion) =>
+        set(() => ({ ultimaActualizacion })),
       setPlanPozo: (planPozo, pozoActivo) =>
         set(() => ({ planPozo, pozoActivo, isLoading: false })),
     }),

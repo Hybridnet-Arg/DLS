@@ -6,7 +6,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+} from '@/components/ui/shadcn/navigation-menu';
 import usePerforadoresStore from '@/store/perforadores.store';
 import { usePlanPozoStore } from '@/store/planPozo.store';
 import { getAllPlanesPozo } from '@/services/planesPozo.services';

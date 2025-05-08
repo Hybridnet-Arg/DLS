@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(_request, { params }) {
   try {
-    const { numero } = params;
+    const { numero } = await params;
     const whereQuery = {
       perforador: { numero: Number(numero) },
       plan_pozo: { activo: true },
@@ -46,9 +47,6 @@ export async function GET(_request, { params }) {
 
     return NextResponse.json(estadoDiagrama, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener el avance de pozo' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error);
   }
 }

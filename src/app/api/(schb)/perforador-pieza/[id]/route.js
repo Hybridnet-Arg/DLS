@@ -4,7 +4,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(_req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const pieza = await prisma.perforadorPieza.findUnique({
       where: { idPerforadorPieza: Number(id) },
     });
@@ -16,7 +16,7 @@ export async function GET(_req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const {
       hsInst,
       enUso,
@@ -55,7 +55,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(_req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const perforadorPieza = await prisma.perforadorPieza.update({
       where: { idPerforadorPieza: Number(id) },
       data: { baja: 1 },

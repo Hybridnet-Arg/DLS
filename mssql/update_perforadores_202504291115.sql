@@ -1,0 +1,20 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+  UPDATE perforadores
+  SET deshabilitado = 1
+  WHERE nombre_clave IN ('171', '173', '174');
+
+  COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

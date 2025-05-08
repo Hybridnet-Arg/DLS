@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 
 import { getAllPozos } from '@/services/pozos.services';
+import { usePlanPozoStore } from '@/store/planPozo.store';
 import usePerforadoresStore from '@/store/perforadores.store';
 
 import AdvancementCurve from './components/AdvancementCurveGraphic/AdvancementCurve';
@@ -13,13 +14,14 @@ import {
 } from './helpers/etapasPozos.helper';
 
 export default function AvancesDePozoByPerforador() {
+  const { setUltimaActualizacion } = usePlanPozoStore();
   const { perforadorSeleccionado: perforador } = usePerforadoresStore();
 
-  const [pozos, setPozos] = useState([]);
   const [hole, setHole] = useState({});
+  const [pozos, setPozos] = useState([]);
   const [progress, setProgress] = useState(0);
-  const [progressNivelTrepano, setProgressNivelTrepano] = useState(0);
   const [isLoaded, setIsLoaded] = useState(true);
+  const [progressNivelTrepano, setProgressNivelTrepano] = useState(0);
 
   const handleProgress = (hole) => {
     const profundidad = hole?.avances_pozo?.[0]?.profundidad ?? 0;
@@ -84,6 +86,7 @@ export default function AvancesDePozoByPerforador() {
     if (!value) return;
     const hole = pozos?.find((pozo) => pozo?.id === parseInt(value));
     handleProgress(hole);
+    setUltimaActualizacion({ ...hole?.avances_pozo?.[0], pozo: hole });
     setHole(hole);
   };
 
@@ -103,6 +106,7 @@ export default function AvancesDePozoByPerforador() {
                 trepanLevel={hole?.avances_pozo?.[0]?.nivel_trepano ?? 0}
                 velocity={hole?.avances_pozo?.[0]?.velocidad ?? 0}
                 etapasPozo={hole?.etapas_pozo ?? []}
+                enProgreso={hole?.en_progreso || false}
               />
             </div>
             <div className="flex flex-col flex-1 md:flex-1 justify-between">

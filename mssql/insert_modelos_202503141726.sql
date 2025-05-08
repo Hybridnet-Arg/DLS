@@ -1,0 +1,22 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+  SET IDENTITY_INSERT [dbo].[modelo] ON
+  INSERT INTO modelo
+  (idModelo, modelo, idMarca)
+  VALUES(108, 'XM-320WL', 2);
+  SET IDENTITY_INSERT [dbo].[modelo] OFF
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

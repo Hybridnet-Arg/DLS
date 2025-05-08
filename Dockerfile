@@ -1,10 +1,10 @@
 # Usa una imagen oficial de Node.js como base
-FROM node:18.18.2-alpine
+FROM node:22.14.0-alpine
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia los archivos package.json y package-lock.json al contenedor
+# Copia los archivos package.json y yarn.lock al contenedor
 COPY package.json yarn.lock ./
 
 # Copia el directorio prisma, donde se encuentra schema.prisma

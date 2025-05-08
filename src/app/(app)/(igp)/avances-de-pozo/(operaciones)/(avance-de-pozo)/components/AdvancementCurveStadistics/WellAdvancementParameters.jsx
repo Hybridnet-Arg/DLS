@@ -1,7 +1,7 @@
 'use client';
 import BitPositionImage from '../../../../../../../../../public/static/images/avance-pozo/bit-position.png';
 
-function BitPositionIcon(props) {
+function BitPositionIcon({ isBlinking = false, ...props }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,9 @@ function BitPositionIcon(props) {
         fillRule="evenodd"
         d="m14 66-5-4.408-5-2.923 2-4.722L7.8 49h12.4l1.8 4.947 2 4.721-5 2.924L14 66Z"
         clipRule="evenodd"
-        style={{ animation: 'blink 0.3s infinite' }}
+        style={{
+          animation: isBlinking ? 'blink 0.3s infinite' : 'none',
+        }}
       />
     </svg>
   );
@@ -54,13 +56,14 @@ export default function WellAdvancementParameters({
   valueBitPosition,
   titleHoleDepth,
   valueHoleDepth,
+  isBlinking,
 }) {
   return (
     <div className="flex gap-[20px] justify-center items-center p-0">
       <InfoBox
         title={titleBitPosition}
         value={valueBitPosition}
-        icon={<BitPositionIcon />}
+        icon={<BitPositionIcon isBlinking={isBlinking} />}
         description="BP"
       />
       <InfoBox

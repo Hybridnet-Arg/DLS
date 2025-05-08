@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import Button from '../buttons/Button';
 
 export default function Modal({
@@ -14,14 +15,23 @@ export default function Modal({
   cancel = false,
   isLoadingOk = false,
   containerStyles = '',
+  closable = false,
 }) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div
-        className={`bg-white rounded-lg shadow-lg w-full ${containerStyles ? containerStyles : 'max-w-lg'} `}
+        className={`bg-white rounded-lg shadow-lg w-full relative ${containerStyles ? containerStyles : 'max-w-lg'} `}
       >
+        {closable && (
+          <button
+            className="absolute top-1 right-1 text-gray-400 hover:text-gray-700"
+            onClick={onClose}
+          >
+            <X size={20} />
+          </button>
+        )}
         {header
           ? header
           : title && (

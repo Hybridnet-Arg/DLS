@@ -8,6 +8,7 @@ import Procesando from '@/components/icons/procesando';
 const Logs = () => {
   const { perforador } = useContext(AuthContext);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [logs, setLogs] = useState([]);
   const [logsBomba, setLogsBombas] = useState([]);
   const [sortConfig, setSortConfig] = useState({
@@ -23,7 +24,9 @@ const Logs = () => {
 
   useEffect(() => {
     const buscarLogs = async () => {
-      if (perforador) {
+      try {
+        setIsLoading(true);
+        if (!perforador) return;
         const filtro = {
           perf: perforador.idPerforador,
         };
@@ -31,6 +34,10 @@ const Logs = () => {
         const { data } = await axios.post('/api/base/logs', filtro);
         setLogs(data);
         setLogsBombas(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     buscarLogs();
@@ -38,6 +45,7 @@ const Logs = () => {
     return () => {
       setLogs([]);
       setLogsBombas([]);
+      setIsLoading(true);
     };
   }, [perforador]);
 
@@ -107,78 +115,88 @@ const Logs = () => {
           </select>
         </div>
 
-        {sortedData().length > 0 ? (
-          <div className="h-96 overflow-y-auto mt-2 ml-3">
-            <table className="w-full snap-y">
-              <thead>
-                <tr className="top-0  bg-gray-100 sticky">
-                  <th
-                    className="ml-1 py-1 cursor-pointer"
-                    onClick={() => requestSort('fecha')}
-                  >
-                    Fecha
-                  </th>
-                  <th
-                    className="ml-1 py-1 cursor-pointer"
-                    onClick={() => requestSort('bomba')}
-                  >
-                    Bomba
-                  </th>
-                  <th
-                    className="ml-1 py-1 cursor-pointer"
-                    onClick={() => requestSort('cuerpo')}
-                  >
-                    Cuerpo
-                  </th>
-                  <th className="ml-1 py-1">Modulo</th>
-                  <th className="ml-1 py-1">Nro.</th>
-                  <th className="ml-1 py-1 ">Tipo</th>
-                  <th className="ml-1 py-1 ">Diametro</th>
-                  <th className="ml-1 py-1 ">Marca</th>
-                  <th className="ml-1 py-1 ">Hs</th>
-                  <th className="ml-1 py-1 ">Movimiento</th>
-                  <th className="ml-1 py-1 ">Detalle</th>
-                  <th className="ml-1 py-1 ">Usuario</th>
-                  <th className="ml-1 py-1 ">Serie</th>
-                </tr>
-              </thead>
-              <tbody className="text-xs">
-                {sortedData().map((item) => (
-                  <tr key={item.idLog} className="hover:bg-blue-200">
-                    <td className="border px-2 py-1">
-                      {new Date(item.fecha).toLocaleString()}
-                    </td>
-                    <td className="border px-2 py-1">{item.bomba}</td>
-                    <td className="border px-2 py-1">{item.cuerpo}</td>
-                    <td className="border px-2 py-1">{item.modulo}</td>
-                    <td className="border px-2 py-1">
-                      {item.perforadorPieza.pieza.nroPieza}
-                    </td>
-                    <td className="border px-2 py-1">
-                      {item.perforadorPieza.pieza.tipo}
-                    </td>
-                    <td className="border px-2 py-1">
-                      {item.perforadorPieza.diametro
-                        ? item.perforadorPieza.diametro.diametro
-                        : ''}
-                    </td>
-                    <td className="border px-2 py-1">
-                      {item.perforadorPieza.marca
-                        ? item.perforadorPieza.marca.marca
-                        : ''}
-                    </td>
-                    <td className="border px-2 py-1">{item.hs}</td>
-                    <td className="border px-2 py-1">{item.movimiento}</td>
-                    <td className="border px-2 py-1">{item.detalle}</td>
-                    <td className="border px-2 py-1">{item.usuario}</td>
-                    <td className="border px-2 py-1">
-                      {item.perforadorPieza.serie}
-                    </td>
+        {!isLoading ? (
+          sortedData().length > 0 ? (
+            <div className="h-96 overflow-y-auto mt-2 ml-3">
+              <table className="w-full snap-y">
+                <thead>
+                  <tr className="top-0  bg-gray-100 sticky">
+                    <th
+                      className="ml-1 py-1 cursor-pointer"
+                      onClick={() => requestSort('fecha')}
+                    >
+                      Fecha
+                    </th>
+                    <th
+                      className="ml-1 py-1 cursor-pointer"
+                      onClick={() => requestSort('bomba')}
+                    >
+                      Bomba
+                    </th>
+                    <th
+                      className="ml-1 py-1 cursor-pointer"
+                      onClick={() => requestSort('cuerpo')}
+                    >
+                      Cuerpo
+                    </th>
+                    <th className="ml-1 py-1">Modulo</th>
+                    <th className="ml-1 py-1">Nro.</th>
+                    <th className="ml-1 py-1 ">Tipo</th>
+                    <th className="ml-1 py-1 ">Diametro</th>
+                    <th className="ml-1 py-1 ">Marca</th>
+                    <th className="ml-1 py-1 ">Modelo</th>
+                    <th className="ml-1 py-1 ">Hs</th>
+                    <th className="ml-1 py-1 ">Movimiento</th>
+                    <th className="ml-1 py-1 ">Detalle</th>
+                    <th className="ml-1 py-1 ">Usuario</th>
+                    <th className="ml-1 py-1 ">Serie</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="text-xs">
+                  {sortedData().map((item) => (
+                    <tr key={item.idLog} className="hover:bg-blue-200">
+                      <td className="border px-2 py-1">
+                        {new Date(item.fecha).toLocaleString()}
+                      </td>
+                      <td className="border px-2 py-1">{item.bomba}</td>
+                      <td className="border px-2 py-1">{item.cuerpo}</td>
+                      <td className="border px-2 py-1">{item.modulo}</td>
+                      <td className="border px-2 py-1">
+                        {item.perforadorPieza.pieza.nroPieza}
+                      </td>
+                      <td className="border px-2 py-1">
+                        {item.perforadorPieza.pieza.tipo}
+                      </td>
+                      <td className="border px-2 py-1">
+                        {item.perforadorPieza.diametro
+                          ? item.perforadorPieza.diametro.diametro
+                          : ''}
+                      </td>
+                      <td className="border px-2 py-1">
+                        {item.perforadorPieza.marca
+                          ? item.perforadorPieza.marca.marca
+                          : ''}
+                      </td>
+                      <td className="border px-2 py-1">
+                        {item?.perforadorPieza?.modelo
+                          ? item?.perforadorPieza?.modelo?.modelo
+                          : ''}
+                      </td>
+                      <td className="border px-2 py-1">{item.hs}</td>
+                      <td className="border px-2 py-1">{item.movimiento}</td>
+                      <td className="border px-2 py-1">{item.detalle}</td>
+                      <td className="border px-2 py-1">{item.usuario}</td>
+                      <td className="border px-2 py-1">
+                        {item.perforadorPieza.serie}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="p-6">No se encontraron registros...</p>
+          )
         ) : (
           <Procesando />
         )}

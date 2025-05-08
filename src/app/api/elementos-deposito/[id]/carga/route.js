@@ -1,10 +1,11 @@
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import { serializedData } from '@/lib/prisma/utils';
-import { NextResponse } from 'next/server';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function PUT(_req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const elementoDeposito = await prisma.elementos_deposito.update({
       where: { id: parseInt(id) },
       data: {
@@ -18,9 +19,8 @@ export async function PUT(_req, { params }) {
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al actualizar el elemento componente' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al actualizar el elemento componente',
+    });
   }
 }

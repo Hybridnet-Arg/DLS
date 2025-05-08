@@ -26,6 +26,7 @@ export default function CargaDeAlmacen() {
         const params = {
           elemento_id: ELEMENTOS_CICLOS_CABLE_TONELADA_MILLA.BOBINA,
           componente_id: COMPONENTES.CICLOS_CABLE_TONELADA_MILLA,
+          nombre_perforador: perforadorSeleccionado?.nombre,
         };
         const data = await getElementosComponenteByNumeroPerforador(
           perforadorSeleccionado?.idPerforador,

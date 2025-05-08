@@ -145,18 +145,27 @@ export default function CortarCableForm({ bobina }) {
                       type="number"
                       error={errors?.metros_corte}
                       label={'Metros corte'}
+                      max={bobina?.diametro?.largo_corte}
                       labelStyles="font-light"
                       inputStyles="text-[8px] bg-white shadow py-2 px-2 text-base"
                       onChange={(value) => {
-                        handleChange(value);
-
                         const maxCorte = Number(bobina?.diametro?.largo_corte);
                         const corte = value?.target?.value
                           ? Number(value?.target?.value)
                           : 0;
 
                         const remanente = corte > 0 ? maxCorte - corte : '';
+
+                        if (corte > maxCorte) {
+                          setFieldValue(
+                            'remanente',
+                            maxCorte - values?.metros_corte
+                          );
+                          return;
+                        }
+
                         setFieldValue('remanente', remanente);
+                        handleChange(value);
                       }}
                     />
                     <InputField

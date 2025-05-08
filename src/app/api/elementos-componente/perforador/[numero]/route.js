@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import { serializedData } from '@/lib/prisma/utils';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(request, { params }) {
   const { searchParams } = new URL(request.url);
   try {
     const whereQuery = {};
-    const numeroPerforador = params?.numero;
+    const { numero: numeroPerforador } = await params;
 
     const elementoId = searchParams.get('elemento_id');
     const componenteId = searchParams.get('componente_id');
+    const nombrePerforador = searchParams.get('nombre_perforador');
 
     if (elementoId) {
       whereQuery.elemento_id = parseInt(elementoId);
@@ -23,7 +25,10 @@ export async function GET(request, { params }) {
     if (numeroPerforador) {
       whereQuery.componente_perforador = {
         ...whereQuery.componente_perforador,
-        perforador: { numero: parseInt(numeroPerforador) },
+        perforador: {
+          numero: parseInt(numeroPerforador),
+          nombre: nombrePerforador,
+        },
       };
     }
 
@@ -54,9 +59,6 @@ export async function GET(request, { params }) {
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los pozos' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error);
   }
 }

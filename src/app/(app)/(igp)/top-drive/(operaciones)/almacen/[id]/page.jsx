@@ -1,20 +1,18 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { handleAxiosError } from '@/utils/handlers/axiosError.handler';
-import { showToastSuccess } from '@/utils/showToast.util';
+import { use, useEffect, useState } from 'react';
+import { isSaverSub } from '../../helpers/elementType.helper';
 import { eliminarElementoDeposito } from '@/services/elementosDeposito.service';
 import { getElementosComponenteById } from '@/services/elementosComponente.service';
 import CanioLavadorSkeleton from '../../components/CanioLavadorSkeleton';
 import CanioLavadorTablaPiezas from '../../components/CanioLavadorTablaPiezas';
 import ModalDialog from '@/components/ui/modal/ModalDialog';
-import { isSaverSub } from '../../helpers/elementType.helper';
 
 export default function TopDriveAlmacenId({ params }) {
-  const { id } = params;
-
+  
   const router = useRouter();
+  const { id } = use(params);
   const [isMounted, setisMounted] = useState(false);
   const [elementoComponente, setElementoComponente] = useState({});
   const [selectedItem, setSelectedItem] = useState({});

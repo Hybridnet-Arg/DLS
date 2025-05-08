@@ -5,7 +5,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 export async function GET(req, { params }) {
   const { searchParams } = new URL(req.url);
   try {
-    const { id } = params;
+    const { id } = await params;
     const lastLocacionPerforadorCronograma = searchParams.get(
       'last_locacion_perforador_cronograma'
     );

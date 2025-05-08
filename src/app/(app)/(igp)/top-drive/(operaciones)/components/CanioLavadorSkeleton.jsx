@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/shadcn/skeleton';
 
 export default function CanioLavadorSkeleton() {
   return (

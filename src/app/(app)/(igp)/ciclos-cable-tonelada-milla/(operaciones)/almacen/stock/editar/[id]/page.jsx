@@ -1,7 +1,7 @@
 'use client';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import Title from '@/components/ui/labels/Title';
 import Button from '@/components/ui/buttons/Button';
 import ModalDialog from '@/components/ui/modal/ModalDialog';
@@ -10,10 +10,10 @@ import {
   actualizarElementoDeposito,
   obtenerElementoDepositoPorId,
 } from '@/services/elementosDeposito.service';
-import { SkeletonContainer } from '@/components/ui/skeleton';
+import { SkeletonContainer } from '@/components/ui/shadcn/skeleton';
 
 export default function EditarBobina({ params }) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
   const formRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);

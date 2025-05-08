@@ -5,6 +5,7 @@ import {
   getDepositElements,
   groupDepositElementsCiclosCable,
 } from '@/lib/prisma/repositories/elementosDeposito.repository';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -93,10 +94,9 @@ export async function GET(req) {
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los elementos de deposito' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al obtener los elementos de deposito',
+    });
   }
 }
 
@@ -129,9 +129,8 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al crear el elemento deposito' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al crear el elemento deposito',
+    });
   }
 }

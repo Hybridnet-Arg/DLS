@@ -35,7 +35,9 @@ export default function Button({
       disabled={disabled || loading}
     >
       {icon && icon}
-      <span className={clsx('flex-grow', labelStyles)}>{children}</span>
+      <span className={clsx('flex-grow first-letter:uppercase', labelStyles)}>
+        {children}
+      </span>
       {loading && (
         <Loader
           size={20}

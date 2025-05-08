@@ -11,11 +11,15 @@ export async function middleware(req) {
   const path = req?.nextUrl?.pathname;
   const session = await getToken({ req, secret: CONFIG.NEXTAUTH.SECRET });
   if (session) {
-    const requestHeaders = new Headers({
-      ...req.headers,
-      ...corsOptions,
-    });
+    const contentType = req.headers.get('content-type');
+    const requestHeaders = new Headers(req.headers);
     requestHeaders.set('uid', session?.id);
+
+    if (!contentType?.includes('multipart/form-data')) {
+      Object.entries(corsOptions).forEach(([key, value]) => {
+        requestHeaders.set(key, value);
+      });
+    }
 
     if (
       path &&
@@ -30,6 +34,10 @@ export async function middleware(req) {
     });
   }
 
+  if (path && path.startsWith('/uploads/private')) {
+    return new Response('No autorizado', { status: 401 });
+  }
+
   if (path && path.startsWith('/api/')) {
     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
   }
@@ -40,26 +48,46 @@ export async function middleware(req) {
 export const config = {
   matcher: [
     '/',
+    '/uploads/private/:path*',
     '/avances-de-pozo/:path*',
     '/schb/:path*',
     '/cronograma/:path*',
-    '/api/estados-pozo/:path*',
+    '/sistema-de-trazabilidad-para-tubulares/:path*',
     '/api/avances-pozo/:path*',
     '/api/cortes-cable/:path*',
+    '/api/desgastes-cable/:path*',
     '/api/diametros/:path*',
     '/api/elementos-componente/:path*',
     '/api/elementos-deposito/:path*',
     '/api/estados-diagrama/:path*',
+    '/api/estados-pozo/:path*',
     '/api/locaciones/:path*',
     '/api/marcas/:path*',
     '/api/modelos/:path*',
     '/api/perforador-locaciones/:path*',
     '/api/perforadores/:path*',
     '/api/planes-pozo/:path*',
+    '/api/planta/:path*',
     '/api/pozos/:path*',
     '/api/tipos-rosca/:path*',
-    '/api/locaciones/:path*',
+    '/api/ubicaciones/:path*',
     '/api/cronogramas/:path*',
+    '/api/locaciones-perforador-cronograma/:path*',
+    '/api/perforadores-cronograma/:path*',
+    '/api/perforadores-forecast/:path*',
+    '/api/planificacion-areas/:path*',
+    '/api/planificaciones/:path*',
     '/api/tareas-forecast/:path*',
+    '/api/tubulares/:path*',
+    '/api/tubulares-adquisiciones/:path*',
+    '/api/tubulares-destinos/:path*',
+    '/api/tubulares-documentos/:path*',
+    '/api/tubulares-movimientos/:path*',
+    '/api/tubulares-proveedores/:path*',
+    '/api/tubulares-rangos/:path*',
+    '/api/tubulares-talleres/:path*',
+    '/api/tubulares-tipos-barra/:path*',
+    '/api/tubulares-tipos-conexion/:path*',
+    '/api/tanques/:path*',
   ],
 };

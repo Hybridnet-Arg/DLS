@@ -1,3 +1,5 @@
+'use client';
+
 import Submenu from '@/components/ui/tabs/Submenu';
 import PlantaIcon from '@/components/icons/PlantaIcon';
 import {
@@ -6,13 +8,18 @@ import {
   CableMillaIcon,
   LineasAltaPresionIcon,
   PozoIcon,
+  TanqueGasoilIcon,
   TelaZarandaIcon,
   TopDriveIcon,
   TubularesIcon,
   ValvulaPiletaIcon,
 } from '@/components/icons/MenuIcons';
+import { CONFIG } from '@/constants';
+import { usePlantaStore } from '@/store/planta.store';
 
 export default function OperatingSystem() {
+  const { setActiveSection, setInitial } = usePlantaStore();
+
   const options = [
     {
       key: 'schb',
@@ -20,6 +27,10 @@ export default function OperatingSystem() {
       disabled: false,
       link: '/sistema-de-horas-de-bomba',
       icon: <BombaIcon height={35} width={35} />,
+      onMouseEnter: () => setActiveSection('schb'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
     {
       key: 'adp',
@@ -28,6 +39,10 @@ export default function OperatingSystem() {
       component: null,
       link: '/avances-de-pozo',
       icon: <PozoIcon height={35} width={35} />,
+      onMouseEnter: () => setActiveSection('adp'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
     {
       key: 'td',
@@ -36,6 +51,10 @@ export default function OperatingSystem() {
       component: null,
       link: '/top-drive',
       icon: <TopDriveIcon height={35} width={35} />,
+      onMouseEnter: () => setActiveSection('td'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
     {
       key: 'cctm',
@@ -45,6 +64,10 @@ export default function OperatingSystem() {
       component: null,
       link: '/ciclos-cable-tonelada-milla',
       icon: <CableMillaIcon height={35} width={35} />,
+      onMouseEnter: () => setActiveSection('cctm'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
     {
       key: 'ldap',
@@ -81,24 +104,37 @@ export default function OperatingSystem() {
     {
       key: 'stpt',
       title: 'Sist. de trazabilidad p/ tubulares',
-      disabled: true,
-      hidden: true,
       component: null,
+      disabled: false,
+      hidden: false,
+      link: '/sistema-de-trazabilidad-para-tubulares',
       icon: (
         <TubularesIcon height={35} width={28} className="mr-[0.30rem] ml-1" />
       ),
+      onMouseEnter: () => setActiveSection('stpt'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
     {
       key: 'er',
-      title: 'ER (Gasoil)',
-      disabled: true,
-      hidden: true,
+      title: 'Tanques de Gasoil',
+      disabled: false,
+      hidden: false,
       component: null,
-      icon: <PozoIcon height={35} width={35} />,
+      link: '/tanques-gasoil',
+      icon: <TanqueGasoilIcon height={35} width={35} />,
+      onMouseEnter: () => setActiveSection('er'),
+      onMouseLeave: () => {
+        setActiveSection(null), setInitial(true);
+      },
     },
   ];
 
   return (
-    <Submenu items={options} defaultView={<PlantaIcon className="p-10" />} />
+    <Submenu
+      items={options}
+      defaultView={<PlantaIcon className="p-2 rounded-lg" />}
+    />
   );
 }

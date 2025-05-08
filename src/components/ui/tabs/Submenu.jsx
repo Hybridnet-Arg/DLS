@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { usePlantaStore } from '@/store/planta.store';
 
 function SubItem({
   hidden,
@@ -55,6 +56,7 @@ export default function Submenu({
   defaultView,
 }) {
   const path = usePathname();
+  const { selectedOptionMenu } = usePlantaStore();
   const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
@@ -73,37 +75,70 @@ export default function Submenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
+  useEffect(() => {
+    setSelectedOption(selectedOptionMenu);
+  }, [selectedOptionMenu]);
+
   return (
     <div
       className={`rounded-b-md mb-5 bg-backgroundGray pt-5 pb-3 px-3 ${className}`}
     >
       <div className="flex flex-col md:flex-row">
         <div className="flex-[1] md:flex-[1] rounded-e mt-5">
-          {items?.map(({ disabled, hidden, title, icon, ...rest }) =>
-            rest?.link ? (
-              <Link key={rest?.key} href={rest?.link}>
+          {items?.map(
+            ({
+              disabled,
+              hidden,
+              title,
+              icon,
+              onMouseEnter,
+              onMouseLeave,
+              ...rest
+            }) =>
+              rest?.link ? (
+                onMouseEnter ? (
+                  <Link
+                    key={rest?.key}
+                    href={rest?.link}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <SubItem
+                      disabled={disabled}
+                      hidden={hidden}
+                      title={title}
+                      id={rest?.key}
+                      selectedOption={selectedOption}
+                      setSelectedOption={setSelectedOption}
+                      icon={icon}
+                    />
+                  </Link>
+                ) : (
+                  <Link key={rest?.key} href={rest?.link}>
+                    <SubItem
+                      disabled={disabled}
+                      hidden={hidden}
+                      title={title}
+                      id={rest?.key}
+                      selectedOption={selectedOption}
+                      setSelectedOption={setSelectedOption}
+                      icon={icon}
+                    />
+                  </Link>
+                )
+              ) : (
                 <SubItem
-                  disabled={disabled}
+                  key={rest?.key}
                   hidden={hidden}
+                  disabled={disabled}
                   title={title}
                   id={rest?.key}
                   selectedOption={selectedOption}
                   setSelectedOption={setSelectedOption}
                   icon={icon}
                 />
-              </Link>
-            ) : (
-              <SubItem
-                key={rest?.key}
-                hidden={hidden}
-                disabled={disabled}
-                title={title}
-                id={rest?.key}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
-                icon={icon}
-              />
-            )
+              )
           )}
         </div>
         <div className="flex-[4.23] md:flex-[4.23] bg-white rounded-lg mt-4 md:mt-0 min-h-[440px] 2xl:min-h-[500px]">

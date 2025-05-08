@@ -1,5 +1,5 @@
 'use client';
-import { Progress } from './progress';
+import { Progress } from '../shadcn/progress';
 import { formatCurrency } from '@/utils/formatters/currency.formatter';
 
 const ProgressBar = ({

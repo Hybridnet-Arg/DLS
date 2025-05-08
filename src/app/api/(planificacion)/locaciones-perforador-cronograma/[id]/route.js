@@ -4,7 +4,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     const data = {

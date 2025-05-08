@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(req, { params }) {
   const { searchParams } = new URL(req.url);
   try {
     const includeQuery = {};
-    const { numero } = params;
+    const { numero } = await params;
 
     const includePozoEnProgreso = searchParams.get('include_pozo_en_progreso');
     const includePlanesPozo = searchParams.get('include_planes_pozo');
@@ -35,9 +36,11 @@ export async function GET(req, { params }) {
 
     return NextResponse.json(perforadorLocacion, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener el perforador' },
-      { status: 500 }
+    return (
+      apiErrorHandler(error),
+      {
+        fallbackMessage: 'Error al obtener la locación del perforador',
+      }
     );
   }
 }

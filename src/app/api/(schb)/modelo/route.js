@@ -5,7 +5,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 export async function GET() {
   try {
     const modelos = await prisma.modelo.findMany({
-      include: { marca: true },
+      include: { marca: true, diametro: true },
     });
     return NextResponse.json(modelos, { status: 200 });
   } catch (error) {

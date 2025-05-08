@@ -1,24 +1,29 @@
 'use client';
 import { Loader } from 'lucide-react';
-import { Prisma } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { DATE_FORMATS } from '@/constants';
+import { useRefreshStore } from '@/store/refresh.store';
+import { usePlanPozoStore } from '@/store/planPozo.store';
+import usePerforadoresStore from '@/store/perforadores.store';
+import { formatToDDMMYYYY } from '@/utils/formatters/date.formatter';
+import { getPerforadorByNumero } from '@/services/perforadores.services';
+import { obtenerAvancesDePozoPorPerforador } from '@/services/avancesDePozo.service';
 import Submenu from '@/components/ui/tabs/Submenu';
 import { PozoIcon } from '@/components/icons/MenuIcons';
-import usePerforadoresStore from '@/store/perforadores.store';
-import { getPerforadorByNumero } from '@/services/perforadores.services';
-import { obtenerAvancesDePozo } from '@/services/avancesDePozo.service';
-import { useRefreshStore } from '@/store/refresh.store';
+import LastUpdateLabel from '@/components/ui/labels/LastUpdateLabel';
 
 const TIME_TO_REFRESH = 60000;
 
 export default function OperacionesLayout({ children }) {
   const router = useRouter();
+
   const { shouldRefresh } = useRefreshStore();
   const { perforadorSeleccionado } = usePerforadoresStore();
+  const { ultimaActualizacion, setUltimaActualizacion } = usePlanPozoStore();
+
   const [perforador, setPerforador] = useState({});
   const [isMounted, setIsMounted] = useState(false);
-  const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
 
   useEffect(() => {
     const fetchAvancePozo = async () => {
@@ -44,12 +49,15 @@ export default function OperacionesLayout({ children }) {
   useEffect(() => {
     const fetchAvancePozo = async () => {
       try {
-        const data = await obtenerAvancesDePozo({
-          limit: 1,
-          sort_field: 'creado_el',
-          sort_type: Prisma.SortOrder.desc,
-        });
-        setUltimaActualizacion(data?.avancesDePozo?.[0]?.creado_el ?? null);
+        setIsMounted(false);
+        const avanceDePozo = await obtenerAvancesDePozoPorPerforador(
+          perforadorSeleccionado?.idPerforador,
+          {
+            nombre_perforador: perforadorSeleccionado?.nombre,
+          }
+        );
+
+        setUltimaActualizacion(avanceDePozo);
       } catch (error) {
         setUltimaActualizacion(null);
       } finally {
@@ -61,7 +69,7 @@ export default function OperacionesLayout({ children }) {
 
     const intervalo = setInterval(fetchAvancePozo, TIME_TO_REFRESH);
     return () => clearInterval(intervalo);
-  }, []);
+  }, [perforadorSeleccionado]);
 
   const options = [
     {
@@ -106,24 +114,6 @@ export default function OperacionesLayout({ children }) {
     },
   ];
 
-  const formatUTC = (date) => {
-    const utcDate = new Date(date);
-    const dateTimeConfig = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZone: 'UTC',
-    };
-    const formatter = new Intl.DateTimeFormat('es-AR', dateTimeConfig);
-
-    const formattedTime = formatter.format(utcDate);
-    return formattedTime;
-  };
-
   return (
     <div>
       <div className="bg-backgroundGray pt-4 rounded-t-md flex items-center justify-between">
@@ -134,12 +124,20 @@ export default function OperacionesLayout({ children }) {
           {!isMounted ? (
             <Loader size={20} className="animate-spin text-white mx-4" />
           ) : (
-            <p className="m-0 font-medium text-sm text-ellipsis overflow-hidden whitespace-nowrap px-4">
-              Última actualización:{' '}
-              {!ultimaActualizacion
-                ? 'DD/MM/AAAA'
-                : formatUTC(ultimaActualizacion)}
-            </p>
+            <LastUpdateLabel>
+              Última actualización
+              {ultimaActualizacion?.pozo?.nombre ? (
+                <>
+                  <br />
+                  <b>en pozo {ultimaActualizacion?.pozo?.nombre}:</b>{' '}
+                </>
+              ) : (
+                ': '
+              )}
+              {formatToDDMMYYYY(ultimaActualizacion?.creado_el, {
+                formatter: DATE_FORMATS.DD_MM_YYYY_HH_MM_SS,
+              })}{' '}
+            </LastUpdateLabel>
           )}
         </div>
       </div>

@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma/client';
 import apiErrorHandler, { ApiError } from '@/utils/handlers/apiError.handler';
 
 export async function GET(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const { searchParams } = new URL(req.url);
   try {
     const idMarca = searchParams.get('idMarca');
@@ -118,6 +118,45 @@ export async function GET(req, { params }) {
         total: diametro?._count?.perforadorPieza ?? 0,
       })),
     };
+
+    //obtener piezas sin modelos
+    if (!idModelo) {
+      const countPiezasSinModelo = await prisma.perforadorPieza.count({
+        where: {
+          ...whereClause.perforadorPieza.some,
+          idModelo: null,
+        },
+      });
+      if (countPiezasSinModelo > 0) {
+        formattedPieza.modelos.push({
+          idMarca: null,
+          idModelo: null,
+          modelo: 'Sin modelo',
+          total: countPiezasSinModelo,
+          _count: {
+            perforadorPieza: countPiezasSinModelo,
+          },
+        });
+      }
+    }
+
+    //obtener piezas sin diametros
+    const countPiezasSinDiametros = await prisma.perforadorPieza.count({
+      where: {
+        ...whereClause.perforadorPieza.some,
+        idDiametro: null,
+      },
+    });
+    if (countPiezasSinDiametros > 0) {
+      formattedPieza.diametros.push({
+        idDiametro: null,
+        diametro: 'Sin diámetro',
+        total: countPiezasSinDiametros,
+        _count: {
+          perforadorPieza: countPiezasSinDiametros,
+        },
+      });
+    }
 
     return NextResponse.json(formattedPieza, { status: 200 });
   } catch (error) {

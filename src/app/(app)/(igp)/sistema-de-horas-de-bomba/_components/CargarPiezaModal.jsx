@@ -40,10 +40,12 @@ export default function CargarPiezaModal({
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [marcasTipoPieza, setMarcasTipoPieza] = useState([]);
   const [opcionesDiametro, setOpcionesDiametro] = useState([]);
+  const [tipoPiezaSeleccionada, setTipoPiezaSeleccionada] = useState(null);
 
   useEffect(() => {
     if (pieza) {
       obtenerMarcas(pieza.idPieza);
+      obtenerOpcionesDiametro(pieza.idPieza);
       setInitialValues({
         idPieza: pieza.idPieza,
         idMarca: pieza.idMarca,
@@ -153,23 +155,33 @@ export default function CargarPiezaModal({
       );
       if (tipoPieza) {
         marcas = tipoPieza.marcasTipoPieza.map((item) => item?.marca);
+        setTipoPiezaSeleccionada(tipoPieza);
       }
     }
     setMarcasTipoPieza(marcas);
   }
 
-  function obtenerOpcionesDiametro(idPieza) {
-    let opciones =
-      parseInt(idPieza) !== 15
-        ? [
-            { value: '', label: 'Sin diámetro' },
-            ...diametros?.map((diametro) => ({
-              value: diametro?.idDiametro,
-              label: diametro?.diametro,
-            })),
-          ]
-        : [{ value: '', label: 'Sin diámetro' }];
-    setOpcionesDiametro(opciones);
+  function obtenerOpcionesDiametro(idModelo) {
+    const opcionPorDefecto = { value: '', label: 'Sin diámetro' };
+    const modeloObj = modelos.find(
+      (item) => parseInt(item.idModelo) === parseInt(idModelo)
+    );
+    if (modeloObj) {
+      const diametroObj = modeloObj?.diametro;
+      if (diametroObj) {
+        setOpcionesDiametro([
+          opcionPorDefecto,
+          {
+            value: diametroObj?.idDiametro,
+            label: diametroObj?.diametro,
+          },
+        ]);
+      } else {
+        setOpcionesDiametro([opcionPorDefecto]);
+      }
+    } else {
+      setOpcionesDiametro([opcionPorDefecto]);
+    }
   }
   return (
     <Modal
@@ -215,9 +227,9 @@ export default function CargarPiezaModal({
                 handleChange(e);
                 handleSelectChange(e.target.value);
                 obtenerMarcas(e.target.value);
-                obtenerOpcionesDiametro(e.target.value);
                 formikRef.current?.setFieldValue('idMarca', '');
                 formikRef.current?.setFieldValue('idModelo', '');
+                formikRef.current?.setFieldValue('idDiametro', '');
               }}
             />
             <InputField
@@ -239,6 +251,7 @@ export default function CargarPiezaModal({
               onChange={(e) => {
                 handleChange(e);
                 formikRef.current?.setFieldValue('idModelo', '');
+                formikRef.current?.setFieldValue('idDiametro', '');
               }}
             />
             <InputField
@@ -250,7 +263,9 @@ export default function CargarPiezaModal({
                 ...modelos
                   ?.filter(
                     (modelo) =>
-                      parseInt(modelo?.idMarca) === parseInt(values?.idMarca)
+                      parseInt(modelo?.idMarca) === parseInt(values?.idMarca) &&
+                      parseInt(modelo?.idTipoPieza) ===
+                        parseInt(tipoPiezaSeleccionada.idTipoPieza)
                   )
                   ?.map((modelo) => ({
                     value: modelo?.idModelo,
@@ -262,6 +277,11 @@ export default function CargarPiezaModal({
               label={'Modelo'}
               labelStyles="font-light text-sm"
               inputStyles="text-[8px] bg-white shadow py-[0.4rem] px-2 text-sm"
+              onChange={(e) => {
+                handleChange(e);
+                handleSelectChange(e.target.value);
+                obtenerOpcionesDiametro(e.target.value);
+              }}
             />
             <InputField
               id={'idDiametro'}

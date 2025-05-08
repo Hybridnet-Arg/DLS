@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
 import { serializedData } from '@/lib/prisma/utils';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function GET(request, { params }) {
   const { searchParams } = new URL(request.url);
+
   try {
+    const { id } = await params;
+
     const includeElementosDeposito = searchParams.get(
       'include_elementos_deposito'
     );
@@ -55,7 +59,7 @@ export async function GET(request, { params }) {
 
     const elementoComponente = await prisma.elementos_componente.findFirst({
       where: {
-        id: parseInt(params?.id),
+        id: Number(id),
       },
       include: includeQuery,
     });
@@ -83,9 +87,6 @@ export async function GET(request, { params }) {
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los pozos' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error);
   }
 }

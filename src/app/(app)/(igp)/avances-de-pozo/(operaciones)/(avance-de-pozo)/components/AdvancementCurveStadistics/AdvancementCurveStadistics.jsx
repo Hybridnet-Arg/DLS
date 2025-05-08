@@ -29,6 +29,7 @@ export default function AdvancementCurveStadistics({
         valueBitPosition={hole?.avances_pozo?.[0]?.nivel_trepano || 0}
         titleHoleDepth={`Hole Depth`}
         valueHoleDepth={hole?.avances_pozo?.[0]?.profundidad || 0}
+        isBlinking={hole?.en_progreso || false}
       ></WellAdvancementParameters>
       <WellAdvancementStatisticsAdvanceCurve
         etapasPozo={hole?.etapas_pozo ?? []}

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { detalles_estado_diagrama = [] } = await req.json();
 
     const estadoDiagrama = await prisma.estados_diagrama.findFirst({
@@ -48,9 +48,8 @@ export async function PUT(req, { params }) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al actualizar los detalles' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al actualizar el estado diagrama',
+    });
   }
 }

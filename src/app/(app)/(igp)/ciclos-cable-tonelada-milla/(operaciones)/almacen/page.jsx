@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Table from '@/components/table/Table';
 import Title from '@/components/ui/labels/Title';
 import Button from '@/components/ui/buttons/Button';
-import { SkeletonContainer } from '@/components/ui/skeleton';
+import { SkeletonContainer } from '@/components/ui/shadcn/skeleton';
 import { getAllElementosDepositoByFilters } from '@/services/elementosDeposito.service';
 import { ELEMENTOS_CICLOS_CABLE_TONELADA_MILLA } from '@/constants/elementos.contant';
 import { COMPONENTES } from '@/constants/componentes.constant';

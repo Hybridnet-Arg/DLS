@@ -1,9 +1,99 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
+/**
+ * @swagger
+ * /api/planes-pozo/{id}:
+ *   put:
+ *     summary: Actualiza un plan de pozo existente junto con sus pozos y etapas.
+ *     description: Este endpoint actualiza los datos de un plan de pozo, incluyendo los pozos relacionados y sus etapas. Todos los cambios se realizan dentro de una transacción.
+ *     tags:
+ *       - Plan Pozo
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del plan de pozo a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: Plan Pozo Norte
+ *               descripcion:
+ *                 type: string
+ *                 example: Descripción del plan actualizado
+ *               pozos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 101
+ *                     nombre:
+ *                       type: string
+ *                       example: Pozo A1
+ *                     fecha_inicio:
+ *                       type: string
+ *                       format: date
+ *                       example: 2025-05-01
+ *                     fecha_fin:
+ *                       type: string
+ *                       format: date
+ *                       example: 2025-06-01
+ *                     etapas_pozo:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 1
+ *                           profundidad_desde:
+ *                             type: number
+ *                             example: 1200
+ *                           profundidad_hasta:
+ *                             type: number
+ *                             example: 1500
+ *                           duracion:
+ *                             type: integer
+ *                             example: 5
+ *                           encamisado:
+ *                             type: boolean
+ *                             example: true
+ *                           casing:
+ *                             type: string
+ *                             example: Casing tipo X
+ *     responses:
+ *       200:
+ *         description: Plan pozo creado con éxito.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 planPozo:
+ *                   type: object
+ *                   description: Plan de pozo actualizado con pozos y etapas.
+ *                 message:
+ *                   type: string
+ *                   example: Plan pozo creado con exito
+ *       400:
+ *         description: Error de validación o datos incompletos.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { pozos, ...body } = await req.json();
 
     const planPozo = await prisma.$transaction(
@@ -71,9 +161,8 @@ export async function PUT(req, { params }) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al crear el plan pozo' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage: 'Error al actualizar el plan pozo',
+    });
   }
 }

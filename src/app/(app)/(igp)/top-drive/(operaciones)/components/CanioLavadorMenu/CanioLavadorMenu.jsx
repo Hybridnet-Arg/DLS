@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useRefreshStore } from '@/store/refresh.store';
 import usePerforadoresStore from '@/store/perforadores.store';
+import { usePlanPozoStore } from '@/store/planPozo.store';
+
 import { getAllElementosComponenteByFilters } from '@/services/elementosComponente.service';
 import {
   LowerIBOPIcon,
@@ -43,6 +45,8 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
   const searchParams = useSearchParams();
 
   const { shouldRefresh } = useRefreshStore();
+  const { planPozo } = usePlanPozoStore();
+
   const { perforadorSeleccionado } = usePerforadoresStore();
   const [elementosComponente, setElementosComponente] = useState([]);
   const [numeroPerforador, setNumeroPerforador] = useState(null);
@@ -54,7 +58,6 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
           numero_perforador: perforadorSeleccionado?.idPerforador,
           componente_id: 1,
         };
-
         const order = ['WashPipe', 'Upper IBOP', 'Lower IBOP', 'Saver Sub'];
         const data = await getAllElementosComponenteByFilters(filters);
         data.sort((a, b) => {
@@ -71,23 +74,20 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
         if (data?.length === 0)
           return router.replace(`${redirectTo}?empty=true`);
 
-        setElementosComponente(data);
-
-        if (
-          searchParams?.get('elemento_id') &&
-          perforadorSeleccionado?.idPerforador === numeroPerforador
-        ) {
-          return;
-        }
-        if (params?.id && searchParams?.get('elemento_id')) {
-          router.replace(
-            `${redirectTo}/${params?.id}?=elemento_id=${searchParams?.get('elemento_id')}`
+        const elementoComponente = data.find(
+          (item) => item.id === parseInt(params?.id)
+        );
+        if (elementoComponente) {
+          await router.replace(
+            `${redirectTo}${elementoComponente.id ? `/${elementoComponente.id}?elemento_id=${elementoComponente.elemento_id}` : '?empty=true'}`
           );
-        } else if (params?.id && !searchParams?.get('elemento_id')) {
-          router.replace(`${redirectTo}/${params?.id}`);
         } else {
-          router.replace(`${redirectTo}/${data[0]?.id}`);
+          await router.replace(
+            `${redirectTo}${data[0]?.id ? `/${data[0]?.id}?elemento_id=${data[0]?.elemento_id}` : '?empty=true'}`
+          );
         }
+
+        setElementosComponente(data);
       } catch (error) {
         setElementosComponente([]);
       } finally {
@@ -130,6 +130,7 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
                 elementosComponente[0]?.elementos_deposito?.[0]?.horas_en_uso,
               maxHours:
                 elementosComponente[0]?.elemento?.tipo_elemento?.horas_hasta,
+              planPozoActive: planPozo?.id ? true : false,
             })}
           </Link>
         </div>
@@ -154,6 +155,7 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
                   elementosComponente[1]?.elementos_deposito?.[0]?.horas_en_uso,
                 maxHours:
                   elementosComponente[1]?.elemento?.tipo_elemento?.horas_hasta,
+                planPozoActive: planPozo?.id ? true : false,
               })}
             </Link>
           </div>
@@ -175,6 +177,7 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
                   elementosComponente[2]?.elementos_deposito?.[0]?.horas_en_uso,
                 maxHours:
                   elementosComponente[2]?.elemento?.tipo_elemento?.horas_hasta,
+                planPozoActive: planPozo?.id ? true : false,
               })}
             </Link>
           </div>
@@ -198,6 +201,7 @@ export default function CanioLavadorMenu({ redirectTo = '/top-drive' }) {
                 elementosComponente[3]?.elementos_deposito?.[0]?.horas_en_uso,
               maxHours:
                 elementosComponente[3]?.elemento?.tipo_elemento?.horas_hasta,
+              planPozoActive: planPozo?.id ? true : false,
             })}
           </Link>
         </div>

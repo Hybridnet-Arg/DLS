@@ -5,7 +5,7 @@ import Table from '@/components/table/Table';
 import Title from '@/components/ui/labels/Title';
 import Button from '@/components/ui/buttons/Button';
 import ModalDialog from '@/components/ui/modal/ModalDialog';
-import { SkeletonContainer } from '@/components/ui/skeleton';
+import { SkeletonContainer } from '@/components/ui/shadcn/skeleton';
 import {
   eliminarElementoDeposito,
   getAllElementosDepositoByFilters,
@@ -121,6 +121,7 @@ export default function StockCiclosCable() {
       {cambiarBobina ? (
         <div className="flex justify-end gap-3 mt-4">
           <Button
+            disabled={!selectedRow}
             onClick={() =>
               router.push(
                 `/ciclos-cable-tonelada-milla/almacen/stock/cambiar/${selectedRow?.id}`

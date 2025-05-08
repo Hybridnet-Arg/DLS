@@ -8,12 +8,12 @@ export const obtenerAvancesDePozo = async (params = {}) => {
   return data;
 };
 
-export const getAvanceDePozoByNumeroPerforador = async (
-  drillerNumber,
+export const obtenerAvancesDePozoPorPerforador = async (
+  numeroPerforador,
   params
 ) => {
   const { data } = await clientAxios.get(
-    `${ENDPOINTS.AVANCES_POZO.BY_NUMERO_PERFORADOR}/${drillerNumber}`,
+    `${ENDPOINTS.AVANCES_POZO.BY_NUMERO_PERFORADOR}/${numeroPerforador}`,
     { params }
   );
   return data;

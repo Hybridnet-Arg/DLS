@@ -6,9 +6,10 @@ import Support from './_components/Support';
 import FormLogin from './_components/FormLogin';
 
 export default async function Login({ searchParams }) {
+  const { error: loginError } = (await searchParams) || {};
   const session = await getServerSession();
-  const loginError = searchParams.error;
-  const cookie = cookies();
+  const cookie = await cookies();
+
   const loginAttemptsRaw = cookie.get(COOKIES.LOGIN_ATTEMPTS)?.value;
   const loginAttempts = loginAttemptsRaw ? JSON.parse(loginAttemptsRaw) : null;
 

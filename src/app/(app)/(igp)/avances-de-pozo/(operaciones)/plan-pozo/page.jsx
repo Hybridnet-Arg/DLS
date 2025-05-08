@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getPerforadorByNumero } from '@/services/perforadores.services';
 import usePerforadoresStore from '@/store/perforadores.store';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/shadcn/skeleton';
 import EditPlanPozo from './components/EditPlanPozo/EditPlanPozo';
 import CreatePlanPozo from './components/CreatePlanPozo/CreatePlanPozo';
 

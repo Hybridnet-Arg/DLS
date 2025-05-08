@@ -31,7 +31,7 @@ async function seedPerforadores() {
     },
     {
       nombre: 'DLS4170',
-      nombre_clave: 'DLS',
+      nombre_clave: '170',
       numero: 170,
       descripcion: 'Perforador de alto rendimiento.',
       estado: 'Operativo',
@@ -40,7 +40,7 @@ async function seedPerforadores() {
     },
     {
       nombre: 'DLS4163',
-      nombre_clave: 'DLS',
+      nombre_clave: '163',
       numero: 163,
       descripcion: 'Perforador de alta capacidad.',
       estado: 'Operativo',
@@ -94,7 +94,7 @@ async function seedPerforadores() {
     },
     {
       nombre: 'PAE4001',
-      nombre_clave: 'PAE001',
+      nombre_clave: '1',
       numero: 1,
       descripcion: 'PAE001',
       estado: 'Operativo',
@@ -201,172 +201,21 @@ async function seedUbicaciones() {
 }
 
 async function seedLocaciones() {
-  const data = [
-    {
-      nombre: 'Locación 1',
-      nombre_clave: 'LO004',
-      descripcion: 'Área en el oeste con recursos probados.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 2',
-      nombre_clave: 'LS002',
-      descripcion: 'Área en el sur con alta potencialidad para perforación.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 3',
-      nombre_clave: 'LN001',
-      descripcion: 'Área en el norte para perforación de pozos petroleros.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 4',
-      nombre_clave: 'LE003',
-      descripcion: 'Área en el este conocida por su rica geología.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 5',
-      nombre_clave: 'LO004',
-      descripcion: 'Área en el oeste con recursos probados.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 6',
-      nombre_clave: 'LO004',
-      descripcion: 'Área en el oeste con recursos probados.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 7',
-      nombre_clave: 'LS002',
-      descripcion: 'Área en el sur con alta potencialidad para perforación.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 8',
-      nombre_clave: 'LN001',
-      descripcion: 'Área en el norte para perforación de pozos petroleros.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 9',
-      nombre_clave: 'LE003',
-      descripcion: 'Área en el este conocida por su rica geología.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 10',
-      nombre_clave: 'LO004',
-      descripcion: 'Área en el oeste con recursos probados.',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 11',
-      nombre_clave: 'LOOO5',
-      descripcion: 'LOOO5',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 12',
-      nombre_clave: 'LOO06',
-      descripcion: 'LOOO6',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 13',
-      nombre_clave: 'LOOO7',
-      descripcion: 'LOOO7',
-      deshabilitado: false,
-    },
-    {
-      nombre: 'Locación 14',
-      nombre_clave: 'LOOO14',
-      descripcion: 'LOOO14',
-      deshabilitado: false,
-    },
-  ];
+  const perforadores = await prisma.perforadores.findMany();
+  const fechaFin = new Date();
+  fechaFin.setFullYear(fechaFin.getFullYear() + 1);
+
+  const data = perforadores.map((perforador) => ({
+    nombre: `Locación ${perforador.id}`,
+    nombre_clave: `LO00${perforador.id}`,
+    descripcion: `Locación de perforador ${perforador.id}`,
+    deshabilitado: false,
+    coordenadas: '12.3456789,-12.3456789',
+    fecha_inicio: new Date(),
+    fecha_fin: fechaFin,
+  }));
 
   return prisma.locaciones.createMany({ data });
-}
-
-async function seedPerforadorLocaciones() {
-  const defaultValues = { activo: true };
-
-  const data = [
-    {
-      locacion_id: 1,
-      perforador_id: 1,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 2,
-      perforador_id: 2,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 3,
-      perforador_id: 3,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 4,
-      perforador_id: 4,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 5,
-      perforador_id: 5,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 6,
-      perforador_id: 6,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 7,
-      perforador_id: 7,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 8,
-      perforador_id: 8,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 9,
-      perforador_id: 9,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 10,
-      perforador_id: 10,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 11,
-      perforador_id: 11,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 12,
-      perforador_id: 12,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 13,
-      perforador_id: 13,
-      ...defaultValues,
-    },
-    {
-      locacion_id: 14,
-      perforador_id: 14,
-      ...defaultValues,
-    },
-  ];
-  return prisma.perforador_locaciones.createMany({ data });
 }
 
 async function seedTiposEtapaPozo() {
@@ -471,64 +320,11 @@ async function seedTiposRosca() {
 }
 
 async function seedDepositos() {
-  const data = [
-    {
-      nombre: 'DepositoDLS165',
-      perforador_id: 2,
-    },
-    {
-      nombre: 'DepositoDLS167',
-      perforador_id: 1,
-    },
-    {
-      nombre: 'DepositoDLS166',
-      perforador_id: 3,
-    },
-    {
-      nombre: 'DepositoDLS163',
-      perforador_id: 4,
-    },
-    {
-      nombre: 'DepositoDLS170',
-      perforador_id: 5,
-    },
-    {
-      nombre: 'DepositoPAE169',
-      perforador_id: 6,
-    },
-    {
-      nombre: 'DepositoDLS4163',
-      perforador_id: 7,
-    },
-    {
-      nombre: 'DepositoDLS4156',
-      perforador_id: 8,
-    },
-    {
-      nombre: 'DepositoDLS4173',
-      perforador_id: 9,
-    },
-    {
-      nombre: 'DepositoDLS4160',
-      perforador_id: 10,
-    },
-    {
-      nombre: 'DepositoDLS4170',
-      perforador_id: 11,
-    },
-    {
-      nombre: 'DepositoPAE4001',
-      perforador_id: 12,
-    },
-    {
-      nombre: 'DepositoPAE4168',
-      perforador_id: 13,
-    },
-    {
-      nombre: 'DepositoPAE4174',
-      perforador_id: 14,
-    },
-  ];
+  const perforadores = await prisma.perforadores.findMany();
+  const data = perforadores.map((perforador) => ({
+    nombre: `Deposito ${perforador.id} - ${perforador.nombre}`,
+    perforador_id: perforador.id,
+  }));
 
   return prisma.depositos.createMany({ data });
 }
@@ -867,12 +663,88 @@ async function seedPlanificacionAreas() {
   }
 }
 
+async function seedTubularesRangos() {
+  const data = [
+    { nombre: 'Rango II' },
+    { nombre: 'Rango III' },
+    { nombre: 'Otro' },
+  ];
+  return prisma.tubulares_rangos.createMany({ data });
+}
+async function seedTubularesTiposConexion() {
+  const data = [
+    { nombre: 'NC-50 GRADO G' },
+    { nombre: 'NC-50 GRADO S' },
+    { nombre: 'ST-40+' },
+    { nombre: 'TSDS-40' },
+    { nombre: 'VX-39' },
+    { nombre: 'XT-39' },
+    { nombre: 'Otro' },
+  ];
+  return prisma.tubulares_tipos_conexion.createMany({ data });
+}
+async function seedTubularesTiposBarras() {
+  const data = [
+    { nombre: 'Barra de sondeo' },
+    { nombre: 'Hemingway' },
+    { nombre: 'Porta mecha' },
+    { nombre: 'Otro' },
+  ];
+  return prisma.tubulares_tipos_barra.createMany({ data });
+}
+async function seedTubularesProveedores() {
+  const data = [{ nombre: 'Test' }];
+  return prisma.tubulares_proveedores.createMany({ data });
+}
+
+async function seedTubularesEstadosBarra() {
+  const data = [
+    { nombre: 'Operativas' },
+    { nombre: 'Inspeccion/reparación' },
+    { nombre: 'Descarte' },
+  ];
+  return prisma.tubulares_estados_barra.createMany({ data });
+}
+
+async function seedTubularesDestinos() {
+  const data = [
+    { nombre: 'Locación' },
+    { nombre: 'Taller' },
+    { nombre: 'Base' },
+    { nombre: 'Otro perforador' },
+    { nombre: 'Scrap' },
+    { nombre: 'Perdida en pozo' },
+  ];
+  return prisma.tubulares_destinos.createMany({ data });
+}
+
+async function seedTubularesTalleres() {
+  const data = [{ nombre: 'OTI' }, { nombre: 'NDT' }, { nombre: 'BM' }];
+  return prisma.tubulares_talleres.createMany({ data });
+}
+
+async function seedTanques() {
+  const perforadores = await prisma.perforadores.findMany();
+  const fechaFin = new Date();
+  fechaFin.setFullYear(fechaFin.getFullYear() + 1);
+
+  const data = perforadores.map((perforador) => ({
+    perforador_id: perforador?.id,
+    capacidad: 77000,
+    nivel_critico: 10000,
+    nivel_alerta: 20000,
+    habilitado: true,
+    en_uso: true,
+  }));
+
+  return prisma.tanques.createMany({ data });
+}
+
 const SEED_LIST_COMMAND = 'list';
 const SEED_COMMANDS = {
   ubicaciones: seedUbicaciones,
   perforadores: seedPerforadores,
   locaciones: seedLocaciones,
-  perforador_locaciones: seedPerforadorLocaciones,
   tipos_etapa_pozo: seedTiposEtapaPozo,
   marcas: seedMarcas,
   modelos: seedModelos,
@@ -887,6 +759,14 @@ const SEED_COMMANDS = {
   estados_cronograma: seedEstadosCronograma,
   tipos_tarea_forecast: seedTiposTareaForecast,
   planificacion_areas: seedPlanificacionAreas,
+  tubulares_rangos: seedTubularesRangos,
+  tubulares_tipos_conexion: seedTubularesTiposConexion,
+  tubulares_tipos_barra: seedTubularesTiposBarras,
+  tubulares_proveedores: seedTubularesProveedores,
+  tubulares_estados_barra: seedTubularesEstadosBarra,
+  tubulares_destinos: seedTubularesDestinos,
+  tubulares_talleres: seedTubularesTalleres,
+  tanques: seedTanques,
 };
 
 async function executeSeedCommand(command = '') {

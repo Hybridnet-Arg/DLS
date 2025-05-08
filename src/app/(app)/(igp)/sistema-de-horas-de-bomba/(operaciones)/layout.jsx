@@ -1,5 +1,6 @@
 import Submenu from '@/components/ui/tabs/Submenu';
 import { BombaIcon } from '@/components/icons/MenuIcons';
+import LastUpdateLabel from '@/components/ui/labels/LastUpdateLabel';
 
 export default function OperacionesLayout({ children }) {
   const options = [
@@ -43,6 +44,7 @@ export default function OperacionesLayout({ children }) {
         <h2 className="uppercase font-medium text-sm text-ellipsis overflow-hidden whitespace-nowrap ps-20">
           Operaciones
         </h2>
+        <LastUpdateLabel fecha={new Date()} />
       </div>
       <Submenu items={options}>{children}</Submenu>
     </div>

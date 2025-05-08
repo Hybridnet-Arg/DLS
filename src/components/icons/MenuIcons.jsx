@@ -189,3 +189,23 @@ export function TelaZarandaIcon({ width, height, ...props }) {
     </svg>
   );
 }
+
+export function TanqueGasoilIcon(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props.width || '100%'}
+      height={props.height || '100%'}
+      viewBox="0 0 34 24"
+      fill="none"
+      {...props}
+    >
+      <rect width={30} height={17} x={2} y={3} fill="#25303B" rx={8} />
+      <path fill="#fff" d="M4 11h26a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7Z" />
+      <path
+        fill="#25303B"
+        d="M8.5 21h4v1a2 2 0 1 1-4 0v-1ZM21.5 21h4v1a2 2 0 1 1-4 0v-1Z"
+      />
+    </svg>
+  );
+}

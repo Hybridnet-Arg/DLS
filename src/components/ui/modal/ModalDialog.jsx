@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useEffect } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, TriangleAlert, X } from 'lucide-react';
 import Button from '../buttons/Button';
 
 const STATUS_ICONS = {
@@ -14,6 +14,11 @@ const STATUS_ICONS = {
   error: (
     <div className="bg-red-500 rounded-full p-3">
       <X size={25} color="white" />
+    </div>
+  ),
+  warning: (
+    <div className="bg-yellow-500 rounded-full p-2">
+      <TriangleAlert size={35} color="white" />
     </div>
   ),
 };
@@ -34,6 +39,7 @@ export default function ModalDialog({
   onAutoClose = () => {},
   closable = true,
   timeout = 2500,
+  showCancelButton = true,
 }) {
   useEffect(() => {
     if (autoclose && isOpen)
@@ -86,12 +92,14 @@ export default function ModalDialog({
           )}
           {!autoclose && (
             <div className="flex justify-center mt-6 mb-1 gap-14">
-              <Button
-                className="font-medium  text-lg"
-                onClick={() => onCancel()}
-              >
-                {onCancelLabel}
-              </Button>
+              {showCancelButton && (
+                <Button
+                  className="font-medium  text-lg"
+                  onClick={() => onCancel()}
+                >
+                  {onCancelLabel}
+                </Button>
+              )}
               <Button
                 className="font-medium px-5 text-lg"
                 type="button"

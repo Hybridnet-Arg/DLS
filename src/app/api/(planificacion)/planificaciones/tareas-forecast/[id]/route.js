@@ -5,7 +5,7 @@ import apiErrorHandler, { ApiError } from '@/utils/handlers/apiError.handler';
 export async function DELETE(req, { params }) {
   const { searchParams } = new URL(req.url);
   try {
-    const { id } = params;
+    const { id } = await params;
     const planificacion_area_id = searchParams.get('planificacion_area_id');
     const planificacion_actividad_ids = searchParams.getAll(
       'planificacion_actividad_ids[]'

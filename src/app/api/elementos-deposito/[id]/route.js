@@ -5,7 +5,7 @@ import apiErrorHandler, { ApiError } from '@/utils/handlers/apiError.handler';
 
 export async function GET(_req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const elementoDeposito = await prisma.elementos_deposito.findUnique({
       where: { id: Number(id) },
       include: {
@@ -42,7 +42,7 @@ export async function GET(_req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const {
       marca_id,
       modelo_id,
@@ -90,7 +90,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const uid = req.headers.get('uid');
 
     const elementoDeposito = await prisma.elementos_deposito.findUnique({

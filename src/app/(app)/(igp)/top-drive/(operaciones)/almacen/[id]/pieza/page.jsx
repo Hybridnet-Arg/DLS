@@ -1,16 +1,25 @@
 'use client';
+
+import { use, useEffect, useState } from 'react';
 import { getElementosComponenteById } from '@/services/elementosComponente.service';
 import CargarElementoDeposito from './components/CargarElementoDeposito';
 
-export default async function TopDriveAlmacenPieza({ params }) {
-  const { id } = params;
-  let elementoComponente = {};
+export default function TopDriveAlmacenPieza({ params }) {
+  const { id } = use(params);
+  const [elementoComponente, setElementoComponente] = useState({});
 
-  try {
-    elementoComponente = await getElementosComponenteById(id);
-  } catch (error) {
-    elementoComponente = {};
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getElementosComponenteById(id);
+        setElementoComponente(data);
+      } catch (error) {
+        setElementoComponente({});
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   return (
     <CargarElementoDeposito

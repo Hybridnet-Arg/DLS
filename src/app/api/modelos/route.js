@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Modelos
+ * /api/modelos:
+ *   get:
+ *     summary: Obtener modelos
+ *     tags: [Modelos]
+ *     responses:
+ *       200:
+ *         description: Modelos obtenidos correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   try {
@@ -16,9 +33,6 @@ export async function GET(request) {
     });
     return NextResponse.json({ modelos }, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Error al obtener los pozos' },
-      { status: 500 }
-    );
+    return apiErrorHandler(error);
   }
 }

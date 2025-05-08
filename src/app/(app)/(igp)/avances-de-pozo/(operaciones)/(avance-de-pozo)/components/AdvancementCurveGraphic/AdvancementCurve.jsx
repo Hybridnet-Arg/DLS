@@ -32,6 +32,7 @@ export default function AdvancementCurve({
   trepanLevel,
   holeName,
   etapasPozo = [],
+  enProgreso,
 }) {
   return (
     <div className="relative w-full h-[500px]">
@@ -147,8 +148,7 @@ export default function AdvancementCurve({
           </>
         )}
       </div>
-
-      <div className="relative z-10 flex justify-center items-center w-full h-full py-3 px-5">
+      <div className="relative z-10 flex justify-center items-center w-full h-full py-3">
         <WellAdvancementIcon
           progress={progress}
           progressNivelTrepano={progressNivelTrepano}
@@ -157,6 +157,7 @@ export default function AdvancementCurve({
           maxDepth={
             etapasPozo?.[etapasPozo?.length - 1]?.profundidad_hasta ?? 0
           }
+          enProgreso={enProgreso}
         />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma/client';
+import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,13 +27,9 @@ export async function GET() {
 
     return response;
   } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      {
-        message:
-          'Error al obtener las locaciones disponibles para asignar a un perforador.',
-      },
-      { status: 500 }
-    );
+    return apiErrorHandler(error, {
+      fallbackMessage:
+        'Error al obtener las locaciones disponibles para asignar a un perforador.',
+    });
   }
 }

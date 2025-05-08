@@ -9,7 +9,7 @@ export default function LocalTime() {
     <Loader size={20} className="animate-spin text-white mx-4" />
   ) : (
     <p className="m-0 font-medium text-sm text-ellipsis overflow-hidden whitespace-nowrap px-4">
-      Fecha y hora: {localTime}
+      Fecha y hora servidor DMS: {localTime}
     </p>
   );
 }

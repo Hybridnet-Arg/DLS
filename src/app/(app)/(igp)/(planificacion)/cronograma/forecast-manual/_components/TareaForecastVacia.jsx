@@ -10,6 +10,7 @@ export default function TareaForecastVacia({
   tiposTareasForecast,
   disabled,
   onReload = () => {},
+  expandibleDays,
 }) {
   const { addTareaForescastPendiente, removeTareaForescastPendiente } =
     useCronogramaStore();
@@ -30,13 +31,18 @@ export default function TareaForecastVacia({
 
   return (
     <div
-      className={clsx('relative bg-backgroundGray py-4 px-[0.3rem] rounded', {
+      className={clsx('relative bg-backgroundGray rounded', {
+        'px-1 py-4': !expandibleDays,
+        'px-[2px] py-[0.4rem]': expandibleDays,
         'cursor-not-allowed bg-gray-500':
           !perforadorForecast?.perforador_id || disabled,
       })}
     >
       {(perforadorForecast?.perforador_id || disabled) && (
-        <div className="absolute top-0 right-0">
+        <div className={clsx('absolute right-0', {
+          'top-0': !expandibleDays,
+          'top-[-6]': expandibleDays,
+        })}>
           <input
             type="checkbox"
             id="checkbox"

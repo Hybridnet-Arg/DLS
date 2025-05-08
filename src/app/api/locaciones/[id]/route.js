@@ -4,7 +4,7 @@ import apiErrorHandler from '@/utils/handlers/apiError.handler';
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
     const {
       nombre,
@@ -54,7 +54,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const uid = request.headers.get('uid');
     const locacion = await prisma.locaciones.findUnique({
       where: { id: parseInt(id) },
