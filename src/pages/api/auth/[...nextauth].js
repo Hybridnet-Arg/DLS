@@ -6,7 +6,7 @@ import { authenticateWithAD } from '@/services/ldap/auth.service';
 import { parseCookies, setCookie } from 'nookies';
 
 const DEMO_USER = {
-  username: 'demo.user',
+  username: 'demodms',
   permisos: [
     'CN=SCHB-DLS4170-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
     'CN=SCHB-DLS4169-Operacion,OU=Sistema de Control de Horas de Bomba de lodo,OU=Gestion Centralizada,OU=Argentina,OU=Locations,DC=lam,DC=domain',
@@ -80,7 +80,14 @@ const handlerNextAuth = (req, res) =>
           try {
             let user;
 
-            if (CONFIG.APP_ENV === CONFIG.WORK_ENVS.DEMO) {
+            if (CONFIG.DEMO) {
+              if (
+                credentials?.username !== DEMO_USER.username ||
+                credentials?.password !== DEMO_USER.username
+              ) {
+                throw new Error('Invalid credentials');
+              }
+
               user = DEMO_USER;
             } else {
               user = await authenticateWithAD(credentials);

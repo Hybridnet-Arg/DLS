@@ -25,7 +25,6 @@ const WORK_ENVS = {
   PROD: 'production',
   DEV: 'development',
   TRAINING: 'training',
-  DEMO: 'demo',
 };
 
 export const CONFIG = {
@@ -35,4 +34,5 @@ export const CONFIG = {
   LDAP,
   RECAPTCHA,
   WORK_ENVS,
+  DEMO: process.env.NEXT_PUBLIC_DEMO || false,
 };

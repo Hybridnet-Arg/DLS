@@ -32,7 +32,7 @@ export default function LoginLayout({ children }) {
                   className="text-[#F5D92F]"
                   target="_blank"
                 >
-                  https://dmscapacitacion.dls-archer.com
+                  https://dmsdemo.company.com
                 </a>
               </div>
             )}
