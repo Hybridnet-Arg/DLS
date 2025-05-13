@@ -21,13 +21,13 @@ export async function middleware(req) {
       });
     }
 
-    if (
+    /* if (
       path &&
       path.startsWith('/cronograma/') &&
       CONFIG.APP_ENV === CONFIG.WORK_ENVS.PROD
     ) {
       return NextResponse.redirect(new URL('/', req.url));
-    }
+    } */
 
     return NextResponse.next({
       request: { headers: requestHeaders },
