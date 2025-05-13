@@ -28,7 +28,7 @@ export default function LoginLayout({ children }) {
               <div className="my-2">
                 <div className="text-white">Sitio de Capacitación</div>
                 <a
-                  href="http://dmscapacitacion.dls-archer.com/"
+                  href="https://dmsdemo.company.com/"
                   className="text-[#F5D92F]"
                   target="_blank"
                 >

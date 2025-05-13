@@ -161,7 +161,7 @@ export default function Navbar() {
       style={{ backgroundImage: `url(${BgHeaderImg.src})` }}
     >
       <div className="container mx-auto flex justify-between items-center min-h-[64px]">
-        <Link href="/">
+        {/* <Link href="/">
           <Image
             src={'/static/images/logo.png'}
             width={40}
@@ -170,7 +170,7 @@ export default function Navbar() {
             blurDataURL={'/static/images/logo.png'}
             unoptimized
           />
-        </Link>
+        </Link> */}
         <div className="flex flex-grow justify-end space-x-5 sm:flex-col sm:items-end md:flex-col md:items-end lg:flex-row">
           <nav className="flex items-center md:items-end">
             <NavLink options={PLANIFICACION_NAV} firstItem lastItem blue>

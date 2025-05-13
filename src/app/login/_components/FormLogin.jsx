@@ -78,7 +78,7 @@ export default function FormLogin() {
         </p>
       </div>
       <div className="flex gap-5 mb-20">
-        <div className="mt-[3.3rem]">
+        {/* <div className="mt-[3.3rem]">
           <Image
             src={'/static/images/login/dls-archer-logo.png'}
             width={150}
@@ -86,7 +86,7 @@ export default function FormLogin() {
             alt={'logo'}
             unoptimized
           />
-        </div>
+        </div> */}
         <Formik
           initialValues={{}}
           validate={handleValidation}

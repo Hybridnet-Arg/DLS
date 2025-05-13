@@ -12,7 +12,7 @@ const Header = () => {
     <>
       {usuario && (
         <header className="h-1/6 flex flex-col md:flex-row items-center justify-between ">
-          <img className="w-14 ml-2 mb-1" src="/static/images/logo.png" />
+          {/* <img className="w-14 ml-2 mb-1" src="/static/images/logo.png" /> */}
           <ListaPerforadores />
           <FechaActual />
         </header>
